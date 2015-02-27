@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+<item android:color="@android:color/white" android:drawable="@drawable/round_button" android:state_pressed="true"> </item>
+<item android:color="@android:color/black" android:drawable="@drawable/round_button_not_pressed" ></item>
+
+</selector>

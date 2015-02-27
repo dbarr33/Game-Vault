@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Game Collection</string>
+
+    <string name="ps4_drawer_title">PS4</string>
+    <string name="ps3_drawer_title">PS3</string>
+    <string name="ps2_drawer_title">PS2</string>
+    <string name="ps1_drawer_title">PSX</string>
+    <string name="xboxone_drawer_title">Xbox One</string>
+    <string name="xbox360_drawer_title">Xbox 360</string>
+    <string name="xbox_drawer_title">Xbox</string>
+    <string name="pc_drawer_title">PC</string>
+    <string name="wiiu_drawer_title">Wii U</string>
+    <string name="wii_drawer_title">Wii</string>
+    <string name="gamecube_drawer_title">Gamecube</string>
+    <string name="nintendo64_drawer_title">Nintendo 64</string>
+    <string name="supernintendo_drawer_title">Super Nintendo</string>
+    <string name="nintendo_drawer_title">Nintendo</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="empty_list">The list is empty.</string>
+    <string name="new_game">New Game</string>
+    <string name="drawer_open">Open drawer</string>
+    <string name="drawer_close">Close drawer</string>
+
+    <string name="edit_game_name">Name:</string>
+    <string name="edit_game_platform">Platform:</string>
+    <string name="edit_game_description">Description:</string>
+    <string name="edit_game_genre">Genre:</string>
+    <string name="edit_game_user_rating">User Rating:</string>
+    <string name="edit_game_ign_rating">IGN Rating:</string>
+    <string name="edit_game_completion_percentage">Completion %:</string>
+    <string name="save_game">Save Game</string>
+    <string name="get_ign_info">Search Ign</string>
+    <string name="update_game">Update Game</string>
+    <string name="edit_game_screen_title">Edit Game</string>
+
+    <string name="actionbar__color_action_down">#4b4949</string>
+    <string name="actionbar_color_action_up">#22222222</string>
+
+
+
+</resources>
