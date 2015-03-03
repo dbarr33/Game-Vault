@@ -69,9 +69,9 @@ public class IgnGamesFragment extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ((EditGameActivity) getActivity()).setIgnResponse(ignDialogListAdapter.getItem(position));
 
-                if(!ignResponses.get(position).thumb.toString().trim().matches("")) {
+              //  if(!ignResponses.get(position).thumb.toString().trim().matches("")) {
                     ((EditGameActivity) getActivity()).setGameImage((ImageView) view.findViewById(R.id.ign_list_item_gameImage));
-                }
+               // }
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent());
                 getDialog().dismiss();
             }
