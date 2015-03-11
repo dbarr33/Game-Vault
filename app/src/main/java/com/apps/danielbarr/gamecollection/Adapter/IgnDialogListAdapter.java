@@ -149,8 +149,8 @@ public class IgnDialogListAdapter extends ArrayAdapter<IgnResponse> {
 
             if (result == null) {
                 hasLoaded.set(position,true);
-                Bitmap defualtBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.default_image);
-                images.set(position, defualtBitmap);
+                Bitmap defaultBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.box_art);
+                images.set(position, defaultBitmap);
                 notifyDataSetChanged();
             }
             else {

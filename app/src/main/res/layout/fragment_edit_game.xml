@@ -24,10 +24,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:id="@+id/edit_name_textField"
-                android:maxLength="30"
                 android:lines="1"
                 android:textColor="#000"
-                android:inputType="textCapSentences"/>
+                android:inputType="textCapSentences"
+                android:ellipsize="end"/>
         </LinearLayout>
 
         <LinearLayout
@@ -65,7 +65,7 @@
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:id="@+id/edit_game_photo"
-                        android:src="@drawable/default_image"
+                        android:src="@drawable/box_art"
                         />
 
                 </LinearLayout>

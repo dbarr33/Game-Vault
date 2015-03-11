@@ -345,6 +345,7 @@ public class EditGameFragment extends Fragment {
             }
             description.setText(ignResponse.getShort_description());
             ignTextView.setText(ignResponse.getScore());
+            gameName.setText(ignResponse.getTitle());
 
             ignTextView.setVisibility(View.VISIBLE);
             ignLabel.setVisibility(View.VISIBLE);
