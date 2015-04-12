@@ -2,7 +2,7 @@
 <resources>
 
     <color name="title_bar">#1976D2</color>
-    <color name="primary">#2196F3</color>
+    <color name="primary">#ff2196F3</color>
     <color name="pressed">#64B5F6</color>
 
 </resources>

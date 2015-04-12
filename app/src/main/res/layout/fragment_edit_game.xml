@@ -1,220 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:gravity="center"
+    android:id="@+id/topView"
+    android:visibility="gone"
+    android:layout_alignTop="@+id/scroll"
+       >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:id="@+id/topViewGameName"/>
+</LinearLayout>
+
+<com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
+    android:id="@+id/scroll"
+    >
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+
         android:id="@+id/editGameContainer">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="@string/edit_game_name"
-                />
-
-            <EditText
+            android:gravity="center"
+            android:layout_gravity="center">
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:id="@+id/edit_game_photo"
+                    />
+                <ProgressBar
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/gameImageProgressBar"
+                    />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/primary"
+            android:gravity="center"
+            android:id="@+id/sync"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/edit_name_textField"
+                android:textColor="#fff"
+                android:ellipsize="end"
                 android:lines="1"
-                android:textColor="#000"
-                android:inputType="textCapSentences"
-                android:ellipsize="end"/>
+                android:textSize="20sp"
+                android:gravity="center"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-            <TextView
+            android:orientation="vertical"
+            android:layout_marginTop="5dp"
+            android:id="@+id/achor"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            >
+
+
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="@string/edit_game_genre"/>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:id="@+id/edit_genre_textField"
-                android:maxLength="13"
-                android:textColor="#000"
-                android:inputType="textCapSentences"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="10dp">
-                    <ImageView
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:id="@+id/edit_game_photo"
-                        android:src="@drawable/box_art"
-                        />
+                    android:text="@string/edit_game_platform"/>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Spinner
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp">
-
-                <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:text="@string/edit_game_platform"/>
-
-                        <Spinner
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:id="@+id/edit_platform_spinner"
-                            android:textColor="#000"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:text="@string/edit_game_completion_percentage"/>
-
-                        <EditText
-                            android:layout_width="40dp"
-                            android:layout_height="48dp"
-                            android:maxLength="3"
-                            android:id="@+id/edit_completion_percentage_textField"
-                            android:textColor="#000"
-                            android:layout_marginLeft="5dp"
-                            android:inputType="number"/>
+                    android:id="@+id/edit_platform_spinner"
+                    android:textColor="#000"/>
+            </LinearLayout>
 
 
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="10dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:text="@string/edit_game_user_rating"
-                            android:layout_gravity="center"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp">
-                            <RatingBar
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                style="?android:attr/ratingBarStyleSmall"
-                                android:numStars="5"
-                                android:stepSize="1"
-                                android:isIndicator="false"
-                                android:id="@+id/userRatingStars"/>
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit_game_completion_percentage"/>
 
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:id="@+id/edit_ign_label"
-                            android:text="@string/edit_game_ign_rating"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:id="@+id/edit_ign_ratingTextview"
-                            android:layout_marginLeft="5dp"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLength="3"
+                    android:id="@+id/edit_completion_percentage_textField"
+                    android:textColor="#000"
+                    android:layout_marginLeft="5dp"
+                    />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/edit_descriptionLayout">
-                >
+                android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edit_description_label"
-                    android:text="@string/edit_game_description"/>
+                    android:text="@string/edit_game_user_rating"
+                    android:layout_gravity="center"/>
 
-                <EditText
+                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edit_description_textField"
-                    android:textSize="15sp"
-                    android:maxLength="300"
-                    android:textColor="#000"
-                    android:layout_gravity="top"
-                    />
+                    android:layout_marginLeft="5dp">
+                    <RatingBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:numStars="5"
+                        android:stepSize="1"
+                        android:isIndicator="false"
+                        android:id="@+id/userRatingStars"/>
 
-
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right|bottom"
-                android:layout_alignBottom="@+id/edit_descriptionLayout"
-                android:layout_marginBottom="4dp"
-                android:layout_marginRight="7dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edit_description_textCount"
-                    android:textSize="10sp"
-                    android:text="0 "/>
+                    android:text="@string/edit_game_genre"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="10sp"
-                    android:text="/ 300"/>
-            </LinearLayout>
-        </RelativeLayout>
+                    android:id="@+id/edit_genre_textField"
+                    android:textColor="#000"/>
 
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:id="@+id/recyclerviewLayout">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_characterRecyclerView"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/edit_descriptionLayout">
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_description_label"
+                android:text="@string/edit_game_description"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edit_description_textField"
+                    android:textSize="15sp"
+                    android:textColor="#000"
+                    android:maxLines="7"
+                    android:layout_gravity="top"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:gravity="top"
+            android:id="@+id/expandText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="See More"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="15sp"
+            style="?android:attr/borderlessButtonStyle"
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -222,42 +243,15 @@
             android:layout_marginTop="20dp"
             >
 
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <Button
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="10dp"
-
-                >
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edit_game_IgnInfoButton"
-                    android:text="@string/get_ign_info"
-                    android:textColor="#fff"
-                    android:background="@color/edit_game_button_states"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="20dp"
-                >
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/saveGame"
-                    android:layout_gravity="right"
-                    android:text="@string/save_game"
-                    android:textColor="#fff"
-                    android:background="@color/edit_game_button_states"/>
-
-            </LinearLayout>
+                android:id="@+id/saveGame"
+                android:text="@string/save_game"
+                android:textColor="#fff"
+                android:background="@color/edit_game_button_states"/>
 
         </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView>
+</LinearLayout>

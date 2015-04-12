@@ -56,7 +56,7 @@ public class GameListAdapter extends ArrayAdapter<Game> {
         gameNameTextView.setText(game.getName());
         gameUserRatingBar.setRating(game.getUserRating());
         gameCompletionTextView.setText("Completion: " + Float.toString(game.getCompletionPercentage()) + "%");
-        gameIgnRating.setText(String.valueOf(game.getIgnRating()));
+        //gameIgnRating.setText(String.valueOf(game.getIgnRating()));
         gameIgnDescription.setText(game.getDescription());
 
         Bitmap bmp = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);
@@ -77,7 +77,7 @@ public class GameListAdapter extends ArrayAdapter<Game> {
     }
 
     public void updateGameList(String platform) {
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).findAll();
+        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false) .findAll();
         games.clear();
         if (!storedGames.isEmpty()) {
             for (int i = 0; i < storedGames.size(); i++) {

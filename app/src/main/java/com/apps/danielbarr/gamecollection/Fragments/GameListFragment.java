@@ -70,9 +70,13 @@ public class GameListFragment extends ListFragment {
 
         switch (item.getItemId()) {
             case R.id.addGame: {
-                Intent intent = new Intent(getActivity(), EditGameActivity.class);
-                intent.putExtra(EditGameFragment.EXTRA_PLATFORM, name);
-                startActivity(intent);
+                android.app.FragmentManager fm = getActivity().getFragmentManager();
+                SearchFragment dialog = new SearchFragment();
+                dialog.setTargetFragment(GameListFragment.this, 0);
+                Bundle args = new Bundle();
+                args.putString(dialog.EXTRA_PASS_PLATFORM, name);
+                dialog.setArguments(args);
+                dialog.show(fm, "TAG");
                 return true;
             }
 

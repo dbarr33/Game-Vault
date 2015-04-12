@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/character_ImageView"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/character_name_textField"
+            android:textColor="#000"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="20sp"
+            android:gravity="center"/>
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/edit_descriptionLayout">
+
+            <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_description_label"
+            android:text="@string/edit_game_description"/>
+
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/character_description_textField"
+                    android:textSize="15sp"
+                    android:textColor="#000"
+                    android:maxLines="7"
+                    android:layout_gravity="top"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+
+         <Button
+            android:gravity="top"
+            android:id="@+id/character_expandText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="See More"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="15sp"
+            style="?android:attr/borderlessButtonStyle"
+            />
+   </LinearLayout>
+</ScrollView>

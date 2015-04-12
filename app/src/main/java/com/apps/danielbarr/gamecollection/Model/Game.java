@@ -1,5 +1,6 @@
 package com.apps.danielbarr.gamecollection.Model;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 
 /**
@@ -16,6 +17,9 @@ public class Game extends RealmObject{
     private float userRating;
     private float ignRating;
     private byte[] photo;
+    private byte[] largePhoto;
+    private RealmList<GameCharacters> characterses;
+    private boolean isDeleted = false;
 
     public String getName() {
         return name;
@@ -80,4 +84,29 @@ public class Game extends RealmObject{
     public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
+
+    public byte[] getLargePhoto() {
+        return largePhoto;
+    }
+
+    public void setLargePhoto(byte[] largePhoto) {
+        this.largePhoto = largePhoto;
+    }
+
+    public RealmList<GameCharacters> getCharacterses() {
+        return characterses;
+    }
+
+    public void setCharacterses(RealmList<GameCharacters> characterses) {
+        this.characterses = characterses;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
+

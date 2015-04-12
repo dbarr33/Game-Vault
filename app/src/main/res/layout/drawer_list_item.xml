@@ -11,8 +11,8 @@
         android:gravity="center">
         <ImageView
             android:id="@+id/drawer_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"/>
     </LinearLayout>
@@ -32,10 +32,11 @@
         android:layout_height="wrap_content"
         android:gravity="right">
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:id="@+id/drawer_item_dragIcon"
             android:gravity="right"
-            android:src="@drawable/icmpmove"/>
+            android:src="@drawable/icmpmove"
+            android:layout_marginRight="10dp"/>
     </LinearLayout>
 </LinearLayout>

@@ -27,22 +27,21 @@
     <string name="new_game">New Game</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
+    <string name="search_button">Search</string>
 
     <string name="edit_game_name">Name:</string>
     <string name="edit_game_platform">Platform:</string>
     <string name="edit_game_description">Description:</string>
-    <string name="edit_game_genre">Genre:</string>
+    <string name="edit_game_genre">Genre: </string>
     <string name="edit_game_user_rating">User Rating:</string>
     <string name="edit_game_ign_rating">IGN Rating:</string>
-    <string name="edit_game_completion_percentage">Completion %:</string>
+    <string name="edit_game_completion_percentage">Completion Percentage:</string>
     <string name="save_game">Save Game</string>
-    <string name="get_ign_info">Search Ign</string>
+    <string name="get_ign_info">Search</string>
     <string name="update_game">Update Game</string>
     <string name="edit_game_screen_title">Edit Game</string>
 
     <string name="actionbar__color_action_down">#4b4949</string>
     <string name="actionbar_color_action_up">#22222222</string>
-
-
 
 </resources>

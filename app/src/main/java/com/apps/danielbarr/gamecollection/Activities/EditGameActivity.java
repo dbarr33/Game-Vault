@@ -9,10 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
-import com.apps.danielbarr.gamecollection.Model.IgnResponse;
 import com.apps.danielbarr.gamecollection.R;
 
 /**
@@ -21,14 +19,10 @@ import com.apps.danielbarr.gamecollection.R;
 public class EditGameActivity extends SingleFragmentActivity {
 
     private EditGameFragment editGameFragment;
-    private IgnResponse ignResponse;
-    private ImageView gameImage;
 
     @Override
     protected Fragment createFragment() {
         editGameFragment = new EditGameFragment();
-        ignResponse = new IgnResponse();
-        gameImage = new ImageView(this);
         return editGameFragment;
     }
 
@@ -38,8 +32,15 @@ public class EditGameActivity extends SingleFragmentActivity {
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+       // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       // getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().hide();
+
+        if (savedInstanceState != null) {
+            //Restore the fragment's instance
+            editGameFragment = (EditGameFragment)getFragmentManager().getFragment(
+                    savedInstanceState, "mContent");
+        }
 
     }
 
@@ -71,30 +72,39 @@ public class EditGameActivity extends SingleFragmentActivity {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+//Save the fragment's instance
+        getFragmentManager().putFragment(outState, "mContent", editGameFragment);
+
+
+    }
+
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
-    public IgnResponse getIgnResponse() {
-        return ignResponse;
-    }
-
-    public void setIgnResponse(IgnResponse ignResponse) {
-        this.ignResponse = ignResponse;
-    }
-
-    public ImageView getGameImage() {
-        return gameImage;
-    }
-
-    public void setGameImage(ImageView gameImage) {
-        this.gameImage = gameImage;
+    public void hideEditFragment() {
+        getFragmentManager().beginTransaction().hide(editGameFragment).commit();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setupUI(findViewById(R.id.editGameContainer));
+        //setupUI(findViewById(R.id.editGameContainer));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+            getFragmentManager().beginTransaction().show(editGameFragment).commit();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 }

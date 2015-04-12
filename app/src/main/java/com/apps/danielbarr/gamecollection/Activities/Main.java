@@ -56,7 +56,6 @@ public class Main extends ActionBarActivity {
 
         Bundle args = new Bundle();
 
-
         // Initializing
         dataList = new ArrayList<DrawerItem>();
         mDrawerTitle  = getTitle();

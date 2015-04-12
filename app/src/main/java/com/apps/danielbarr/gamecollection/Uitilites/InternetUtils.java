@@ -22,8 +22,8 @@ public class InternetUtils {
     public static AlertDialog.Builder buildDialog(Context c) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle("No Internet connection.");
-        builder.setMessage("You have no internet connection");
+        builder.setTitle("No Internet connection");
+        builder.setMessage("You are not  connected to the internet");
 
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 

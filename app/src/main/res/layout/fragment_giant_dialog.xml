@@ -7,7 +7,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ign_dialog_cancelButton"
+        android:id="@+id/giant_dialog_cancelButton"
         android:text="Close"
         android:textColor="@color/title_bar"
         android:layout_margin="10dp"
@@ -16,7 +16,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/ign_dialog_gameList"
+        android:id="@+id/giant_dialog_gameList"
         android:choiceMode="singleChoice"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"

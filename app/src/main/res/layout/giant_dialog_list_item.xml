@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:id="@+id/ign_list_item_gameImage"
+        android:id="@+id/giant_list_item_gameImage"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
@@ -19,14 +19,14 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:layout_centerInParent="true"
-            android:id="@+id/ign_list_item_progressBar"
+            android:id="@+id/giant_list_item_progressBar"
             android:visibility="gone"/>
     </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/ign_list_item_gameName"
+        android:id="@+id/giant_list_item_gameName"
         android:textSize="15dp"
         android:gravity="center"
         android:layout_marginRight="5dp"

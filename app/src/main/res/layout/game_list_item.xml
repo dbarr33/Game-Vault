@@ -80,7 +80,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/edit_game_ign_description"
+                android:maxLines="5"
                 android:textSize="10dp"
+                android:maxLength="200"
                 />
         </LinearLayout>
     </LinearLayout>
