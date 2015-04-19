@@ -16,6 +16,7 @@ import com.apps.danielbarr.gamecollection.Activities.EditGameActivity;
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
 import com.apps.danielbarr.gamecollection.Model.GameCharacters;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character;
+import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.BuildGameCharacter;
 
@@ -27,41 +28,47 @@ import io.realm.RealmList;
  * @author Daniel Barr (Fuzz)
  */
 
-public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ListViewHolder> {
+public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameCharactersRecyclerAdapter.ListViewHolder> {
 
     private ArrayList<Character> characters;
     private Activity activity;
     private ArrayList<Bitmap> gameImageView;
     private ArrayList<GameCharacters> gameCharacterses;
-    private boolean loadURLS = true;
+    private ArrayList<RecyclerObject> recyclerObjects;
     OnItemClickListener mItemClickListener;
 
 
-    public CustomRecyclerAdapter(ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character> characters, Activity activity)
+    public GameCharactersRecyclerAdapter(ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character> characters, Activity activity)
     {
         this.characters = characters;
         gameImageView = new ArrayList<>();
         gameCharacterses = new ArrayList<>();
+        recyclerObjects = new ArrayList<>();
 
         for(int i = 0; i < characters.size(); i++) {
+            recyclerObjects.add(new RecyclerObject());
+            recyclerObjects.get(i).setPhotosLoaded(false);
             gameImageView.add(null);
             gameCharacterses.add(new GameCharacters());
             gameCharacterses.get(i).setName(characters.get(i).getName());
             gameCharacterses.get(i).setID(characters.get(i).getId());
-            BuildGameCharacter buildGameCharacter = new BuildGameCharacter(activity, characters.get(i), this, i);
+            new BuildGameCharacter(activity, characters.get(i), this, i);
         }
         this.activity = activity;
         SetOnItemClickListener(characterTransition);
     }
 
-    public CustomRecyclerAdapter(RealmList<GameCharacters> characters, Activity activity) {
+    public GameCharactersRecyclerAdapter(RealmList<GameCharacters> characters, Activity activity) {
         this.characters = new ArrayList<>();
         gameImageView = new ArrayList<>();
         gameCharacterses = new ArrayList<>();
+        recyclerObjects = new ArrayList<>();
 
         for (int i = 0; i < characters.size(); i++) {
             Character temp = new Character();
             gameCharacterses.add(characters.get(i));
+            recyclerObjects.add(new RecyclerObject());
+            recyclerObjects.get(i).setPhotosLoaded(false);
             temp.setName(characters.get(i).getName());
             this.characters.add(temp);
             gameImageView.add(null);
@@ -69,42 +76,31 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
             if (bmp != null) {
                 gameImageView.set(i, bmp);
             }
-        }
-        this.activity = activity;
-        this.loadURLS = false;
-        SetOnItemClickListener(characterTransition);
-    }
-
-    public CustomRecyclerAdapter(Activity activity, ArrayList<GameCharacters> gameCharacters) {
-        this.characters = new ArrayList<>();
-        gameImageView = new ArrayList<>();
-        gameCharacterses = new ArrayList<>();
-
-        for (int i = 0; i < characters.size(); i++) {
-            Character temp = new Character();
-            gameCharacterses.add(gameCharacters.get(i));
-            temp.setName(characters.get(i).getName());
-            this.characters.add(temp);
-            gameImageView.add(null);
-            Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.get(i).getPhoto(), 0, gameCharacters.get(i).getPhoto().length);
-            if (bmp != null) {
-                gameImageView.set(i, bmp);
+            else {
+                new BuildGameCharacter(activity, characters.get(i), this, i);
             }
         }
         this.activity = activity;
-        this.loadURLS = false;
         SetOnItemClickListener(characterTransition);
     }
 
     public void setCharactersAtPosition(int position, GameCharacters gameCharacters) {
         if(position < gameCharacterses.size()) {
             gameCharacterses.set(position, gameCharacters);
-            Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
+            recyclerObjects.get(position).setPhotosLoaded(true);
+            recyclerObjects.get(position).setPhoto(gameCharacters.getPhoto());
+            recyclerObjects.get(position).setLargePhoto(gameCharacters.getLargePhoto());
+            recyclerObjects.get(position).setDescription(gameCharacters.getDescription());
+            Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getLargePhoto().length);
             if (bmp != null) {
                 gameImageView.set(position, bmp);
                 notifyDataSetChanged();
             }
         }
+    }
+
+    public ArrayList<RecyclerObject> getRecyclerObjects() {
+        return recyclerObjects;
     }
 
     @Override
@@ -126,6 +122,9 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
         if(gameImageView.get(i) != null) {
             listViewHolder.mCharacterImageView.setImageBitmap(gameImageView.get(i));
             listViewHolder.mProgressBar.setVisibility(View.GONE);
+        }
+        else {
+            listViewHolder.mProgressBar.setVisibility(View.VISIBLE);
         }
     }
 

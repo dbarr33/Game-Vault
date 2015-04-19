@@ -13,13 +13,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,12 +29,15 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.apps.danielbarr.gamecollection.Adapter.CustomRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.Game;
 import com.apps.danielbarr.gamecollection.Model.GameCharacters;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.GameResponse;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Genre;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.GiantBombSearch;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.SimilarGames;
+import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
@@ -50,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -64,23 +68,26 @@ public class EditGameFragment extends Fragment {
     public static final String EXTRA_SEARCH = "com.apps.danielbarr.gamecollection.search";
 
     private Button saveGameButton;
+    private Button backToTopButton;
     private ImageView gameImageView;
     private TextView gameName;
-    private TextView genre;
-    private TextView description;
     private TextView completionPercentage;
     private TextView topViewGameName;
     private RatingBar userRatingBar;
     private Realm realm;
     private Spinner platformSpinner;
+    private RecyclerView relevantGamesRecyclerView;
+    private RecyclerView gameDescriptionRecyclearView;
+    private RecyclerView gameGenresRecyclerView;
 
     private Game currentGame;
     private int gamePosition;
     private String currentPlatform;
-    private TextView expandTextView;
     private String longDescription;
     private GiantBombSearch searchResults;
     private Bitmap searchImage;
+    private Dialog mDialog;
+
 
     private RecyclerView charactersRecyclerView;
     private LinearLayout recyclerLayout;
@@ -91,55 +98,12 @@ public class EditGameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realm = Realm.getInstance(getActivity().getApplicationContext());
         currentPlatform = getActivity().getIntent().getStringExtra(EXTRA_PLATFORM);
         gamePosition = getActivity().getIntent().getIntExtra(EXTRA_GAME, -1);
         searchResults = (GiantBombSearch)getActivity().getIntent().getSerializableExtra("GiantBombResponse");
         searchImage = (Bitmap)getActivity().getIntent().getParcelableExtra(EXTRA_SEARCH);
 
         setHasOptionsMenu(true);
-        //setRetainInstance(true);
-    }
-
-    private View.OnClickListener expandOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            description.setMaxLines(Integer.MAX_VALUE);
-            String temp = longDescription;
-            description.setText(temp);
-            expandTextView.setOnClickListener(collapseOnClick);
-            expandTextView.setText("Collapse");
-        }
-    };
-
-    private View.OnClickListener collapseOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            description.setMaxLines(7);
-            expandTextView.setOnClickListener(expandOnClick);
-            expandTextView.setText("See More");
-        }
-    };
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putByteArray("GameImage", PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap()));
-        outState.putSerializable("Recycler", ((CustomRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses());
-
-    }
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            byte[] bytes =  savedInstanceState.getByteArray("GameImage");
-            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            gameImageView.setImageBitmap(bmp);
-            ArrayList<GameCharacters> gameCharacterses = (ArrayList)savedInstanceState.getSerializable("Recycler");
-            CustomRecyclerAdapter customRecyclerAdapter = new CustomRecyclerAdapter(getActivity(), gameCharacterses);
-            charactersRecyclerView.setAdapter(customRecyclerAdapter);
-
-        }
     }
 
     @Override
@@ -149,21 +113,22 @@ public class EditGameFragment extends Fragment {
         gameImageView = (ImageView) v.findViewById(R.id.edit_game_photo);
         gameName = (TextView) v.findViewById(R.id.edit_name_textField);
         platformSpinner = (Spinner) v.findViewById(R.id.edit_platform_spinner);
-        genre = (TextView) v.findViewById(R.id.edit_genre_textField);
         userRatingBar = (RatingBar) v.findViewById(R.id.userRatingStars);
-        description = (TextView) v.findViewById(R.id.edit_description_textField);
         completionPercentage = (TextView) v.findViewById(R.id.edit_completion_percentage_textField);
-        expandTextView = (TextView) v.findViewById(R.id.expandText);
         charactersRecyclerView = (RecyclerView)v.findViewById(R.id.edit_characterRecyclerView);
         recyclerLayout = (LinearLayout)v.findViewById(R.id.recyclerviewLayout);
         gameImageProgressBar = (ProgressBar)v.findViewById(R.id.gameImageProgressBar);
         topViewGameName = (TextView)v.findViewById(R.id.topViewGameName);
+        relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclearView);
+        gameDescriptionRecyclearView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
+        gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
+        backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
-
-        SynchronizedScrollView mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
+        final SynchronizedScrollView mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
 
         mScrollView.setAnchorView(v.findViewById(R.id.topView));
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
+        mScrollView.setToTheTopButton(backToTopButton);
         int temp = gamePosition;
 
         if(gamePosition == -1) {
@@ -175,54 +140,75 @@ public class EditGameFragment extends Fragment {
                         new Callback<GameResponse>() {
                             @Override
                             public void success(GameResponse gameResponse, retrofit.client.Response response) {
-                                mDialog.dismiss();
-                                ArrayList<Genre> genres = new ArrayList<Genre>();
-                                genres = gameResponse.getResults().getGenres();
-                                StringBuffer temp = new StringBuffer();
-                                for (int i = 0; i < genres.size(); i++) {
-                                    if (i < genres.size() - 1) {
-                                        temp.append(genres.get(i).getName() + ", ");
-                                    } else {
-                                        temp.append(genres.get(i).getName());
+
+                                if(gameResponse.getResults().getGenres() != null) {
+                                    ArrayList<Genre> genres = new ArrayList<Genre>();
+                                    genres = gameResponse.getResults().getGenres();
+                                    ArrayList<String> genreList = new ArrayList<String>();
+                                    genreList.add("Genres");
+                                    for(int i = 0; i < genres.size(); i++) {
+                                        genreList.add(genres.get(i).getName());
                                     }
+                                    RelevantGameRecyclerAdapter genreRecycylerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
+                                            gameGenresRecyclerView , genreList.size() * 120);
+                                    gameGenresRecyclerView.setAdapter(genreRecycylerAdapter);
+                                    gameGenresRecyclerView.setMinimumHeight(160);
                                 }
-                                genre.setText(temp);
+
+
+                                if(gameResponse.getResults().getSimilar_games() != null) {
+                                    ArrayList<SimilarGames> similarGameses = gameResponse.getResults().getSimilar_games();
+
+                                    ArrayList<String> similarGameNames = new ArrayList<String>();
+                                    similarGameNames.add("Similar Games");
+
+                                    if(similarGameses.size() < 7) {
+                                        for (int i = 0; i < similarGameses.size(); i++) {
+                                            similarGameNames.add(similarGameses.get(i).getName());
+                                        }
+                                    }
+                                    else {
+                                        for (int i = 0; i < 7; i++) {
+                                            similarGameNames.add(similarGameses.get(i).getName());
+                                        }
+                                    }
+                                    final RelevantGameRecyclerAdapter relevantGameRecyclerAdapter = new RelevantGameRecyclerAdapter(similarGameNames, getActivity(),
+                                            relevantGamesRecyclerView, 120 * similarGameNames.size());
+
+                                    relevantGamesRecyclerView.setAdapter(relevantGameRecyclerAdapter);
+                                    relevantGamesRecyclerView.setMinimumHeight(160);
+                                }
 
                                 ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character> characters = new ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character>();
                                 characters = gameResponse.getResults().getCharacters();
-                                temp = new StringBuffer();
 
                                 if(characters != null) {
-                                    for (int i = 0; i < characters.size(); i++) {
-                                        if (i < characters.size() - 1) {
-                                            temp.append(characters.get(i).getName() + ", ");
-                                        } else {
-                                            temp.append(characters.get(i).getName());
-                                        }
-                                    }
-                                    CustomRecyclerAdapter customRecyclerAdapter;
+
+                                    GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
 
                                     if(characters.size() <= 30) {
-                                        customRecyclerAdapter = new CustomRecyclerAdapter(characters, getActivity());
+                                        gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(characters, getActivity());
                                     }
                                     else {
-                                        customRecyclerAdapter = new CustomRecyclerAdapter( new ArrayList<>(characters.subList(0, 30)), getActivity());
+                                        gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(characters.subList(0, 30)), getActivity());
 
                                     }
-                                    charactersRecyclerView.setAdapter(customRecyclerAdapter);
+                                    charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
                                 }
                                 else {
                                     recyclerLayout.setVisibility(View.GONE);
                                 }
+                                mDialog.dismiss();
                             }
 
                             @Override
                             public void failure(RetrofitError error) {
+                                mDialog.dismiss();
+
                                 if (!InternetUtils.isNetworkAvailable(getActivity())) {
                                     AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
                                     dialog.show();
                                 }
-                                mDialog.dismiss();
                                 Log.e("Giant", error.getMessage());
                             }
                         });
@@ -241,6 +227,15 @@ public class EditGameFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         charactersRecyclerView.setLayoutManager(linearLayoutManager);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        relevantGamesRecyclerView.setLayoutManager(linearLayoutManager);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        gameDescriptionRecyclearView.setLayoutManager(linearLayoutManager);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        gameGenresRecyclerView.setLayoutManager(linearLayoutManager);
 
         addItemsOnSpinner();
 
@@ -249,24 +244,37 @@ public class EditGameFragment extends Fragment {
             public void onClick(View v) {
 
                 if (gamePosition != -1 && gamePosition != -2) {
-                    upDateGame();
+                    mDialog = ProgressDialog.show(getActivity(), "Updating", "Wait while Updating...", true);
+                    new Thread(new Runnable() {
+                        public void run() {
+                            upDateGame();
+                            mDialog.dismiss();
+                            getActivity().finish();
+                        }
+                    }).start();
+
                 } else {
-                    saveGame();
+                    mDialog = ProgressDialog.show(getActivity(), "Saving", "Wait while Saving...", true);
+                    new Thread(new Runnable() {
+                        public void run() {
+
+                            for(int i = 0; i < 500;i++){
+                                realm.compactRealmFile(getActivity().getApplicationContext());
+                                saveGame();
+                            }
+                            mDialog.dismiss();
+                            getActivity().finish();
+                        }
+                    }).start();
                 }
-                getActivity().finish();
             }
         });
 
-        expandTextView.setOnClickListener(expandOnClick);
-
-        description.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        backToTopButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onGlobalLayout() {
-                if (description.getLineCount() <= 7) {
-                    expandTextView.setVisibility(View.GONE);
-                } else {
-                    expandTextView.setVisibility(View.VISIBLE);
-                }
+            public void onClick(View v) {
+                mScrollView.smoothScrollTo(0,0);
+                backToTopButton.setVisibility(View.GONE);
             }
         });
 
@@ -274,35 +282,34 @@ public class EditGameFragment extends Fragment {
     }
 
     public void saveGame() {
-        realm.beginTransaction();
+        Realm saveGameRealm = Realm.getInstance(getActivity().getApplicationContext());
+        saveGameRealm.beginTransaction();
 
-        Game game = realm.createObject(Game.class);
+        Game game = saveGameRealm.createObject(Game.class);
         game.setName(gameName.getText().toString());
         game.setPlatform(platformSpinner.getSelectedItem().toString().toString());
-        game.setDescription(longDescription);
-        game.setGenre(genre.getText().toString());
         game.setUserRating(userRatingBar.getRating());
+
 
         if(!completionPercentage.getText().toString().matches("")) {
             game.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
         }
-        game.setDescription(description.getText().toString());
+        game.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
 
         if(gameImageView.getDrawable() != null) {
              byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
              game.setLargePhoto(bytes);
-             game.setPhoto(PictureUtils.convertBitmapToByteArray(searchImage));
         }
         else {
-            byte[] bytes = PictureUtils.convertBitmapToByteArray(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.box_art));
-            game.setLargePhoto(bytes);
-            game.setPhoto(PictureUtils.convertBitmapToByteArray(searchImage));
+            game.setPhotoURL(searchResults.image.getSuper_url());
         }
 
+        game.setPhoto(PictureUtils.convertBitmapToByteArray(searchImage));
+
         if(recyclerLayout.getVisibility() != View.GONE) {
-            ArrayList<GameCharacters> gameCharacterses = ((CustomRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
+            ArrayList<GameCharacters> gameCharacterses = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
             for (int i = 0; i < gameCharacterses.size(); i++) {
-                GameCharacters realmCharacter = realm.createObject(GameCharacters.class);
+                GameCharacters realmCharacter = saveGameRealm.createObject(GameCharacters.class);
                 realmCharacter.setName(gameCharacterses.get(i).getName());
                 realmCharacter.setID(gameCharacterses.get(i).getID());
 
@@ -310,70 +317,164 @@ public class EditGameFragment extends Fragment {
                     realmCharacter.setPhoto(gameCharacterses.get(i).getPhoto());
                     realmCharacter.setLargePhoto(gameCharacterses.get(i).getLargePhoto());
                     realmCharacter.setDescription(gameCharacterses.get(i).getDescription());
+                    realmCharacter.setPhotosLoaded(true);
                 }
                 else {
-                    byte[] bytes = PictureUtils.convertBitmapToByteArray(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.box_art));
-                    realmCharacter.setPhoto(bytes);
-                    realmCharacter.setLargePhoto(bytes);
+                    realmCharacter.setPhotosLoaded(false);
                 }
+
                 game.getCharacterses().add(realmCharacter);
             }
         }
 
-        realm.commitTransaction();
-        realm.close();
+        if(gameGenresRecyclerView.getVisibility() != View.GONE) {
+            ArrayList<String> genreTypes = ((RelevantGameRecyclerAdapter) gameGenresRecyclerView.getAdapter()).getGameList();
+            for (int i = 1; i < genreTypes.size(); i++) {
+                com.apps.danielbarr.gamecollection.Model.Genre genre = saveGameRealm.createObject(com.apps.danielbarr.gamecollection.Model.Genre.class);
+                genre.setName(genreTypes.get(i));
+                game.getGenre().add(genre);
+            }
+        }
+
+        if(relevantGamesRecyclerView.getVisibility() != View.GONE) {
+            ArrayList<String> similarGameNames = ((RelevantGameRecyclerAdapter) relevantGamesRecyclerView.getAdapter()).getGameList();
+            for (int i = 1; i < similarGameNames.size(); i++) {
+                Game similarGame = saveGameRealm.createObject(Game.class);
+                similarGame.setName(similarGameNames.get(i));
+                game.getSimilarGames().add(similarGame);
+            }
+        }
+
+        saveGameRealm.commitTransaction();
+        saveGameRealm.close();
     }
 
     public void upDateGame() {
-        realm.beginTransaction();
 
-        currentGame.setPlatform(platformSpinner.getSelectedItem().toString());
-        currentGame.setGenre(genre.getText().toString());
-        currentGame.setUserRating(userRatingBar.getRating());
+        Realm updateRealm = Realm.getInstance(getActivity().getApplicationContext());
+
+        updateRealm.beginTransaction();
+        RealmResults<Game> storedGames = updateRealm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+        Game upDateGame = storedGames.get(gamePosition);
+
+        upDateGame.setPlatform(platformSpinner.getSelectedItem().toString());
+        upDateGame.setUserRating(userRatingBar.getRating());
         if(!completionPercentage.getText().toString().matches("")) {
-            currentGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
+            upDateGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
+        }
+        if(gameImageView.getDrawable() != null) {
+            byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
+            upDateGame.setLargePhoto(bytes);
         }
 
-        realm.commitTransaction();
-        realm.close();
+        if(recyclerLayout.getVisibility() != View.GONE) {
+            ArrayList<RecyclerObject> editCharacters = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects();
+            for (int i = 0; i < editCharacters.size(); i++) {
+                if(!upDateGame.getCharacterses().get(i).isPhotosLoaded() && editCharacters.get(i).isPhotosLoaded()) {
+                    upDateGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
+                    upDateGame.getCharacterses().get(i).setLargePhoto(editCharacters.get(i).getLargePhoto());
+                    upDateGame.getCharacterses().get(i).setDescription(editCharacters.get(i).getDescription());
+                    upDateGame.getCharacterses().get(i).setPhotosLoaded(true);
+                }
+            }
+        }
+
+        updateRealm.commitTransaction();
+        updateRealm.close();
     }
 
     public void populateTextFields(int gamePosition, String name) {
         gameImageProgressBar.setVisibility(View.GONE);
+
+        realm = Realm.getInstance(getActivity().getApplicationContext());
 
         RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", name).equalTo("isDeleted", false).findAll();
         currentGame = storedGames.get(gamePosition);
 
         gameName.setText(currentGame.getName());
         topViewGameName.setText(currentGame.getName());
-        genre.setText(currentGame.getGenre());
         longDescription = currentGame.getDescription();
-        description.setText(currentGame.getDescription());
         userRatingBar.setRating(currentGame.getUserRating());
         completionPercentage.setText(Float.toString(currentGame.getCompletionPercentage()));
 
+        ArrayList<String> descriptionList = new ArrayList<>();
+        descriptionList.add("Description");
+        descriptionList.add(currentGame.getDescription());
+        TextView textView = new TextView(getActivity());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        textView.setText(currentGame.getDescription());
+        textView.measure(0, 0);
+        RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
+                gameDescriptionRecyclearView, textView.getLineCount() * 118 + 180);
+        gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
+        gameDescriptionRecyclearView.setMinimumHeight(160);
+
+
+
         if(currentGame.getCharacterses().size() > 0) {
-            CustomRecyclerAdapter customRecyclerAdapter = new CustomRecyclerAdapter(currentGame.getCharacterses(), getActivity());
-            charactersRecyclerView.setAdapter(customRecyclerAdapter);
-            customRecyclerAdapter.notifyDataSetChanged();
+            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(currentGame.getCharacterses(), getActivity());
+            charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
+            gameCharactersRecyclerAdapter.notifyDataSetChanged();
         }
         else {
             recyclerLayout.setVisibility(View.GONE);
         }
 
-        if(!currentGame.getPhoto().toString().equals(""))
-        {
-            Bitmap bmp = BitmapFactory.decodeByteArray(currentGame.getLargePhoto(), 0, currentGame.getLargePhoto().length);
-            if(bmp != null) {
-                gameImageView.setImageBitmap(bmp);
+        if(currentGame.getGenre().size() > 0) {
+            RealmList<com.apps.danielbarr.gamecollection.Model.Genre> savedGenres = currentGame.getGenre();
+            ArrayList<String> genres = new ArrayList<>();
+            genres.add("Genres");
+            for(int i =0;i < savedGenres.size(); i ++) {
+                genres.add(savedGenres.get(i).getName());
             }
+            RelevantGameRecyclerAdapter genreRecyclerAdapter = new RelevantGameRecyclerAdapter(genres, getActivity(),
+                    gameGenresRecyclerView, 120 * genres.size());
+            gameGenresRecyclerView .setAdapter(genreRecyclerAdapter);
+            gameGenresRecyclerView.setMinimumHeight(160);
+        }
+
+        if(currentGame.getSimilarGames().size() > 0) {
+            RealmList<Game> similarGames = currentGame.getSimilarGames();
+            ArrayList<String> games = new ArrayList<>();
+            games.add("Similar Games");
+            for(int i =0;i < similarGames.size(); i ++) {
+                games.add(similarGames.get(i).getName());
+            }
+            RelevantGameRecyclerAdapter relevantGameRecyclerAdapter = new RelevantGameRecyclerAdapter(games, getActivity(),
+                    relevantGamesRecyclerView, 120 * games.size());
+            relevantGamesRecyclerView .setAdapter(relevantGameRecyclerAdapter);
+            relevantGamesRecyclerView.setMinimumHeight(160);
+        }
+        else {
+            relevantGamesRecyclerView.setVisibility(View.GONE);
+        }
+
+        Bitmap bmp = BitmapFactory.decodeByteArray(currentGame.getLargePhoto(), 0, currentGame.getLargePhoto().length);
+        if(bmp != null) {
+            gameImageView.setImageBitmap(bmp);
+        }
+        else {
+            new DownloadAsyncTask(gameImageView).execute(currentGame.getPhotoURL());
+            gameImageProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
     public void populateFromSearch(GiantBombSearch giantBombSearch) {
         gameName.setText(giantBombSearch.getName());
         topViewGameName.setText(giantBombSearch.getName());
-        description.setText(stripHtml(giantBombSearch.getDescription()));
+
+        ArrayList<String> descriptionList = new ArrayList<>();
+        descriptionList.add("Description");
+        descriptionList.add(stripHtml(giantBombSearch.getDescription()));
+        TextView textView = new TextView(getActivity());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+        textView.setText(stripHtml(giantBombSearch.getDescription()));
+        textView.measure(0, 0);
+        RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
+                gameDescriptionRecyclearView, textView.getLineCount() * 118 + 180);
+        gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
+        gameDescriptionRecyclearView.setMinimumHeight(160);
+
         longDescription = stripHtml(giantBombSearch.getDescription());
     }
 
@@ -414,6 +515,7 @@ public class EditGameFragment extends Fragment {
         }
     }
 
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.customDeleteButton:
@@ -431,7 +533,12 @@ public class EditGameFragment extends Fragment {
     }
 
     public String stripHtml(String html) {
-        return Html.fromHtml(html).toString();
+        if(html != null) {
+            return Html.fromHtml(html).toString();
+        }
+        else {
+            return "";
+        }
     }
 
     private class DownloadAsyncTask extends AsyncTask<String, Void, Bitmap> {
@@ -474,5 +581,4 @@ public class EditGameFragment extends Fragment {
             }
         }
     }
-
 }

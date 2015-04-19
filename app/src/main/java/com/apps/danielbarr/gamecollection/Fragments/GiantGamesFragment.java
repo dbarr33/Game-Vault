@@ -3,7 +3,6 @@ package com.apps.danielbarr.gamecollection.Fragments;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Activities.EditGameActivity;
 import com.apps.danielbarr.gamecollection.Adapter.GiantDialogListAdapter;
@@ -69,18 +69,20 @@ public class GiantGamesFragment extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent i = new Intent(getActivity(), EditGameActivity.class);
-                i.putExtra("GiantBombResponse", giantDialogListAdapter.getItem(position));
+
                 if(giantDialogListAdapter.getImages().get(position) != null) {
+                    Intent i = new Intent(getActivity(), EditGameActivity.class);
+                    i.putExtra("GiantBombResponse", giantDialogListAdapter.getItem(position));
                     i.putExtra(EditGameFragment.EXTRA_SEARCH, giantDialogListAdapter.getImages().get(position));
+                    i.putExtra(EditGameFragment.EXTRA_PLATFORM, getArguments().getString("platform"));
+                    getDialog().dismiss();
+                    startActivity(i);
                 }
                 else {
-                    i.putExtra(EditGameFragment.EXTRA_SEARCH, BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.box_art));
-
+                    Toast.makeText(getActivity().getApplicationContext(), "Wait for " + giantDialogListAdapter.getItem(position).getName() + " to load",
+                            Toast.LENGTH_SHORT).show();
                 }
-                i.putExtra(EditGameFragment.EXTRA_PLATFORM, getArguments().getString("platform"));
-                getDialog().dismiss();
-                startActivity(i);
+
             }
         });
 

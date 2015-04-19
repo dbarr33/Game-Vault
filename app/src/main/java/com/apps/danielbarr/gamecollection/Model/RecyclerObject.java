@@ -1,13 +1,9 @@
 package com.apps.danielbarr.gamecollection.Model;
 
-import java.io.Serializable;
-
-import io.realm.RealmObject;
-
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class GameCharacters extends RealmObject implements Serializable {
+public class RecyclerObject {
 
     private int ID;
     private String name;

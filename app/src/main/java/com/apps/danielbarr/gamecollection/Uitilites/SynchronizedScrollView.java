@@ -1,8 +1,10 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ScrollView;
 
 /**
@@ -12,7 +14,9 @@ public class SynchronizedScrollView extends ScrollView {
 
     private View mAnchorView;
     private View mSyncView;
-    private float position;
+    private float position = new Float(0.0);
+    private Button toTheTopButton;
+    private boolean animating = false;
 
     public SynchronizedScrollView(Context context) {
         super(context);
@@ -50,6 +54,14 @@ public class SynchronizedScrollView extends ScrollView {
        // syncViews();
     }
 
+    public Button getToTheTopButton() {
+        return toTheTopButton;
+    }
+
+    public void setToTheTopButton(Button toTheTopButton) {
+        this.toTheTopButton = toTheTopButton;
+    }
+
     //Position the views together
     private void syncViews() {
         if(mAnchorView == null || mSyncView == null) {
@@ -64,6 +76,9 @@ public class SynchronizedScrollView extends ScrollView {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
+        if(mAnchorView == null || mSyncView == null) {
+            return;
+        }
         position =  mSyncView.getTop() - (mSyncView.getTop() - mSyncView.getBottom()) ;
 
         //Calling this here attaches the views together if they were added
@@ -72,11 +87,67 @@ public class SynchronizedScrollView extends ScrollView {
     }
 
     @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+    protected void onScrollChanged(int l, final int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
         if(mAnchorView == null || mSyncView == null) {
             return;
         }
+
+        if(t + 50 < oldt) {
+            if(toTheTopButton.getVisibility() != GONE && !animating) {
+                toTheTopButton.animate().translationY(-200).setListener( new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        animating = true;
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        toTheTopButton.setVisibility(GONE);
+                        animating = false;
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            }
+        }
+        else if(getScrollY() > 3000 && t > oldt) {
+            if(toTheTopButton.getVisibility() != VISIBLE) {
+                toTheTopButton.animate().translationY(300).setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        animating = true;
+                        toTheTopButton.setVisibility(VISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        animating = false;
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            }
+        }
+
 
         float temp = position - t;
         temp = temp/ position;

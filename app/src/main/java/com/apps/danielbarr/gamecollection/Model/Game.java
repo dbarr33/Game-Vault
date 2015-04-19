@@ -12,7 +12,8 @@ public class Game extends RealmObject{
     private String name;
     private String platform;
     private String description;
-    private String genre;
+    private RealmList<com.apps.danielbarr.gamecollection.Model.Genre> genre;
+    private String photoURL;
     private float completionPercentage;
     private float userRating;
     private float ignRating;
@@ -20,6 +21,7 @@ public class Game extends RealmObject{
     private byte[] largePhoto;
     private RealmList<GameCharacters> characterses;
     private boolean isDeleted = false;
+    private RealmList<Game> similarGames;
 
     public String getName() {
         return name;
@@ -61,11 +63,11 @@ public class Game extends RealmObject{
         this.platform = platform;
     }
 
-    public String getGenre() {
+    public RealmList<com.apps.danielbarr.gamecollection.Model.Genre> getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(RealmList<com.apps.danielbarr.gamecollection.Model.Genre> genre) {
         this.genre = genre;
     }
 
@@ -107,6 +109,22 @@ public class Game extends RealmObject{
 
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
+    }
+
+    public RealmList<Game> getSimilarGames() {
+        return similarGames;
+    }
+
+    public void setSimilarGames(RealmList<Game> similarGames) {
+        this.similarGames = similarGames;
     }
 }
 

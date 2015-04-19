@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
 
-import com.apps.danielbarr.gamecollection.Adapter.CustomRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.GameCharacters;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.CharacterResponse;
 
@@ -28,19 +28,29 @@ public class BuildGameCharacter {
 
     private Activity activity;
     private GameCharacters gameCharacterses;
-    private CustomRecyclerAdapter customRecyclerAdapter;
+    private GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
     private int position;
     private int count = 0;
 
 
-    public BuildGameCharacter(Activity activity, com.apps.danielbarr.gamecollection.Model.GiantBomb.Character characters, CustomRecyclerAdapter customRecyclerAdapter, int position) {
+    public BuildGameCharacter(Activity activity, com.apps.danielbarr.gamecollection.Model.GiantBomb.Character characters, GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter, int position) {
         this.activity = activity;
-        this.customRecyclerAdapter = customRecyclerAdapter;
+        this.gameCharactersRecyclerAdapter = gameCharactersRecyclerAdapter;
         this.position = position;
         gameCharacterses = new GameCharacters();
         gameCharacterses.setName(characters.getName());
         gameCharacterses.setID(characters.getId());
         getCharacterInfo(characters.getId());
+    }
+
+    public BuildGameCharacter(Activity activity, GameCharacters characters, GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter, int position) {
+        this.activity = activity;
+        this.gameCharactersRecyclerAdapter = gameCharactersRecyclerAdapter;
+        this.position = position;
+        gameCharacterses = new GameCharacters();
+        gameCharacterses.setName(characters.getName());
+        gameCharacterses.setID(characters.getID());
+        getCharacterInfo(characters.getID());
     }
 
     public void getCharacterInfo(int id) {
@@ -121,9 +131,7 @@ public class BuildGameCharacter {
                 }
 
                 if(count == 2) {
-                    customRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
-                    customRecyclerAdapter.notifyDataSetChanged();
-
+                    gameCharactersRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
                 }
             }
         }

@@ -56,7 +56,6 @@ public class GameListAdapter extends ArrayAdapter<Game> {
         gameNameTextView.setText(game.getName());
         gameUserRatingBar.setRating(game.getUserRating());
         gameCompletionTextView.setText("Completion: " + Float.toString(game.getCompletionPercentage()) + "%");
-        //gameIgnRating.setText(String.valueOf(game.getIgnRating()));
         gameIgnDescription.setText(game.getDescription());
 
         Bitmap bmp = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);

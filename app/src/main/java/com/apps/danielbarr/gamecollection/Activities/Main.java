@@ -1,14 +1,15 @@
 package com.apps.danielbarr.gamecollection.Activities;
 
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.DrawerList;
 import com.apps.danielbarr.gamecollection.Model.FirstInstall;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.UIDialogFactory;
 
 import java.util.ArrayList;
 
@@ -71,6 +73,9 @@ public class Main extends ActionBarActivity {
             createDrawerList();
         }
 
+        Dialog dialog =  UIDialogFactory.createDialog(this, "", new UIDialogFactory.OKDialogBuild());
+       // dialog.show();
+
         RealmResults<DrawerItem> drawerItems = realm.allObjects(DrawerItem.class);
 
         for(int i =0; i < drawerItems.size(); i++)
@@ -78,7 +83,7 @@ public class Main extends ActionBarActivity {
             dataList.add(drawerItems.get(i));
         }
 
-        adapter = new DragNDropAdapter(getApplicationContext(), dataList);//new DragNDropAdapter(this,content)
+        adapter = new DragNDropAdapter(getApplicationContext(), dataList);
 
         mDrawerList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -95,7 +100,6 @@ public class Main extends ActionBarActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 toolbar, R.string.drawer_open,
