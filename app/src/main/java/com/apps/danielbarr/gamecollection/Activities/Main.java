@@ -1,6 +1,5 @@
 package com.apps.danielbarr.gamecollection.Activities;
 
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -11,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,12 +24,12 @@ import com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropAdapter;
 import com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropListView;
 import com.apps.danielbarr.gamecollection.DragAndDropList.DropListener;
 import com.apps.danielbarr.gamecollection.DragAndDropList.RemoveListener;
-import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
+import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
+import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
 import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.DrawerList;
 import com.apps.danielbarr.gamecollection.Model.FirstInstall;
 import com.apps.danielbarr.gamecollection.R;
-import com.apps.danielbarr.gamecollection.Uitilites.UIDialogFactory;
 
 import java.util.ArrayList;
 
@@ -45,8 +45,10 @@ public class Main extends ActionBarActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ActionBar actionBar;
-    DragNDropAdapter adapter;
-    Realm realm;
+    private GameRecyclerListFragment gameRecyclerListFragment;
+    private boolean shouldUpdateGameList;
+    private DragNDropAdapter adapter;
+    private Realm realm;
 
     ArrayList<DrawerItem> dataList;
 
@@ -57,6 +59,7 @@ public class Main extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Bundle args = new Bundle();
+        shouldUpdateGameList = false;
 
         // Initializing
         dataList = new ArrayList<DrawerItem>();
@@ -72,9 +75,6 @@ public class Main extends ActionBarActivity {
         {
             createDrawerList();
         }
-
-        Dialog dialog =  UIDialogFactory.createDialog(this, "", new UIDialogFactory.OKDialogBuild());
-       // dialog.show();
 
         RealmResults<DrawerItem> drawerItems = realm.allObjects(DrawerItem.class);
 
@@ -119,13 +119,14 @@ public class Main extends ActionBarActivity {
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        GameListFragment listFragment = new GameListFragment();
-        args.putString(GameListFragment.ITEM_NAME, dataList.get(0).getName());
+        gameRecyclerListFragment = new GameRecyclerListFragment();
+        args.putString(GameRecyclerListFragment.GAME_PLATFORM, dataList.get(0).getName());
 
-        listFragment.setArguments(args);
+        gameRecyclerListFragment.setArguments(args);
         FragmentManager frgManager = getFragmentManager();
-        frgManager.beginTransaction().add(R.id.content_frame, listFragment)
+        frgManager.beginTransaction().add(R.id.content_frame, gameRecyclerListFragment, getResources().getString(R.string.fragment_game_list))
                 .commit();
+
         getSupportActionBar().setTitle(dataList.get(0).getName());
         mDrawerList.setItemChecked(0,true);
         mTitle = dataList.get(0).getName();
@@ -133,20 +134,12 @@ public class Main extends ActionBarActivity {
 
 
 
-    public void SelectItem(int possition) {
+    public void SelectItem(int position) {
 
-        Bundle args = new Bundle();
+        gameRecyclerListFragment.updateGameList(dataList.get(position).getName());
 
-        GameListFragment listFragment = new GameListFragment();
-        args.putString(GameListFragment.ITEM_NAME, dataList.get(possition).getName());
-
-        listFragment.setArguments(args);
-        FragmentManager frgManager = getFragmentManager();
-        frgManager.beginTransaction().replace(R.id.content_frame, listFragment)
-                .commit();
-
-        mDrawerList.setItemChecked(possition, true);
-        setTitle(dataList.get(possition).getName());
+        mDrawerList.setItemChecked(position, true);
+        setTitle(dataList.get(position).getName());
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -171,14 +164,57 @@ public class Main extends ActionBarActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // The action bar home/up action should open or close the drawer.
-        // ActionBarDrawerToggle will take care of this.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+
+        switch (item.getItemId()) {
+            case R.id.addGame: {
+                android.app.FragmentManager fm = getFragmentManager();
+                SearchFragment dialog = new SearchFragment();
+                Bundle args = new Bundle();
+                args.putString(dialog.EXTRA_PASS_PLATFORM, mDrawerTitle.toString());
+                dialog.setArguments(args);
+                dialog.show(fm, "TAG");
+                return true;
+            }
+
+            default:
+                if (mDrawerToggle.onOptionsItemSelected(item)) {
+                    return true;
+                }
         }
 
         return false;
+    }
+
+    public void setShouldUpdateGameList(boolean shouldUpdateGameList) {
+        this.shouldUpdateGameList = shouldUpdateGameList;
+    }
+
+    @Override
+    protected void onResume() {
+        if(shouldUpdateGameList) {
+            gameRecyclerListFragment.notifiyDataSetChanged();
+            shouldUpdateGameList = false;
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
+               getFragmentManager().beginTransaction().show(getFragmentManager().
+                       findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+            }
+            getFragmentManager().popBackStack();
+        }
     }
 
     private class DrawerItemClickListener implements

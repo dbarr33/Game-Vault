@@ -29,6 +29,7 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.Game;
@@ -83,7 +84,6 @@ public class EditGameFragment extends Fragment {
     private Game currentGame;
     private int gamePosition;
     private String currentPlatform;
-    private String longDescription;
     private GiantBombSearch searchResults;
     private Bitmap searchImage;
     private Dialog mDialog;
@@ -95,13 +95,37 @@ public class EditGameFragment extends Fragment {
 
     private ImageView savedGameImage;
 
+    public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
+    {
+        Bundle args = new Bundle();
+        args.putString(EXTRA_PLATFORM, platform);
+        args.putSerializable("GiantBombResponse", giantBombSearch);
+        args.putParcelable(EditGameFragment.EXTRA_SEARCH, image);
+        EditGameFragment fragment = new EditGameFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    public static EditGameFragment newInstance(String platform, int gamePosition)
+    {
+        Bundle args = new Bundle();
+        args.putString(EXTRA_PLATFORM, platform);
+        args.putSerializable(EXTRA_GAME, gamePosition);
+        EditGameFragment fragment = new EditGameFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentPlatform = getActivity().getIntent().getStringExtra(EXTRA_PLATFORM);
-        gamePosition = getActivity().getIntent().getIntExtra(EXTRA_GAME, -1);
-        searchResults = (GiantBombSearch)getActivity().getIntent().getSerializableExtra("GiantBombResponse");
-        searchImage = (Bitmap)getActivity().getIntent().getParcelableExtra(EXTRA_SEARCH);
+        currentPlatform = getArguments().getString(EXTRA_PLATFORM);
+        gamePosition = getArguments().getInt(EXTRA_GAME, -1);
+        searchResults = (GiantBombSearch)getArguments().getSerializable("GiantBombResponse");
+        searchImage = getArguments().getParcelable(EXTRA_SEARCH);
+        ((Main)getActivity()).getSupportActionBar().hide();
 
         setHasOptionsMenu(true);
     }
@@ -129,7 +153,6 @@ public class EditGameFragment extends Fragment {
         mScrollView.setAnchorView(v.findViewById(R.id.topView));
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
         mScrollView.setToTheTopButton(backToTopButton);
-        int temp = gamePosition;
 
         if(gamePosition == -1) {
             gamePosition = -2;
@@ -249,7 +272,8 @@ public class EditGameFragment extends Fragment {
                         public void run() {
                             upDateGame();
                             mDialog.dismiss();
-                            getActivity().finish();
+                            ((Main)getActivity()).setShouldUpdateGameList(true);
+                            getFragmentManager().popBackStack();
                         }
                     }).start();
 
@@ -259,11 +283,11 @@ public class EditGameFragment extends Fragment {
                         public void run() {
 
                             for(int i = 0; i < 500;i++){
-                                realm.compactRealmFile(getActivity().getApplicationContext());
                                 saveGame();
                             }
                             mDialog.dismiss();
-                            getActivity().finish();
+                            ((Main)getActivity()).setShouldUpdateGameList(true);
+                            getFragmentManager().popBackStack();
                         }
                     }).start();
                 }
@@ -315,8 +339,8 @@ public class EditGameFragment extends Fragment {
 
                 if(gameCharacterses.get(i).getPhoto() != null) {
                     realmCharacter.setPhoto(gameCharacterses.get(i).getPhoto());
-                    realmCharacter.setLargePhoto(gameCharacterses.get(i).getLargePhoto());
                     realmCharacter.setDescription(gameCharacterses.get(i).getDescription());
+                    realmCharacter.setEnemies(gameCharacterses.get(i).getEnemies());
                     realmCharacter.setPhotosLoaded(true);
                 }
                 else {
@@ -372,8 +396,11 @@ public class EditGameFragment extends Fragment {
             for (int i = 0; i < editCharacters.size(); i++) {
                 if(!upDateGame.getCharacterses().get(i).isPhotosLoaded() && editCharacters.get(i).isPhotosLoaded()) {
                     upDateGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
-                    upDateGame.getCharacterses().get(i).setLargePhoto(editCharacters.get(i).getLargePhoto());
                     upDateGame.getCharacterses().get(i).setDescription(editCharacters.get(i).getDescription());
+
+                    if(editCharacters.get(i).getEnemies() != null) {
+                        upDateGame.getCharacterses().get(i).setEnemies(editCharacters.get(i).getEnemies());
+                    }
                     upDateGame.getCharacterses().get(i).setPhotosLoaded(true);
                 }
             }
@@ -393,7 +420,6 @@ public class EditGameFragment extends Fragment {
 
         gameName.setText(currentGame.getName());
         topViewGameName.setText(currentGame.getName());
-        longDescription = currentGame.getDescription();
         userRatingBar.setRating(currentGame.getUserRating());
         completionPercentage.setText(Float.toString(currentGame.getCompletionPercentage()));
 
@@ -475,7 +501,6 @@ public class EditGameFragment extends Fragment {
         gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
         gameDescriptionRecyclearView.setMinimumHeight(160);
 
-        longDescription = stripHtml(giantBombSearch.getDescription());
     }
 
     public void addItemsOnSpinner() {
@@ -515,6 +540,11 @@ public class EditGameFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

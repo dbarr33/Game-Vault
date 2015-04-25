@@ -30,8 +30,6 @@ public class BuildGameCharacter {
     private GameCharacters gameCharacterses;
     private GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
     private int position;
-    private int count = 0;
-
 
     public BuildGameCharacter(Activity activity, com.apps.danielbarr.gamecollection.Model.GiantBomb.Character characters, GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter, int position) {
         this.activity = activity;
@@ -59,7 +57,6 @@ public class BuildGameCharacter {
                     @Override
                     public void success(CharacterResponse characterResponse, Response response) {
                         if(characterResponse.getResults().getImage() != null) {
-                            new DownloadAsyncTask(false).execute(characterResponse.getResults().getImage().getThumb_url());
                             new DownloadAsyncTask(true).execute(characterResponse.getResults().getImage().getSuper_url());
                         }
 
@@ -69,6 +66,7 @@ public class BuildGameCharacter {
                         else {
                             gameCharacterses.setDescription(stripHtml(characterResponse.getResults().getDescription()));
                         }
+                       // gameCharacterses.setEnemies(characterResponse.getResults().getEnemies());
                     }
 
                     @Override
@@ -121,19 +119,10 @@ public class BuildGameCharacter {
         }
         @Override
         protected void onPostExecute(Bitmap result) {
-            count++;
-            if (result != null) {
-                if ((boolean) isLargePhoto.get()) {
-                    gameCharacterses.setLargePhoto(PictureUtils.convertBitmapToByteArray(result));
-                }
-                else {
-                    gameCharacterses.setPhoto(PictureUtils.convertBitmapToByteArray(result));
-                }
 
-                if(count == 2) {
-                    gameCharactersRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
-                }
-            }
+            gameCharacterses.setPhoto(PictureUtils.convertBitmapToByteArray(result));
+            gameCharactersRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
+            gameCharactersRecyclerAdapter.notifyDataSetChanged();
         }
     }
 }

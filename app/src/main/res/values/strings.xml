@@ -35,7 +35,7 @@
     <string name="edit_game_genre">Genre: </string>
     <string name="edit_game_user_rating">User Rating:</string>
     <string name="edit_game_ign_rating">IGN Rating:</string>
-    <string name="edit_game_completion_percentage">Completion Percentage:</string>
+    <string name="edit_game_completion_percentage">Completion :100%</string>
     <string name="save_game">Save Game</string>
     <string name="get_ign_info">Search</string>
     <string name="update_game">Update Game</string>
@@ -43,5 +43,11 @@
 
     <string name="actionbar__color_action_down">#4b4949</string>
     <string name="actionbar_color_action_up">#22222222</string>
+
+    //Fragments
+    <string name="fragment_edit_game">EditGameFragment</string>
+    <string name="fragment_game_list">GameListFragment</string>
+    <string name="fragment_character">CharacterFragment</string>
+
 
 </resources>

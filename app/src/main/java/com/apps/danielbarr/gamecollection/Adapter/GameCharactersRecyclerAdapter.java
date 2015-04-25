@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.apps.danielbarr.gamecollection.Activities.EditGameActivity;
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
 import com.apps.danielbarr.gamecollection.Model.GameCharacters;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character;
@@ -89,9 +88,11 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             gameCharacterses.set(position, gameCharacters);
             recyclerObjects.get(position).setPhotosLoaded(true);
             recyclerObjects.get(position).setPhoto(gameCharacters.getPhoto());
-            recyclerObjects.get(position).setLargePhoto(gameCharacters.getLargePhoto());
             recyclerObjects.get(position).setDescription(gameCharacters.getDescription());
-            Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getLargePhoto().length);
+            if(gameCharacters.getEnemies() != null) {
+                recyclerObjects.get(position).setEnemies(gameCharacters.getEnemies());
+            }
+            Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
             if (bmp != null) {
                 gameImageView.set(position, bmp);
                 notifyDataSetChanged();
@@ -143,8 +144,10 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
 
             if(gameCharacterses.get(position).getPhoto() != null) {
                 CharacterFragment characterFragment = CharacterFragment.newInstance(gameCharacterses.get(position));
-                ((EditGameActivity) activity).hideEditFragment();
-                activity.getFragmentManager().beginTransaction().add(R.id.gameListContainer, characterFragment).addToBackStack(null).commit();
+                activity.getFragmentManager().beginTransaction().hide(activity.getFragmentManager().
+                        findFragmentByTag(activity.getResources().getString(R.string.fragment_edit_game))).commit();
+                activity.getFragmentManager().beginTransaction().add(R.id.content_frame, characterFragment, activity.getResources().getString(R.string.fragment_character))
+                        .addToBackStack(null).commit();
             }
             else {
                 Toast.makeText(activity.getApplicationContext(),  "Wait for " + gameCharacterses.get(position).getName() + " to load",

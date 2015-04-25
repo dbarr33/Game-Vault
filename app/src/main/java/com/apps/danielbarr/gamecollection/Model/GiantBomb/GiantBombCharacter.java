@@ -6,6 +6,7 @@ package com.apps.danielbarr.gamecollection.Model.GiantBomb;
 public class GiantBombCharacter {
     private Image image;
     private String description;
+//    private Enemy test;
 
     public Image getImage() {
         return image;
@@ -22,4 +23,12 @@ public class GiantBombCharacter {
     public void setDescription(String description) {
         this.description = description;
     }
+//
+//    public Enemy getEnemies() {
+//        return test;
+//    }
+//
+//    public void setEnemies(Enemy enemies) {
+//        this.test = enemies;
+//    }
 }

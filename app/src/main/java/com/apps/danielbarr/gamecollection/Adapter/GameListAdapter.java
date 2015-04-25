@@ -78,6 +78,7 @@ public class GameListAdapter extends ArrayAdapter<Game> {
     public void updateGameList(String platform) {
         RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false) .findAll();
         games.clear();
+
         if (!storedGames.isEmpty()) {
             for (int i = 0; i < storedGames.size(); i++) {
                 games.add(storedGames.get(i));

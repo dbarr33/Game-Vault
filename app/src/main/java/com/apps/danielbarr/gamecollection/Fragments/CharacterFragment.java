@@ -4,16 +4,21 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.GameCharacters;
 import com.apps.danielbarr.gamecollection.R;
+
+import java.util.ArrayList;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -22,10 +27,8 @@ public class CharacterFragment extends Fragment {
 
     private ImageView characterImageView;
     private TextView characterName;
-    private TextView description;
-    private TextView expandTextView;
-
-
+    private RecyclerView characterDescriptionRecyclerView;
+    private RecyclerView characterEnemiesRecyclerView;
     private GameCharacters gameCharacters;
 
     public static final String EXTRA_GIANTCHARACTER = "com.apps.danielbarr.gamecollection.character";
@@ -46,51 +49,55 @@ public class CharacterFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_character, parent, false);
         characterImageView = (ImageView) v.findViewById(R.id.character_ImageView);
         characterName = (TextView) v.findViewById(R.id.character_name_textField);
-        description = (TextView)v.findViewById(R.id.character_description_textField);
-        expandTextView = (TextView)v.findViewById(R.id.character_expandText);
+        characterDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.characterDescriptionsRecyclearView);
+        characterEnemiesRecyclerView = (RecyclerView)v.findViewById(R.id.characterEnemiesRecyclearView);
 
         gameCharacters = (GameCharacters) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getLargePhoto(), 0, gameCharacters.getLargePhoto().length);
+        Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
         if (bmp != null) {
             characterImageView.setImageBitmap(bmp);
         }
-        description.setText(gameCharacters.getDescription());
         characterName.setText(gameCharacters.getName());
-        expandTextView.setOnClickListener(expandOnClick);
 
         setHasOptionsMenu(true);
-        description.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (description.getLineCount() <= 7) {
-                    expandTextView.setVisibility(View.GONE);
-                } else {
-                    expandTextView.setVisibility(View.VISIBLE);
-                }
+
+        ArrayList<String> descriptionList = new ArrayList<>();
+        descriptionList.add("Description");
+        descriptionList.add(gameCharacters.getDescription());
+        TextView textView = new TextView(getActivity());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        textView.setText(gameCharacters.getDescription());
+        textView.measure(0, 0);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
+        RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
+                characterDescriptionRecyclerView, textView.getLineCount() * 118 + 180);
+        characterDescriptionRecyclerView .setAdapter(gameDescriptionRecyclerAdapter);
+        characterDescriptionRecyclerView.setMinimumHeight(160);
+
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        ArrayList<String> enemiesList = new ArrayList<>();
+        enemiesList.add("Enemies");
+
+
+        if(gameCharacters.getEnemies() != null) {
+            for (int i = 0; i < gameCharacters.getEnemies().size(); i++) {
+                enemiesList.add(gameCharacters.getEnemies().get(i).getName());
             }
-        });
+        }
+
+        RelevantGameRecyclerAdapter gameEnemiesRecyclerAdapter = new RelevantGameRecyclerAdapter(enemiesList, getActivity(),
+                characterEnemiesRecyclerView, enemiesList.size() * 118);
+        characterEnemiesRecyclerView.setLayoutManager(linearLayoutManager);
+        characterEnemiesRecyclerView.setAdapter(gameEnemiesRecyclerAdapter);
+        characterEnemiesRecyclerView.setMinimumHeight(160);
+
 
         return v;
     }
-
-    private View.OnClickListener expandOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            description.setMaxLines(Integer.MAX_VALUE);
-            expandTextView.setOnClickListener(collapseOnClick);
-            expandTextView.setText("Collapse");
-        }
-    };
-
-    private View.OnClickListener collapseOnClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            description.setMaxLines(7);
-            expandTextView.setOnClickListener(expandOnClick);
-            expandTextView.setText("See More");
-        }
-    };
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
