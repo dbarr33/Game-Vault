@@ -1,4 +1,4 @@
-package com.apps.danielbarr.gamecollection.Adapter;
+package com.apps.danielbarr.gamecollection.Old;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.apps.danielbarr.gamecollection.Activities;
+package com.apps.danielbarr.gamecollection.Old;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.apps.danielbarr.gamecollection.Activities.SingleFragmentActivity;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.R;
 

@@ -1,4 +1,4 @@
-package com.apps.danielbarr.gamecollection.Fragments;
+package com.apps.danielbarr.gamecollection.Old;
 
 import android.app.ListFragment;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.apps.danielbarr.gamecollection.Activities.EditGameActivity;
-import com.apps.danielbarr.gamecollection.Adapter.GameListAdapter;
+import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
+import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
 import com.apps.danielbarr.gamecollection.Model.Game;
 import com.apps.danielbarr.gamecollection.R;
 

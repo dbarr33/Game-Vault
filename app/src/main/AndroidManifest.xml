@@ -22,15 +22,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.GameListActivity"
+            android:name=".Old.GameListActivity"
             android:label="@string/app_name" >
         </activity>
-        <activity android:name=".Activities.EditGameActivity" android:parentActivityName=".Activities.GameListActivity"
+        <activity android:name=".Old.EditGameActivity" android:parentActivityName=".Old.GameListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             >
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.GameListActivity"/>
+                android:value=".Old.GameListActivity"/>
         </activity>
     </application>
 </manifest>

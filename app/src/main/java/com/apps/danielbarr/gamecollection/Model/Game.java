@@ -18,7 +18,6 @@ public class Game extends RealmObject{
     private float userRating;
     private float ignRating;
     private byte[] photo;
-    private byte[] largePhoto;
     private RealmList<GameCharacters> characterses;
     private boolean isDeleted = false;
     private RealmList<Game> similarGames;
@@ -85,14 +84,6 @@ public class Game extends RealmObject{
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
-    }
-
-    public byte[] getLargePhoto() {
-        return largePhoto;
-    }
-
-    public void setLargePhoto(byte[] largePhoto) {
-        this.largePhoto = largePhoto;
     }
 
     public RealmList<GameCharacters> getCharacterses() {

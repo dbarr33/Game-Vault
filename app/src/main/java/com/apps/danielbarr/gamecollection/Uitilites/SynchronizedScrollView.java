@@ -2,10 +2,14 @@ package com.apps.danielbarr.gamecollection.Uitilites;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.apps.danielbarr.gamecollection.R;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -17,6 +21,9 @@ public class SynchronizedScrollView extends ScrollView {
     private float position = new Float(0.0);
     private Button toTheTopButton;
     private boolean animating = false;
+    private Toolbar toolbar;
+    private String toolbarTitle;
+    private TextView toolbarTextView;
 
     public SynchronizedScrollView(Context context) {
         super(context);
@@ -52,6 +59,15 @@ public class SynchronizedScrollView extends ScrollView {
     public void setSynchronizedView(View v) {
         mSyncView = v;
        // syncViews();
+    }
+
+    public void setToolbar(Toolbar toolbar) {
+        this.toolbar = toolbar;
+        toolbarTextView = (TextView)toolbar.findViewById(R.id.toolbar_title);
+    }
+
+    public void setToolbarTitle(String toolbarTitle) {
+        this.toolbarTitle = toolbarTitle;
     }
 
     public Button getToTheTopButton() {
@@ -153,6 +169,7 @@ public class SynchronizedScrollView extends ScrollView {
         temp = temp/ position;
 
         mSyncView.setAlpha(temp);
+        toolbar.setAlpha(1 - temp);
 
         //Distance between the anchor view and the scroll position
         int matchDistance = mSyncView.getTop() - getScrollY();
@@ -161,11 +178,10 @@ public class SynchronizedScrollView extends ScrollView {
         //Check if anchor is scrolled off screen
 
         if(matchDistance < 0) {
-            mAnchorView.setVisibility(VISIBLE);
-            mSyncView.setVisibility(GONE);
+            toolbarTextView.setText(toolbarTitle);
         } else {
-            mAnchorView.setVisibility(GONE);
-            mSyncView.setVisibility(VISIBLE);
+
+            toolbarTextView.setText("");
         }
     }
 }

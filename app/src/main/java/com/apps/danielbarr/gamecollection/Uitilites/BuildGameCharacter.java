@@ -119,8 +119,11 @@ public class BuildGameCharacter {
         }
         @Override
         protected void onPostExecute(Bitmap result) {
+            int dp = 120;
+            int px = PictureUtils.dpTOPX(dp, activity);
+            Bitmap bmp = PictureUtils.scaleDown(result,px, true);
 
-            gameCharacterses.setPhoto(PictureUtils.convertBitmapToByteArray(result));
+            gameCharacterses.setPhoto(PictureUtils.convertBitmapToByteArray(bmp));
             gameCharactersRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
             gameCharactersRecyclerAdapter.notifyDataSetChanged();
         }

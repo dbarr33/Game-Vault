@@ -25,6 +25,8 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:textColor="#fff"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:background="@color/primary"
             android:id="@+id/recycler_gameList_gameName"/>
         <LinearLayout

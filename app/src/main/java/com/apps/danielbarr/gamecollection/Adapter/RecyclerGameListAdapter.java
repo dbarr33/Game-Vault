@@ -33,7 +33,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
         images = new ArrayList<>();
         abbrivatedText = new ArrayList<>();
         for(int i = 0; i < games.size(); i++) {
-            Bitmap bmp = BitmapFactory.decodeByteArray(games.get(i).getLargePhoto(), 0, games.get(i).getLargePhoto().length);
+            Bitmap bmp = BitmapFactory.decodeByteArray(games.get(i).getPhoto(), 0, games.get(i).getPhoto().length);
             images.add(bmp);
             abbrivatedText.add(games.get(i).getDescription().substring(0,500));
         }

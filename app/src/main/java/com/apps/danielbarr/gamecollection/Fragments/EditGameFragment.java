@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -70,7 +72,9 @@ public class EditGameFragment extends Fragment {
 
     private Button saveGameButton;
     private Button backToTopButton;
+    private ImageButton deleteGameButton;
     private ImageView gameImageView;
+    private ImageView bluredGameImage;
     private TextView gameName;
     private TextView completionPercentage;
     private TextView topViewGameName;
@@ -92,8 +96,8 @@ public class EditGameFragment extends Fragment {
     private RecyclerView charactersRecyclerView;
     private LinearLayout recyclerLayout;
     private ProgressBar gameImageProgressBar;
+    private SynchronizedScrollView mScrollView;
 
-    private ImageView savedGameImage;
 
     public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
     {
@@ -125,7 +129,7 @@ public class EditGameFragment extends Fragment {
         gamePosition = getArguments().getInt(EXTRA_GAME, -1);
         searchResults = (GiantBombSearch)getArguments().getSerializable("GiantBombResponse");
         searchImage = getArguments().getParcelable(EXTRA_SEARCH);
-        ((Main)getActivity()).getSupportActionBar().hide();
+
 
         setHasOptionsMenu(true);
     }
@@ -134,7 +138,9 @@ public class EditGameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_edit_game, parent, false);
         saveGameButton = (Button) v.findViewById(R.id.saveGame);
+        deleteGameButton = (ImageButton)v.findViewById(R.id.deleteGameButton);
         gameImageView = (ImageView) v.findViewById(R.id.edit_game_photo);
+        bluredGameImage = (ImageView)v.findViewById(R.id.blurredGameImage);
         gameName = (TextView) v.findViewById(R.id.edit_name_textField);
         platformSpinner = (Spinner) v.findViewById(R.id.edit_platform_spinner);
         userRatingBar = (RatingBar) v.findViewById(R.id.userRatingStars);
@@ -148,7 +154,15 @@ public class EditGameFragment extends Fragment {
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
-        final SynchronizedScrollView mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
+        getActivity().findViewById(R.id.toolbar).setVisibility(View.GONE);
+        Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
+        toolbar.setAlpha(0);
+        toolbar.setVisibility(View.VISIBLE);
+        toolbar.setTitle("");
+        ((Main)getActivity()).setSupportActionBar(toolbar);
+
+        mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
+        mScrollView.setToolbar(toolbar);
 
         mScrollView.setAnchorView(v.findViewById(R.id.topView));
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
@@ -209,11 +223,11 @@ public class EditGameFragment extends Fragment {
 
                                     GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
 
-                                    if(characters.size() <= 30) {
+                                    if(characters.size() <= 20) {
                                         gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(characters, getActivity());
                                     }
                                     else {
-                                        gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(characters.subList(0, 30)), getActivity());
+                                        gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(characters.subList(0, 20)), getActivity());
 
                                     }
                                     charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
@@ -282,7 +296,7 @@ public class EditGameFragment extends Fragment {
                     new Thread(new Runnable() {
                         public void run() {
 
-                            for(int i = 0; i < 500;i++){
+                            for(int i = 0; i < 1;i++){
                                 saveGame();
                             }
                             mDialog.dismiss();
@@ -302,6 +316,18 @@ public class EditGameFragment extends Fragment {
             }
         });
 
+        deleteGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                realm.beginTransaction();
+                RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+                storedGames.get(gamePosition).setDeleted(true);
+                realm.commitTransaction();
+                realm.close();
+                ((Main)getActivity()).getSupportFragmentManager().popBackStack();
+            }
+        });
+
         return v;
     }
 
@@ -311,7 +337,7 @@ public class EditGameFragment extends Fragment {
 
         Game game = saveGameRealm.createObject(Game.class);
         game.setName(gameName.getText().toString());
-        game.setPlatform(platformSpinner.getSelectedItem().toString().toString());
+        game.setPlatform(platformSpinner.getSelectedItem().toString());
         game.setUserRating(userRatingBar.getRating());
 
 
@@ -321,14 +347,12 @@ public class EditGameFragment extends Fragment {
         game.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
 
         if(gameImageView.getDrawable() != null) {
-             byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
-             game.setLargePhoto(bytes);
+             int dp = 120;
+             int px = PictureUtils.dpTOPX(dp, getActivity());
+             Bitmap bmp = PictureUtils.scaleDown(((BitmapDrawable) gameImageView.getDrawable()).getBitmap(),px, true);
+             byte[] bytes = PictureUtils.convertBitmapToByteArray(bmp);
+             game.setPhoto(bytes);
         }
-        else {
-            game.setPhotoURL(searchResults.image.getSuper_url());
-        }
-
-        game.setPhoto(PictureUtils.convertBitmapToByteArray(searchImage));
 
         if(recyclerLayout.getVisibility() != View.GONE) {
             ArrayList<GameCharacters> gameCharacterses = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
@@ -386,9 +410,10 @@ public class EditGameFragment extends Fragment {
         if(!completionPercentage.getText().toString().matches("")) {
             upDateGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
         }
+
         if(gameImageView.getDrawable() != null) {
             byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
-            upDateGame.setLargePhoto(bytes);
+            upDateGame.setPhoto(bytes);
         }
 
         if(recyclerLayout.getVisibility() != View.GONE) {
@@ -475,14 +500,21 @@ public class EditGameFragment extends Fragment {
             relevantGamesRecyclerView.setVisibility(View.GONE);
         }
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(currentGame.getLargePhoto(), 0, currentGame.getLargePhoto().length);
+        Bitmap bmp = BitmapFactory.decodeByteArray(currentGame.getPhoto(), 0, currentGame.getPhoto().length);
         if(bmp != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(currentGame.getPhoto(), 0, currentGame.getPhoto().length);
+            bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap,getActivity().getApplicationContext()));
+            bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
             gameImageView.setImageBitmap(bmp);
+
         }
         else {
             new DownloadAsyncTask(gameImageView).execute(currentGame.getPhotoURL());
             gameImageProgressBar.setVisibility(View.VISIBLE);
         }
+
+        mScrollView.setToolbarTitle(currentGame.getName());
+
     }
 
     public void populateFromSearch(GiantBombSearch giantBombSearch) {
@@ -505,7 +537,7 @@ public class EditGameFragment extends Fragment {
 
     public void addItemsOnSpinner() {
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(getString(R.string.ps4_drawer_title));
         list.add(getString(R.string.ps3_drawer_title));
         list.add(getString(R.string.ps2_drawer_title));
@@ -521,7 +553,7 @@ public class EditGameFragment extends Fragment {
         list.add(getString(R.string.supernintendo_drawer_title));
         list.add(getString(R.string.nintendo_drawer_title));
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getActivity(),
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(),
         android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         platformSpinner.setAdapter(dataAdapter);
@@ -533,11 +565,14 @@ public class EditGameFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.global, menu);
-        MenuItem menuItem = menu.findItem(R.id.customDeleteButton);
+        MenuItem deleteButton = menu.findItem(R.id.customDeleteButton);
+        MenuItem addGame = menu.findItem(R.id.addGame);
+        addGame.setVisible(false);
 
-        if (gamePosition == -1) {
-            menuItem.setVisible(false);
-        }
+
+       // if (gamePosition == -1) {
+            deleteButton.setVisible(false);
+       // }
     }
 
     @Override
@@ -555,7 +590,7 @@ public class EditGameFragment extends Fragment {
                 storedGames.get(gamePosition).setDeleted(true);
                 realm.commitTransaction();
                 realm.close();
-                getActivity().finish();
+                ((Main)getActivity()).getSupportFragmentManager().popBackStack();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

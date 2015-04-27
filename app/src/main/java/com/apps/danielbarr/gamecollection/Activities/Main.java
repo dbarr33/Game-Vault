@@ -49,6 +49,7 @@ public class Main extends ActionBarActivity {
     private boolean shouldUpdateGameList;
     private DragNDropAdapter adapter;
     private Realm realm;
+    private MenuItem addGame;
 
     ArrayList<DrawerItem> dataList;
 
@@ -166,6 +167,7 @@ public class Main extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home, menu);
+        addGame = menu.findItem(R.id.addGame);
         return true;
 
     }
@@ -203,6 +205,7 @@ public class Main extends ActionBarActivity {
             gameRecyclerListFragment.notifiyDataSetChanged();
             shouldUpdateGameList = false;
         }
+
         super.onResume();
     }
 
@@ -212,6 +215,14 @@ public class Main extends ActionBarActivity {
             if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
                getFragmentManager().beginTransaction().show(getFragmentManager().
                        findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+            }
+            else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
+                Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);
+                Toolbar editTool = (Toolbar)findViewById(R.id.editToolbar);
+                setSupportActionBar(mainTool);
+                mainTool.setVisibility(View.VISIBLE);
+                editTool.setVisibility(View.GONE);
+
             }
             getFragmentManager().popBackStack();
         }
