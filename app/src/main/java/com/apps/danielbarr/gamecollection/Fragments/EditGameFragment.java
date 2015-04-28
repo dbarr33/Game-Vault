@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -96,7 +97,7 @@ public class EditGameFragment extends Fragment {
     private RecyclerView charactersRecyclerView;
     private LinearLayout recyclerLayout;
     private ProgressBar gameImageProgressBar;
-    private SynchronizedScrollView mScrollView;
+    public SynchronizedScrollView mScrollView;
 
 
     public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
@@ -135,6 +136,11 @@ public class EditGameFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_edit_game, parent, false);
         saveGameButton = (Button) v.findViewById(R.id.saveGame);
@@ -170,6 +176,7 @@ public class EditGameFragment extends Fragment {
 
         if(gamePosition == -1) {
             gamePosition = -2;
+            deleteGameButton.setVisibility(View.GONE);
             if (InternetUtils.isNetworkAvailable(getActivity())) {
                 final Dialog mDialog = ProgressDialog.show(getActivity(), "Loading", "Wait while loading...");
                 new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getSuper_url());
@@ -257,8 +264,16 @@ public class EditGameFragment extends Fragment {
             populateFromSearch(searchResults);
         }
         else if( gamePosition != - 2){
-            populateTextFields(gamePosition, currentPlatform);
+            realm = Realm.getInstance(getActivity().getApplicationContext());
+            RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+            populateTextFields(storedGames.get(gamePosition));
             saveGameButton.setText(getString(R.string.update_game));
+            mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                @Override
+                public void onScrollChanged() {
+
+                }
+            });
         }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -435,13 +450,9 @@ public class EditGameFragment extends Fragment {
         updateRealm.close();
     }
 
-    public void populateTextFields(int gamePosition, String name) {
+    public void populateTextFields(Game game) {
         gameImageProgressBar.setVisibility(View.GONE);
-
-        realm = Realm.getInstance(getActivity().getApplicationContext());
-
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", name).equalTo("isDeleted", false).findAll();
-        currentGame = storedGames.get(gamePosition);
+        currentGame = game;
 
         gameName.setText(currentGame.getName());
         topViewGameName.setText(currentGame.getName());
@@ -459,8 +470,6 @@ public class EditGameFragment extends Fragment {
                 gameDescriptionRecyclearView, textView.getLineCount() * 118 + 180);
         gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
         gameDescriptionRecyclearView.setMinimumHeight(160);
-
-
 
         if(currentGame.getCharacterses().size() > 0) {
             GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(currentGame.getCharacterses(), getActivity());
@@ -532,6 +541,7 @@ public class EditGameFragment extends Fragment {
                 gameDescriptionRecyclearView, textView.getLineCount() * 118 + 180);
         gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
         gameDescriptionRecyclearView.setMinimumHeight(160);
+        mScrollView.setToolbarTitle(giantBombSearch.getName());
 
     }
 
@@ -575,12 +585,6 @@ public class EditGameFragment extends Fragment {
        // }
     }
 
-    @Override
-    public void onResume() {
-
-        super.onResume();
-    }
-
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.customDeleteButton:
@@ -599,12 +603,20 @@ public class EditGameFragment extends Fragment {
 
     public String stripHtml(String html) {
         if(html != null) {
-            return Html.fromHtml(html).toString();
+            String temp = Html.fromHtml(html).toString();
+            if(temp.length() > 4000) {
+                return temp.substring(0, 4000);
+            }
+            else {
+                return temp;
+            }
         }
         else {
             return "";
         }
     }
+
+
 
     private class DownloadAsyncTask extends AsyncTask<String, Void, Bitmap> {
         private WeakReference weakReference;
@@ -641,9 +653,35 @@ public class EditGameFragment extends Fragment {
         protected void onPostExecute(Bitmap result) {
 
             if (result != null) {
-                ((ImageView)weakReference.get()).setImageBitmap(result);
                 gameImageProgressBar.setVisibility(View.GONE);
+                int dp = 120;
+                int px = PictureUtils.dpTOPX(dp, getActivity());
+                Bitmap bmp = PictureUtils.scaleDown(result,px, true);
+                Bitmap bitmap = PictureUtils.scaleDown(result,px,true);
+
+                gameImageView.setImageBitmap(bmp);
+                bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
             }
+        }
+    }
+
+    private class LoadCharacters extends AsyncTask<String,Game,Game> {
+        Realm newRealm;
+        LoadCharacters(Realm realm) {
+            newRealm = realm;
+        }
+
+        @Override
+        protected Game doInBackground(String... params) {
+
+            RealmResults<Game> storedGames = newRealm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+            return storedGames.get(gamePosition);
+        }
+
+        @Override
+        protected void onPostExecute(Game game) {
+            populateTextFields(game);
         }
     }
 }

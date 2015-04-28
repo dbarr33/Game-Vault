@@ -82,9 +82,19 @@ public class BuildGameCharacter {
     }
 
     public String stripHtml(String html) {
-        return Html.fromHtml(html).toString();
+        if(html != null) {
+            String temp = Html.fromHtml(html).toString();
+            if(temp.length() > 4000) {
+                return temp.substring(0, 4000);
+            }
+            else {
+                return temp;
+            }
+        }
+        else {
+            return "";
+        }
     }
-
 
     private class DownloadAsyncTask extends AsyncTask<String, Void, Bitmap> {
 

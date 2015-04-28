@@ -24,6 +24,7 @@ public class SynchronizedScrollView extends ScrollView {
     private Toolbar toolbar;
     private String toolbarTitle;
     private TextView toolbarTextView;
+    private float alphaValue;
 
     public SynchronizedScrollView(Context context) {
         super(context);
@@ -31,11 +32,13 @@ public class SynchronizedScrollView extends ScrollView {
 
     public SynchronizedScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        alphaValue = 1;
 
     }
 
     public SynchronizedScrollView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        alphaValue = 0;
     }
 
     /**
@@ -166,10 +169,10 @@ public class SynchronizedScrollView extends ScrollView {
 
 
         float temp = position - t;
-        temp = temp/ position;
+        alphaValue = temp/ position;
 
-        mSyncView.setAlpha(temp);
-        toolbar.setAlpha(1 - temp);
+        mSyncView.setAlpha(alphaValue);
+        toolbar.setAlpha(1 - alphaValue);
 
         //Distance between the anchor view and the scroll position
         int matchDistance = mSyncView.getTop() - getScrollY();
@@ -183,5 +186,10 @@ public class SynchronizedScrollView extends ScrollView {
 
             toolbarTextView.setText("");
         }
+    }
+
+    public void setViewAlpha() {
+        mSyncView.setAlpha(alphaValue);
+        toolbar.setAlpha(1 - alphaValue);
     }
 }

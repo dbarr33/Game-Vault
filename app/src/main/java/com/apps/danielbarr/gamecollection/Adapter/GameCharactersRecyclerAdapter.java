@@ -142,7 +142,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         @Override
         public void onItemClick(View v, int position) {
 
-            if(gameCharacterses.get(position).getPhoto() != null) {
+            if(gameCharacterses.get(position).getDescription() != null) {
                 CharacterFragment characterFragment = CharacterFragment.newInstance(gameCharacterses.get(position));
                 activity.getFragmentManager().beginTransaction().hide(activity.getFragmentManager().
                         findFragmentByTag(activity.getResources().getString(R.string.fragment_edit_game))).commit();

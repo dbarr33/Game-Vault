@@ -24,6 +24,7 @@ import com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropAdapter;
 import com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropListView;
 import com.apps.danielbarr.gamecollection.DragAndDropList.DropListener;
 import com.apps.danielbarr.gamecollection.DragAndDropList.RemoveListener;
+import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
 import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
 import com.apps.danielbarr.gamecollection.Model.DrawerItem;
@@ -215,6 +216,7 @@ public class Main extends ActionBarActivity {
             if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
                getFragmentManager().beginTransaction().show(getFragmentManager().
                        findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+                ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
                 Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);

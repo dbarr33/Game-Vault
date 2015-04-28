@@ -41,7 +41,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
             @Override
             public void onItemClick(View view, int position) {
                 EditGameFragment editGameFragment = EditGameFragment.newInstance(platform, position);
-                activity.getFragmentManager().beginTransaction().setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                activity.getFragmentManager().beginTransaction()
                         .replace(R.id.content_frame, editGameFragment, activity.getResources().getString(R.string.fragment_edit_game))
                         .addToBackStack(null).commit();
             }
