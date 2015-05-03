@@ -77,6 +77,7 @@ public class PictureUtils {
     public static Bitmap blurBitmap(Bitmap bitmap, Context context) {
 
         Bitmap outBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+
         RenderScript rs = RenderScript.create(context);
         ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
         Allocation allIn = Allocation.createFromBitmap(rs, bitmap);
@@ -85,7 +86,7 @@ public class PictureUtils {
         blurScript.setInput(allIn);
         blurScript.forEach(allOut);
         allOut.copyTo(outBitmap);
-        bitmap.recycle();
+        //bitmap.recycle();
         rs.destroy();
 
         return outBitmap;
@@ -102,14 +103,13 @@ public class PictureUtils {
         if(ratio < 1) {
             width = Math.round((float) ratio * realImage.getWidth());
             height = Math.round((float) ratio * realImage.getHeight());
+            Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                    height, filter);
+            return newBitmap;
         }
         else {
-            return realImage;
+            return Bitmap.createBitmap(realImage, 0, 0, realImage.getWidth(), realImage.getHeight());
         }
-
-        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
-                height, filter);
-        return newBitmap;
     }
 
     public static int pxToDp(int px, Context context) {

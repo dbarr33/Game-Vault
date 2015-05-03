@@ -290,17 +290,4 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:gravity="right|center_vertical">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_menu_delete"
-            android:id="@+id/deleteGameButton"
-            android:layout_marginRight="16dp"/>
-        </LinearLayout>
 </RelativeLayout>

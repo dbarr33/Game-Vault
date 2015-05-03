@@ -1,7 +1,6 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -25,18 +24,14 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
 
     private ArrayList<Game> games;
     private OnItemClickListener onClickListener;
-    private ArrayList<Bitmap> images;
-    private ArrayList<String> abbrivatedText;
+    private int maxSize;
+
 
     public RecyclerGameListAdapter(ArrayList<Game> games, final Activity activity, final String platform) {
         this.games = games;
-        images = new ArrayList<>();
-        abbrivatedText = new ArrayList<>();
-        for(int i = 0; i < games.size(); i++) {
-            Bitmap bmp = BitmapFactory.decodeByteArray(games.get(i).getPhoto(), 0, games.get(i).getPhoto().length);
-            images.add(bmp);
-            abbrivatedText.add(games.get(i).getDescription().substring(0,500));
-        }
+
+        maxSize = games.size();
+
         SetOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -52,23 +47,30 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
     public GameViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recycler_game_list_item, viewGroup, false);
-
         return new GameViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
-        gameViewHolder.name.setText(games.get(i).getName());
+        gameViewHolder.name.setText(games.get(i).getName() + " " + i);
         gameViewHolder.userRating.setRating(games.get(i).getUserRating());
-        gameViewHolder.gameImage.setImageBitmap(images.get(i));
-        gameViewHolder.description.setText(abbrivatedText.get(i));
+        gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(games.get(i).getPhoto(), 0, games.get(i).getPhoto().length));
+
+        String description;
+        if(games.get(i).getDescription().length() > 500) {
+            description = games.get(i).getDescription().substring(0, 500);
+        }
+        else {
+            description = games.get(i).getDescription();
+        }
+        gameViewHolder.description.setText(description);
 
     }
 
     @Override
     public int getItemCount() {
-        return games.size();
+        return maxSize;
     }
 
     public class GameViewHolder extends RecyclerView.ViewHolder  {

@@ -37,6 +37,7 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         this.list.add(backupList.get(0));
         this.recyclerView = recyclerView;
         this.maxSize = maxSize;
+
     }
 
     @Override

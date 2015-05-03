@@ -45,7 +45,7 @@ public class GameRecyclerListFragment extends Fragment {
 
         realm = Realm.getInstance(getActivity().getApplicationContext());
 
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false) .findAll();
+        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false).findAll();
 
         ArrayList<Game> gameList = new ArrayList<>();
         for(int i = 0; i < storedGames.size(); i++) {

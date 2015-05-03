@@ -200,12 +200,22 @@ public class Main extends ActionBarActivity {
         this.shouldUpdateGameList = shouldUpdateGameList;
     }
 
+    public void setUpToolbar() {
+        Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar editTool = (Toolbar)findViewById(R.id.editToolbar);
+        setSupportActionBar(mainTool);
+        mainTool.setVisibility(View.VISIBLE);
+        editTool.setVisibility(View.GONE);
+        findViewById(R.id.deleteGameButton).setVisibility(View.INVISIBLE);
+    }
+
     @Override
     protected void onResume() {
         if(shouldUpdateGameList) {
             gameRecyclerListFragment.notifiyDataSetChanged();
             shouldUpdateGameList = false;
         }
+        setUpToolbar();
 
         super.onResume();
     }
@@ -216,15 +226,11 @@ public class Main extends ActionBarActivity {
             if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
                getFragmentManager().beginTransaction().show(getFragmentManager().
                        findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+                findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
-                Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);
-                Toolbar editTool = (Toolbar)findViewById(R.id.editToolbar);
-                setSupportActionBar(mainTool);
-                mainTool.setVisibility(View.VISIBLE);
-                editTool.setVisibility(View.GONE);
-
+                setUpToolbar();
             }
             getFragmentManager().popBackStack();
         }

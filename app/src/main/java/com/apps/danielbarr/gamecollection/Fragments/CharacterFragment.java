@@ -65,6 +65,7 @@ public class CharacterFragment extends Fragment {
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
         gameCharacters = (GameCharacters) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
+        getActivity().findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
         toolbar.setAlpha(0);
