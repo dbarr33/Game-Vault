@@ -1,6 +1,8 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
 import android.app.Activity;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +27,8 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     private boolean headerMode;
     private RecyclerView recyclerView;
     private ArrayList<String> gameList;
-    private int maxSize;
 
-    public RelevantGameRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView, int maxSize)
+    public RelevantGameRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView)
     {
         this.backupList = list;
         gameList = list;
@@ -36,7 +37,6 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
         this.list = new ArrayList<>();
         this.list.add(backupList.get(0));
         this.recyclerView = recyclerView;
-        this.maxSize = maxSize;
 
     }
 
@@ -55,7 +55,7 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int i) {
         if(viewHolder instanceof HeaderListViewHolder) {
             ((HeaderListViewHolder)viewHolder).mHeader.setText(list.get(0));
         }
@@ -85,16 +85,31 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 headerMode = false;
                 ArrayList<String> temp = new ArrayList<>();
                 list = backupList;
-                recyclerView.setMinimumHeight(maxSize);
+
+                if(list.get(0) == "Description") {
+                    Rect bounds = new Rect();
+                    bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
+                    Paint paint = new Paint();
+                    paint.setTextSize(18);
+                    paint.getTextBounds(list.get(1), 0, list.get(1).length(), bounds);
+
+                    int width = (int) Math.ceil( bounds.width());
+                    String[] lines = list.get(1).split(System.getProperty("line.separator"));
+                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth() + lines.length);
+
+                }
+                else {
+                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * list.size();
+
+                }
                 notifyItemRangeChanged(0, list.size());
                 ((ImageView)v.findViewById(R.id.plus_minus_icon)).setImageDrawable(activity.getResources().getDrawable(R.drawable.minus_icon));
 
             }
             else {
                 headerMode = true;
-                ArrayList<String> temp = new ArrayList<>();
                 notifyItemRangeChanged(0, 1);
-                recyclerView.setMinimumHeight(v.getMeasuredHeight());
+                recyclerView.getLayoutParams().height = v.getMeasuredHeight();
                 ((ImageView)v.findViewById(R.id.plus_minus_icon)).setImageDrawable(activity.getResources().getDrawable(R.drawable.plus_icon));
 
             }

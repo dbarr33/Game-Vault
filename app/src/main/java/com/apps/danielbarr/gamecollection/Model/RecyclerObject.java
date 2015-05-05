@@ -1,9 +1,5 @@
 package com.apps.danielbarr.gamecollection.Model;
 
-import java.util.ArrayList;
-
-import io.realm.RealmList;
-
 /**
  * @author Daniel Barr (Fuzz)
  */
@@ -14,7 +10,6 @@ public class RecyclerObject {
     private byte[] photo;
     private byte[] largePhoto;
     private String description;
-    private ArrayList<Enemy> enemies;
     private boolean photosLoaded;
 
     public int getID() {
@@ -55,23 +50,6 @@ public class RecyclerObject {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public ArrayList<Enemy> getEnemies() {
-        return enemies;
-    }
-
-    public void setEnemies(ArrayList<Enemy> enemies) {
-        this.enemies = enemies;
-    }
-
-    public void setEnemies(RealmList<Enemy> enemies) {
-
-        this.enemies = new ArrayList<>();
-
-        for(int i = 0; i < enemies.size(); i++) {
-            this.enemies.add(enemies.get(i));
-        }
     }
 
     public boolean isPhotosLoaded() {

@@ -1,9 +1,7 @@
 package com.apps.danielbarr.gamecollection.Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 
 /**
@@ -15,7 +13,7 @@ public class GameCharacters extends RealmObject implements Serializable {
     private String name;
     private byte[] photo;
     private String description;
-    private RealmList<Enemy> enemies;
+   // private RealmList<Enemy> enemies;
     private boolean photosLoaded;
 
     public int getID() {
@@ -58,20 +56,20 @@ public class GameCharacters extends RealmObject implements Serializable {
         this.photosLoaded = photosLoaded;
     }
 
-    public RealmList<Enemy> getEnemies() {
-        return enemies;
-    }
+ //   public RealmList<Enemy> getEnemies() {
+ //       return enemies;
+ //   }
 
-    public void setEnemies(RealmList<Enemy> enemies) {
-        this.enemies = enemies;
-    }
-    public void setEnemies(ArrayList<Enemy> enemies) {
-
-        if(this.enemies != null) {
-            this.enemies.clear();
-        }
-        for(int i = 0; i < enemies.size(); i++) {
-            this.enemies.add(enemies.get(i));
-        }
-    }
+//    public void setEnemies(RealmList<Enemy> enemies) {
+//        this.enemies = enemies;
+//    }
+//    public void setEnemies(ArrayList<Enemy> enemies) {
+//
+//        if(this.enemies != null) {
+//            this.enemies.clear();
+//        }
+//        for(int i = 0; i < enemies.size(); i++) {
+//            this.enemies.add(enemies.get(i));
+//        }
+//    }
 }

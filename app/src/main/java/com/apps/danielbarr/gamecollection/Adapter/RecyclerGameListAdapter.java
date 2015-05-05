@@ -25,10 +25,11 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
     private ArrayList<Game> games;
     private OnItemClickListener onClickListener;
     private int maxSize;
+    private String platform;
 
-
-    public RecyclerGameListAdapter(ArrayList<Game> games, final Activity activity, final String platform) {
+    public RecyclerGameListAdapter(ArrayList<Game> games, final Activity activity, final String console) {
         this.games = games;
+        this.platform = console;
 
         maxSize = games.size();
 
@@ -37,10 +38,16 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
             public void onItemClick(View view, int position) {
                 EditGameFragment editGameFragment = EditGameFragment.newInstance(platform, position);
                 activity.getFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, editGameFragment, activity.getResources().getString(R.string.fragment_edit_game))
+                        .hide(activity.getFragmentManager().findFragmentByTag(activity.getResources().getString(R.string.fragment_game_list))).commit();
+                activity.getFragmentManager().beginTransaction()
+                        .add(R.id.content_frame, editGameFragment, activity.getResources().getString(R.string.fragment_edit_game))
                         .addToBackStack(null).commit();
             }
         });
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
     @Override
     public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
-        gameViewHolder.name.setText(games.get(i).getName() + " " + i);
+        gameViewHolder.name.setText(games.get(i).getName());
         gameViewHolder.userRating.setRating(games.get(i).getUserRating());
         gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(games.get(i).getPhoto(), 0, games.get(i).getPhoto().length));
 

@@ -9,12 +9,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
@@ -80,14 +81,14 @@ public class EditGameFragment extends Fragment {
     private TextView completionPercentage;
     private TextView topViewGameName;
     private RatingBar userRatingBar;
-    private Realm realm;
+    public Realm realm;
     private Spinner platformSpinner;
     private RecyclerView relevantGamesRecyclerView;
     private RecyclerView gameDescriptionRecyclearView;
     private RecyclerView gameGenresRecyclerView;
 
     private Game currentGame;
-    private int gamePosition;
+    public int gamePosition;
     private String currentPlatform;
     private GiantBombSearch searchResults;
     private Bitmap searchImage;
@@ -131,7 +132,7 @@ public class EditGameFragment extends Fragment {
         searchResults = (GiantBombSearch)getArguments().getSerializable("GiantBombResponse");
         searchImage = getArguments().getParcelable(EXTRA_SEARCH);
 
-
+        realm = Realm.getInstance(getActivity().getApplicationContext());
         setHasOptionsMenu(true);
     }
 
@@ -159,6 +160,9 @@ public class EditGameFragment extends Fragment {
         gameDescriptionRecyclearView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
+
+        DrawerLayout mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         getActivity().findViewById(R.id.toolbar).setVisibility(View.GONE);
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
@@ -194,9 +198,8 @@ public class EditGameFragment extends Fragment {
                                         genreList.add(genres.get(i).getName());
                                     }
                                     RelevantGameRecyclerAdapter genreRecycylerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
-                                            gameGenresRecyclerView , genreList.size() * 120);
+                                            gameGenresRecyclerView );
                                     gameGenresRecyclerView.setAdapter(genreRecycylerAdapter);
-                                    gameGenresRecyclerView.setMinimumHeight(160);
                                 }else {
                                     gameGenresRecyclerView.setVisibility(View.GONE);
                                 }
@@ -219,10 +222,9 @@ public class EditGameFragment extends Fragment {
                                         }
                                     }
                                     final RelevantGameRecyclerAdapter relevantGameRecyclerAdapter = new RelevantGameRecyclerAdapter(similarGameNames, getActivity(),
-                                            relevantGamesRecyclerView, 120 * similarGameNames.size());
+                                            relevantGamesRecyclerView);
 
                                     relevantGamesRecyclerView.setAdapter(relevantGameRecyclerAdapter);
-                                    relevantGamesRecyclerView.setMinimumHeight(160);
                                 }
                                 else {
                                     relevantGamesRecyclerView.setVisibility(View.GONE);
@@ -269,7 +271,6 @@ public class EditGameFragment extends Fragment {
             populateFromSearch(searchResults);
         }
         else if( gamePosition != - 2){
-            realm = Realm.getInstance(getActivity().getApplicationContext());
             RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
             populateTextFields(storedGames.get(gamePosition));
             saveGameButton.setText(getString(R.string.update_game));
@@ -294,49 +295,42 @@ public class EditGameFragment extends Fragment {
         saveGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+//
                 if (gamePosition != -1 && gamePosition != -2) {
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+//                    Thread thread = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
                             upDateGame();
-                            mDialog.dismiss();
                             ((Main)getActivity()).setShouldUpdateGameList(true);
-                        }
-                    });
-                    mDialog = ProgressDialog.show(getActivity(), "Updating", "Wait while Updating...", true);
-                    mDialog.show();
-                    thread.start();
-                    try {
-                        thread.join();
-                        ((Main)getActivity()).setUpToolbar();
-                        getFragmentManager().popBackStack();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    ((Main)getActivity()).restoreMainScreen();
+                    getFragmentManager().popBackStack();
+//                            dialogHandler.sendEmptyMessage(0);
+//                        }
+//                    });
+//                    mDialog = ProgressDialog.show(getActivity(), "Updating", "Wait while Updating...", true);
+//                    mDialog.show();
+//                    thread.start();
+
 
                 } else {
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for(int i = 0; i < 500;i++){
+//                    mDialog = ProgressDialog.show(getActivity(), "Saving", "Wait while Saving...", true);
+//
+//                    Thread thread = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            for(int i = 0; i < 1;i++){
                                 saveGame();
-                            }
-                            mDialog.dismiss();
-                            ((Main)getActivity()).setShouldUpdateGameList(true);
-                        }
-                    });
-                    mDialog = ProgressDialog.show(getActivity(), "Saving", "Wait while Saving...", true);
-                    mDialog.show();
-                    thread.start();
-                    try {
-                        thread.join();
-                        ((Main)getActivity()).setUpToolbar();
-                        getFragmentManager().popBackStack();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+//                            }
+                           ((Main)getActivity()).setShouldUpdateGameList(true);
+                    ((Main)getActivity()).restoreMainScreen();
+                    getFragmentManager().popBackStack();
+//                            dialogHandler.sendEmptyMessage(0);
+//                        }
+//                    });
+//                    thread.start();
                 }
+                realm.close();
             }
         });
 
@@ -351,10 +345,8 @@ public class EditGameFragment extends Fragment {
         deleteGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                realm = Realm.getInstance(getActivity().getApplicationContext());
                 realm.beginTransaction();
                 RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-                Game deleteGame = storedGames.get(gamePosition);
 /*
                 if(deleteGame.getCharacterses() != null) {
                    RealmList<GameCharacters> characters = deleteGame.getCharacterses();
@@ -365,11 +357,10 @@ public class EditGameFragment extends Fragment {
                     characters.clear();
                 }
                 deleteGame.setCharacterses(null);*/
-                deleteGame.setDeleted(true);
+                storedGames.get(gamePosition).setDeleted(true);
                 realm.commitTransaction();
-                realm.close();
                 ((Main)getActivity()).setShouldUpdateGameList(true);
-                ((Main)getActivity()).setUpToolbar();
+                ((Main)getActivity()).restoreMainScreen();
                 getFragmentManager().popBackStack();
             }
         });
@@ -377,11 +368,21 @@ public class EditGameFragment extends Fragment {
         return v;
     }
 
-    public void saveGame() {
-        Realm saveGameRealm = Realm.getInstance(getActivity().getApplicationContext());
-        saveGameRealm.beginTransaction();
+    private Handler dialogHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            mDialog.dismiss();
+            ((Main)getActivity()).restoreMainScreen();
+            getFragmentManager().popBackStack();
+        }
+    };
 
-        Game game = saveGameRealm.createObject(Game.class);
+    public void saveGame() {
+
+        Realm saveRealm = Realm.getInstance(getActivity().getApplicationContext());
+        saveRealm.beginTransaction();
+
+        Game game = saveRealm.createObject(Game.class);
         game.setName(gameName.getText().toString());
         game.setPlatform(platformSpinner.getSelectedItem().toString());
         game.setUserRating(userRatingBar.getRating());
@@ -390,24 +391,29 @@ public class EditGameFragment extends Fragment {
         if(!completionPercentage.getText().toString().matches("")) {
             game.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
         }
-        game.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
+        if(gameDescriptionRecyclearView.getVisibility() == View.VISIBLE) {
+            game.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
+        }
 
         if(gameImageView.getDrawable() != null) {
              byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
              game.setPhoto(bytes);
         }
+        else {
+            game.setPhotoURL(searchResults.image.getSuper_url());
+        }
 
         if(recyclerLayout.getVisibility() != View.GONE) {
             ArrayList<GameCharacters> gameCharacterses = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
             for (int i = 0; i < gameCharacterses.size(); i++) {
-                GameCharacters realmCharacter = saveGameRealm.createObject(GameCharacters.class);
+                GameCharacters realmCharacter = saveRealm.createObject(GameCharacters.class);
                 realmCharacter.setName(gameCharacterses.get(i).getName());
                 realmCharacter.setID(gameCharacterses.get(i).getID());
 
                 if(gameCharacterses.get(i).getPhoto() != null) {
                     realmCharacter.setPhoto(gameCharacterses.get(i).getPhoto());
                     realmCharacter.setDescription(gameCharacterses.get(i).getDescription());
-                    realmCharacter.setEnemies(gameCharacterses.get(i).getEnemies());
+                  //  realmCharacter.setEnemies(gameCharacterses.get(i).getEnemies());
                     realmCharacter.setPhotosLoaded(true);
                 }
                 else {
@@ -421,7 +427,7 @@ public class EditGameFragment extends Fragment {
         if(gameGenresRecyclerView.getVisibility() != View.GONE) {
             ArrayList<String> genreTypes = ((RelevantGameRecyclerAdapter) gameGenresRecyclerView.getAdapter()).getGameList();
             for (int i = 1; i < genreTypes.size(); i++) {
-                com.apps.danielbarr.gamecollection.Model.Genre genre = saveGameRealm.createObject(com.apps.danielbarr.gamecollection.Model.Genre.class);
+                com.apps.danielbarr.gamecollection.Model.Genre genre = saveRealm.createObject(com.apps.danielbarr.gamecollection.Model.Genre.class);
                 genre.setName(genreTypes.get(i));
                 game.getGenre().add(genre);
             }
@@ -430,33 +436,20 @@ public class EditGameFragment extends Fragment {
         if(relevantGamesRecyclerView.getVisibility() != View.GONE) {
             ArrayList<String> similarGameNames = ((RelevantGameRecyclerAdapter) relevantGamesRecyclerView.getAdapter()).getGameList();
             for (int i = 1; i < similarGameNames.size(); i++) {
-                Game similarGame = saveGameRealm.createObject(Game.class);
+                Game similarGame = saveRealm.createObject(Game.class);
                 similarGame.setName(similarGameNames.get(i));
                 game.getSimilarGames().add(similarGame);
             }
         }
 
-        try {
-            saveGameRealm.commitTransaction();
-        }
-        catch (io.realm.internal.OutOfMemoryError error) {
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getActivity(),"You are out of memory",Toast.LENGTH_SHORT);
-                }
-            });
-        }
-        saveGameRealm.close();
+        saveRealm.commitTransaction();
+        saveRealm.close();
     }
 
     public void upDateGame() {
-
-        Realm updateRealm = Realm.getInstance(getActivity().getApplicationContext());
-
-        updateRealm.beginTransaction();
-        RealmResults<Game> storedGames = updateRealm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+        Realm upDateRealm = Realm.getInstance(getActivity().getApplicationContext());
+        upDateRealm.beginTransaction();
+        RealmResults<Game> storedGames = upDateRealm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
         Game upDateGame = storedGames.get(gamePosition);
 
         upDateGame.setPlatform(platformSpinner.getSelectedItem().toString());
@@ -477,26 +470,15 @@ public class EditGameFragment extends Fragment {
                     upDateGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
                     upDateGame.getCharacterses().get(i).setDescription(editCharacters.get(i).getDescription());
 
-                    if(editCharacters.get(i).getEnemies() != null) {
-                        upDateGame.getCharacterses().get(i).setEnemies(editCharacters.get(i).getEnemies());
-                    }
+                  //  if(editCharacters.get(i).getEnemies() != null) {
+                  //      upDateGame.getCharacterses().get(i).setEnemies(editCharacters.get(i).getEnemies());
+                  //  }
                     upDateGame.getCharacterses().get(i).setPhotosLoaded(true);
                 }
             }
         }
-
-        try {
-            updateRealm.commitTransaction();
-        }
-        catch (io.realm.internal.OutOfMemoryError error) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getActivity(),"You are out of memory",Toast.LENGTH_SHORT);
-                }
-            });
-        }
-        updateRealm.close();
+        upDateRealm.commitTransaction();
+        upDateRealm.close();
     }
 
     public void populateTextFields(Game game) {
@@ -509,17 +491,19 @@ public class EditGameFragment extends Fragment {
         completionPercentage.setText(Float.toString(currentGame.getCompletionPercentage()));
 
 
-                ArrayList descriptionList = new ArrayList<>();
-        descriptionList.add("Description");
-        descriptionList.add(currentGame.getDescription());
-        TextView textView = new TextView(getActivity());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        textView.setText(currentGame.getDescription());
 
-        RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
-                gameDescriptionRecyclearView, (98 * PictureUtils.dpTOPX(19, getActivity()) + PictureUtils.dpTOPX(40, getActivity())));
-        gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
-        gameDescriptionRecyclearView.setMinimumHeight(PictureUtils.dpTOPX(40, getActivity()));
+         if(!currentGame.getDescription().matches("")) {
+            ArrayList descriptionList = new ArrayList<>();
+            descriptionList.add("Description");
+            descriptionList.add(currentGame.getDescription());
+
+            RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
+                    gameDescriptionRecyclearView);
+            gameDescriptionRecyclearView.setAdapter(gameDescriptionRecyclerAdapter);
+        }
+        else {
+             gameDescriptionRecyclearView.setVisibility(View.GONE);
+         }
 
         if(currentGame.getCharacterses().size() > 0) {
             GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(currentGame.getCharacterses(), getActivity());
@@ -539,9 +523,8 @@ public class EditGameFragment extends Fragment {
             }
 
             RelevantGameRecyclerAdapter genreRecyclerAdapter = new RelevantGameRecyclerAdapter(genres, getActivity(),
-                    gameGenresRecyclerView, PictureUtils.dpTOPX(32, getActivity()) * genres.size() + PictureUtils.dpTOPX(40, getActivity()));
+                    gameGenresRecyclerView);
             gameGenresRecyclerView .setAdapter(genreRecyclerAdapter);
-            gameGenresRecyclerView.setMinimumHeight(PictureUtils.dpTOPX(40, getActivity()));
         }
 
         if(currentGame.getSimilarGames().size() > 0) {
@@ -552,7 +535,7 @@ public class EditGameFragment extends Fragment {
                 games.add(similarGames.get(i).getName());
             }
             RelevantGameRecyclerAdapter relevantGameRecyclerAdapter = new RelevantGameRecyclerAdapter(games, getActivity(),
-                    relevantGamesRecyclerView, PictureUtils.dpTOPX(32, getActivity()) * games.size() + PictureUtils.dpTOPX(40, getActivity()));
+                    relevantGamesRecyclerView);
             relevantGamesRecyclerView .setAdapter(relevantGameRecyclerAdapter);
             relevantGamesRecyclerView.setMinimumHeight(PictureUtils.dpTOPX(40, getActivity()));
         }
@@ -581,18 +564,19 @@ public class EditGameFragment extends Fragment {
         gameName.setText(giantBombSearch.getName());
         topViewGameName.setText(giantBombSearch.getName());
 
-        ArrayList<String> descriptionList = new ArrayList<>();
-        descriptionList.add("Description");
-        descriptionList.add(stripHtml(giantBombSearch.getDescription()));
-        TextView textView = new TextView(getActivity());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
-        textView.setText(stripHtml(giantBombSearch.getDescription()));
-        textView.measure(0, 0);
-        RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
-                gameDescriptionRecyclearView, textView.getLineCount() * PictureUtils.dpTOPX(45, getActivity()) + PictureUtils.dpTOPX(40, getActivity()));
-        gameDescriptionRecyclearView .setAdapter(gameDescriptionRecyclerAdapter);
-        gameDescriptionRecyclearView.setMinimumHeight(PictureUtils.dpTOPX(40, getActivity()));
-        mScrollView.setToolbarTitle(giantBombSearch.getName());
+        if(giantBombSearch.getDescription() != null) {
+            ArrayList<String> descriptionList = new ArrayList<>();
+            descriptionList.add("Description");
+            descriptionList.add(stripHtml(giantBombSearch.getDescription()));
+
+            RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
+                    gameDescriptionRecyclearView);
+            gameDescriptionRecyclearView.setAdapter(gameDescriptionRecyclerAdapter);
+            mScrollView.setToolbarTitle(giantBombSearch.getName());
+        }
+        else {
+            gameDescriptionRecyclearView.setVisibility(View.GONE);
+        }
 
     }
 
@@ -629,7 +613,6 @@ public class EditGameFragment extends Fragment {
         MenuItem deleteButton = menu.findItem(R.id.customDeleteButton);
         MenuItem addGame = menu.findItem(R.id.addGame);
         addGame.setVisible(false);
-
 
        // if (gamePosition == -1) {
             deleteButton.setVisible(false);

@@ -100,9 +100,8 @@ public class CharacterFragment extends Fragment {
 
             characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
             RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
-                    characterDescriptionRecyclerView, textView.getLineCount() * 118 + 180);
+                    characterDescriptionRecyclerView);
             characterDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
-            characterDescriptionRecyclerView.setMinimumHeight(160);
         }else {
             characterDescriptionRecyclerView.setVisibility(View.GONE);
         }

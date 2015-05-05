@@ -30,13 +30,14 @@ public class GameRecyclerListFragment extends Fragment {
 
     private RecyclerView gameListRecycler;
     private Realm realm;
+    private String platform;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_recycleview_game_list, container, false);
-        String platform = getArguments().getString(GAME_PLATFORM);
+        platform = getArguments().getString(GAME_PLATFORM);
 
         gameListRecycler = (RecyclerView)v.findViewById(R.id.recycler_gameList);
 
@@ -49,7 +50,7 @@ public class GameRecyclerListFragment extends Fragment {
 
         ArrayList<Game> gameList = new ArrayList<>();
         for(int i = 0; i < storedGames.size(); i++) {
-            gameList.add((Game)storedGames.get(i));
+            gameList.add(storedGames.get(i));
         }
 
         RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(gameList, getActivity(), platform);
@@ -59,22 +60,21 @@ public class GameRecyclerListFragment extends Fragment {
         return v;
     }
 
-    public void updateGameList(String platform) {
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false) .findAll();
+    public void updateGameList(String newPlatform) {
+        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", newPlatform).equalTo("isDeleted", false).findAll();
 
         ArrayList<Game> gameList = new ArrayList<>();
         for(int i = 0; i < storedGames.size(); i++) {
-            gameList.add((Game)storedGames.get(i));
+            gameList.add(storedGames.get(i));
         }
         Toast.makeText(getActivity(), String.valueOf(storedGames.size()), Toast.LENGTH_LONG).show();
 
-        RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(gameList, getActivity(), platform);
+        RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(gameList, getActivity(), newPlatform);
         gameListRecycler.setAdapter(recyclerGameListAdapter);
-
     }
 
-    public void notifiyDataSetChanged() {
-        gameListRecycler.getAdapter().notifyDataSetChanged();
+    public void notifyDataSetChanged(String newPlatform) {
+        updateGameList(newPlatform);
     }
 
     @Override

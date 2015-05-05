@@ -131,11 +131,14 @@ public class BuildGameCharacter {
         protected void onPostExecute(Bitmap result) {
             int dp = 120;
             int px = PictureUtils.dpTOPX(dp, activity);
-            Bitmap bmp = PictureUtils.scaleDown(result,px, true);
 
-            gameCharacterses.setPhoto(PictureUtils.convertBitmapToByteArray(bmp));
-            gameCharactersRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
-            gameCharactersRecyclerAdapter.notifyDataSetChanged();
+            if(result != null) {
+                Bitmap bmp = PictureUtils.scaleDown(result, px, true);
+
+                gameCharacterses.setPhoto(PictureUtils.convertBitmapToByteArray(bmp));
+                gameCharactersRecyclerAdapter.setCharactersAtPosition(position, gameCharacterses);
+                gameCharactersRecyclerAdapter.notifyDataSetChanged();
+            }
         }
     }
 }

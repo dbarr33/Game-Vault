@@ -231,19 +231,19 @@
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:id="@+id/relevantGamesRecyclearView">
             </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:id="@+id/gameGenresRecyclearView">
             </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:id="@+id/gameDescriptionRecyclearView">
             </android.support.v7.widget.RecyclerView>
 

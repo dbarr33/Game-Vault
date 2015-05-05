@@ -89,9 +89,9 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             recyclerObjects.get(position).setPhotosLoaded(true);
             recyclerObjects.get(position).setPhoto(gameCharacters.getPhoto());
             recyclerObjects.get(position).setDescription(gameCharacters.getDescription());
-            if(gameCharacters.getEnemies() != null) {
-                recyclerObjects.get(position).setEnemies(gameCharacters.getEnemies());
-            }
+           // if(gameCharacters.getEnemies() != null) {
+           //     recyclerObjects.get(position).setEnemies(gameCharacters.getEnemies());
+           // }
             Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
             if (bmp != null) {
                 gameImageView.set(position, bmp);

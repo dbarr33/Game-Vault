@@ -122,16 +122,18 @@ public class Main extends ActionBarActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         gameRecyclerListFragment = new GameRecyclerListFragment();
-        args.putString(GameRecyclerListFragment.GAME_PLATFORM, dataList.get(0).getName());
+        mTitle = dataList.get(0).getName();
+        args.putString(GameRecyclerListFragment.GAME_PLATFORM, mTitle.toString());
 
         gameRecyclerListFragment.setArguments(args);
         FragmentManager frgManager = getFragmentManager();
-        frgManager.beginTransaction().add(R.id.content_frame, gameRecyclerListFragment, getResources().getString(R.string.fragment_game_list))
-                .commit();
+        if(frgManager.findFragmentByTag(getResources().getString(R.string.fragment_game_list)) == null) {
+            frgManager.beginTransaction().add(R.id.content_frame, gameRecyclerListFragment, getResources().getString(R.string.fragment_game_list))
+                    .commit();
+        }
 
         getSupportActionBar().setTitle(dataList.get(0).getName());
         mDrawerList.setItemChecked(0,true);
-        mTitle = dataList.get(0).getName();
     }
 
 
@@ -143,6 +145,7 @@ public class Main extends ActionBarActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(dataList.get(position).getName());
         mDrawerLayout.closeDrawer(mDrawerList);
+
     }
 
     @Override
@@ -181,7 +184,7 @@ public class Main extends ActionBarActivity {
                 android.app.FragmentManager fm = getFragmentManager();
                 SearchFragment dialog = new SearchFragment();
                 Bundle args = new Bundle();
-                args.putString(dialog.EXTRA_PASS_PLATFORM, mDrawerTitle.toString());
+                args.putString(dialog.EXTRA_PASS_PLATFORM, mTitle.toString());
                 dialog.setArguments(args);
                 dialog.show(fm, "TAG");
                 return true;
@@ -200,24 +203,19 @@ public class Main extends ActionBarActivity {
         this.shouldUpdateGameList = shouldUpdateGameList;
     }
 
-    public void setUpToolbar() {
+    public void restoreMainScreen() {
         Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);
         Toolbar editTool = (Toolbar)findViewById(R.id.editToolbar);
         setSupportActionBar(mainTool);
         mainTool.setVisibility(View.VISIBLE);
         editTool.setVisibility(View.GONE);
         findViewById(R.id.deleteGameButton).setVisibility(View.INVISIBLE);
-    }
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        getFragmentManager().beginTransaction().show(getFragmentManager()
+                .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).commit();
+        ((GameRecyclerListFragment)getFragmentManager()
+                .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).notifyDataSetChanged(mTitle.toString());
 
-    @Override
-    protected void onResume() {
-        if(shouldUpdateGameList) {
-            gameRecyclerListFragment.notifiyDataSetChanged();
-            shouldUpdateGameList = false;
-        }
-        setUpToolbar();
-
-        super.onResume();
     }
 
     @Override
@@ -226,12 +224,18 @@ public class Main extends ActionBarActivity {
             if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
                getFragmentManager().beginTransaction().show(getFragmentManager().
                        findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
-                findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
+                EditGameFragment editGameFragment = (EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game));
+                if(editGameFragment.gamePosition > -1) {
+                    findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
+                }
+
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
-                setUpToolbar();
+                restoreMainScreen();
+                ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).realm.close();
             }
+
             getFragmentManager().popBackStack();
         }
     }

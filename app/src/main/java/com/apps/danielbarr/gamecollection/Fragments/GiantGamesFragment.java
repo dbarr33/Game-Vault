@@ -73,7 +73,12 @@ public class GiantGamesFragment extends DialogFragment {
                     getDialog().dismiss();
                     EditGameFragment editGameFragment = EditGameFragment.newInstance(getArguments().getString("platform"),
                             giantDialogListAdapter.getImages().get(position), giantDialogListAdapter.getItem(position));
-                    getActivity().getFragmentManager().beginTransaction().replace(R.id.content_frame, editGameFragment, getResources().getString(R.string.fragment_edit_game))
+
+                    getActivity().getFragmentManager().beginTransaction().hide(getActivity().getFragmentManager()
+                            .findFragmentByTag(getResources().getString(R.string.fragment_game_list)))
+                            .commit();
+                    getActivity().getFragmentManager().beginTransaction()
+                            .add(R.id.content_frame, editGameFragment, getResources().getString(R.string.fragment_edit_game))
                             .addToBackStack(null).commit();
                 }
                 else {
