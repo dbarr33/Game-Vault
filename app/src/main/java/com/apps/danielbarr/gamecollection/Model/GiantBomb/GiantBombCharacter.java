@@ -1,10 +1,14 @@
 package com.apps.danielbarr.gamecollection.Model.GiantBomb;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author Daniel Barr (Fuzz)
  */
 public class GiantBombCharacter {
     private Image image;
+
+    @SerializedName("description")
     private String description;
 //    private Enemy test;
 

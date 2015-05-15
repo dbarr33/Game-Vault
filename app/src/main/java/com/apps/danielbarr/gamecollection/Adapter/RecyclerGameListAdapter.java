@@ -26,6 +26,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
     private OnItemClickListener onClickListener;
     private int maxSize;
     private String platform;
+    ArrayList<ImageView> imageViews;
 
     public RecyclerGameListAdapter(ArrayList<Game> games, final Activity activity, final String console) {
         this.games = games;
@@ -36,12 +37,18 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
         SetOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+
                 EditGameFragment editGameFragment = EditGameFragment.newInstance(platform, position);
+               // editGameFragment.setEnterTransition(new Slide());
+               // editGameFragment.setSharedElementEnterTransition(new Slide());
                 activity.getFragmentManager().beginTransaction()
                         .hide(activity.getFragmentManager().findFragmentByTag(activity.getResources().getString(R.string.fragment_game_list))).commit();
+
                 activity.getFragmentManager().beginTransaction()
                         .add(R.id.content_frame, editGameFragment, activity.getResources().getString(R.string.fragment_edit_game))
                         .addToBackStack(null).commit();
+                       // .addSharedElement(activity.findViewById(R.id.recycler_gameList_gameName), "gameName")
+                       // .addSharedElement(activity.findViewById(R.id.recycler_gameList_gameImage), "gameImage").commit();
             }
         });
     }

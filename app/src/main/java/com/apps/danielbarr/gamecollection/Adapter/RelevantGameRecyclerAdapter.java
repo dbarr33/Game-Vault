@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 
 import java.util.ArrayList;
 
@@ -90,12 +91,12 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     Rect bounds = new Rect();
                     bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
                     Paint paint = new Paint();
-                    paint.setTextSize(18);
+                    paint.setTextSize(PictureUtils.dpTOPX(10, activity));
                     paint.getTextBounds(list.get(1), 0, list.get(1).length(), bounds);
 
                     int width = (int) Math.ceil( bounds.width());
                     String[] lines = list.get(1).split(System.getProperty("line.separator"));
-                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth() + lines.length);
+                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth() + 3);
 
                 }
                 else {

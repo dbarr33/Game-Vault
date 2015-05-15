@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
@@ -39,6 +40,9 @@ public class CharacterFragment extends Fragment {
     private GameCharacters gameCharacters;
     private SynchronizedScrollView mScrollView;
     private Button backToTopButton;
+    private LinearLayout characterContainer;
+
+    private boolean notCalled;
 
     public static final String EXTRA_GIANTCHARACTER = "com.apps.danielbarr.gamecollection.character";
 
@@ -63,6 +67,7 @@ public class CharacterFragment extends Fragment {
         characterEnemiesRecyclerView = (RecyclerView)v.findViewById(R.id.characterEnemiesRecyclearView);
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.mScrollView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
+        characterContainer = (LinearLayout)v.findViewById(R.id.characterContainer);
 
         gameCharacters = (GameCharacters) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
         getActivity().findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
@@ -102,6 +107,7 @@ public class CharacterFragment extends Fragment {
             RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
                     characterDescriptionRecyclerView);
             characterDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
+            characterDescriptionRecyclerView.setVisibility(View.VISIBLE);
         }else {
             characterDescriptionRecyclerView.setVisibility(View.GONE);
         }
@@ -124,9 +130,8 @@ public class CharacterFragment extends Fragment {
                 characterEnemiesRecyclerView, enemiesList.size() * 118);
         characterEnemiesRecyclerView.setLayoutManager(linearLayoutManager);
         characterEnemiesRecyclerView.setAdapter(gameEnemiesRecyclerAdapter);
-        characterEnemiesRecyclerView.setMinimumHeight(160);
-
 */
+
         return v;
     }
 

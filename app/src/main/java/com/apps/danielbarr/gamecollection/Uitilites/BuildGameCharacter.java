@@ -52,7 +52,7 @@ public class BuildGameCharacter {
     }
 
     public void getCharacterInfo(int id) {
-        GiantBombRestClient.get().getCharacterGiantBomb(id, "2b5563f0a5655a6ef2e0a4d0556d2958cced098d", "json",
+        GiantBombRestClient.get().getCharacterGiantBomb(id, GiantBombRestClient.key, GiantBombRestClient.json,
                 new Callback<CharacterResponse>() {
                     @Override
                     public void success(CharacterResponse characterResponse, Response response) {

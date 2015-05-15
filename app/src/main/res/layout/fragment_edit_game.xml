@@ -8,8 +8,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/editGameContainer"
     android:orientation="vertical"
     android:background="@android:color/white"
+    android:layout_centerInParent="true"
     >
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -43,17 +45,19 @@
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        android:id="@+id/editGameContainer">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:gravity="center"
-            android:layout_gravity="center">
+            android:id="@+id/edit_gameLayout"
+            android:background="@color/primary"
+
+            >
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:id="@+id/imageContainer">
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -64,6 +68,8 @@
                     android:layout_height="180dp"
                     android:id="@+id/edit_game_photo"
                     android:layout_centerInParent="true"
+                    android:transitionName="gameImage"
+                    android:src="@android:drawable/ic_menu_delete"
 
                     />
                 <ProgressBar
@@ -90,6 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/edit_name_textField"
+                android:transitionName="gameName"
                 android:textColor="#fff"
                 android:ellipsize="end"
                 android:lines="1"
@@ -260,6 +267,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/saveGame"
+                android:gravity="center"
                 android:text="@string/save_game"
                 android:textColor="#fff"
                 android:background="@color/edit_game_button_states"/>

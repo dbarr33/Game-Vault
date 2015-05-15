@@ -11,6 +11,8 @@ import retrofit.client.OkClient;
 public class GiantBombRestClient {
     private static GiantBombInterface REST_CLIENT;
     private static String ROOT = "http://www.giantbomb.com/api";
+    public static String key = "2b5563f0a5655a6ef2e0a4d0556d2958cced098d";
+    public static String json = "json";
 
     static {
         setupRestClient();

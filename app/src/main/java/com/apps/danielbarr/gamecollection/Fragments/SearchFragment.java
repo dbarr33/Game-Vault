@@ -61,7 +61,7 @@ public class SearchFragment extends DialogFragment {
                 } else
                 if (InternetUtils.isNetworkAvailable(getActivity())) {
                     mDialog = ProgressDialog.show(getActivity(), "Loading", "Wait while loading...");
-                    GiantBombRestClient.get().getSearchGiantBomb("2b5563f0a5655a6ef2e0a4d0556d2958cced098d", "json",
+                    GiantBombRestClient.get().getSearchGiantBomb(GiantBombRestClient.key, GiantBombRestClient.json,
                             searchTextView.getText().toString(), "game", 30, new Callback<SearchResponse>() {
                                 @Override
                                 public void success(SearchResponse SearchResponse, retrofit.client.Response response) {

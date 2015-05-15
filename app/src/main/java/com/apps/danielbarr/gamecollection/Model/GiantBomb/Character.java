@@ -4,9 +4,8 @@ package com.apps.danielbarr.gamecollection.Model.GiantBomb;
  * @author Daniel Barr (Fuzz)
 
  */
-public class Character {
+public class Character extends BaseObject{
     int id;
-    String name;
 
     public int getId() {
         return id;
@@ -14,14 +13,6 @@ public class Character {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
 }

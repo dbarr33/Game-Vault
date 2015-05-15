@@ -1,5 +1,6 @@
-package com.apps.danielbarr.gamecollection.Uitilites;
+package com.apps.danielbarr.gamecollection.Old;
 
+import com.apps.danielbarr.gamecollection.Old.IgnInterface;
 import com.squareup.okhttp.OkHttpClient;
 
 import retrofit.RestAdapter;

@@ -23,6 +23,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -39,14 +42,13 @@ import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.Game;
 import com.apps.danielbarr.gamecollection.Model.GameCharacters;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.GameResponse;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.Genre;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.GiantBombSearch;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.SimilarGames;
 import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
+import com.apps.danielbarr.gamecollection.Uitilites.StringArrayListBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 
 import java.io.BufferedInputStream;
@@ -62,6 +64,7 @@ import io.realm.RealmList;
 import io.realm.RealmResults;
 import retrofit.Callback;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by danielbarr on 1/19/15.
@@ -97,8 +100,11 @@ public class EditGameFragment extends Fragment {
 
     private RecyclerView charactersRecyclerView;
     private LinearLayout recyclerLayout;
+    private LinearLayout editGameLayout;
     private ProgressBar gameImageProgressBar;
     public SynchronizedScrollView mScrollView;
+
+    private Boolean notCalled = true;
 
 
     public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
@@ -160,6 +166,7 @@ public class EditGameFragment extends Fragment {
         gameDescriptionRecyclearView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
+        editGameLayout = (LinearLayout)v.findViewById(R.id.editGameContainer);
 
         DrawerLayout mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -178,92 +185,71 @@ public class EditGameFragment extends Fragment {
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
         mScrollView.setToTheTopButton(backToTopButton);
 
+
         if(gamePosition == -1) {
             gamePosition = -2;
             deleteGameButton.setVisibility(View.GONE);
             if (InternetUtils.isNetworkAvailable(getActivity())) {
                 final Dialog mDialog = ProgressDialog.show(getActivity(), "Loading", "Wait while loading...");
-                new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getSuper_url());
-                GiantBombRestClient.get().getGameGiantBomb(searchResults.getId(), "2b5563f0a5655a6ef2e0a4d0556d2958cced098d", "json",
+
+                GiantBombRestClient.get().getGameGiantBomb(searchResults.getId(), GiantBombRestClient.key , GiantBombRestClient.json,
                         new Callback<GameResponse>() {
-                            @Override
-                            public void success(GameResponse gameResponse, retrofit.client.Response response) {
+                    @Override
+                    public void success(GameResponse gameResponse, Response response) {
+                        new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getSuper_url());
 
-                                if(gameResponse.getResults().getGenres() != null) {
-                                    ArrayList<Genre> genres = new ArrayList<Genre>();
-                                    genres = gameResponse.getResults().getGenres();
-                                    ArrayList<String> genreList = new ArrayList<String>();
-                                    genreList.add("Genres");
-                                    for(int i = 0; i < genres.size(); i++) {
-                                        genreList.add(genres.get(i).getName());
-                                    }
-                                    RelevantGameRecyclerAdapter genreRecycylerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
-                                            gameGenresRecyclerView );
-                                    gameGenresRecyclerView.setAdapter(genreRecycylerAdapter);
-                                }else {
-                                    gameGenresRecyclerView.setVisibility(View.GONE);
-                                }
+                        if(gameResponse.getResults().genres != null) {
+                            ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().genres));
+                            RelevantGameRecyclerAdapter genreRecycylerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
+                                    gameGenresRecyclerView);
+                            gameGenresRecyclerView.setAdapter(genreRecycylerAdapter);
+                        }
+                        else {
+                            gameGenresRecyclerView.setVisibility(View.GONE);
+                        }
 
+                        if(gameResponse.getResults().similar_games != null) {
+                            ArrayList<String> similarGamesList = StringArrayListBuilder.createArryList("Similar Games", ((ArrayList) gameResponse.getResults().similar_games));
+                            RelevantGameRecyclerAdapter similareGamesRecycylerAdapter = new RelevantGameRecyclerAdapter(similarGamesList, getActivity(),
+                                    relevantGamesRecyclerView);
+                            relevantGamesRecyclerView.setAdapter(similareGamesRecycylerAdapter);
+                        }
+                        else {
+                            relevantGamesRecyclerView.setVisibility(View.GONE);
+                        }
 
-                                if(gameResponse.getResults().getSimilar_games() != null) {
-                                    ArrayList<SimilarGames> similarGameses = gameResponse.getResults().getSimilar_games();
+                        if(gameResponse.getResults().getCharacters() != null) {
+                            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
 
-                                    ArrayList<String> similarGameNames = new ArrayList<String>();
-                                    similarGameNames.add("Similar Games");
-
-                                    if(similarGameses.size() < 7) {
-                                        for (int i = 0; i < similarGameses.size(); i++) {
-                                            similarGameNames.add(similarGameses.get(i).getName());
-                                        }
-                                    }
-                                    else {
-                                        for (int i = 0; i < 7; i++) {
-                                            similarGameNames.add(similarGameses.get(i).getName());
-                                        }
-                                    }
-                                    final RelevantGameRecyclerAdapter relevantGameRecyclerAdapter = new RelevantGameRecyclerAdapter(similarGameNames, getActivity(),
-                                            relevantGamesRecyclerView);
-
-                                    relevantGamesRecyclerView.setAdapter(relevantGameRecyclerAdapter);
-                                }
-                                else {
-                                    relevantGamesRecyclerView.setVisibility(View.GONE);
-                                }
-
-                                ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character> characters = new ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character>();
-                                characters = gameResponse.getResults().getCharacters();
-
-                                if(characters != null) {
-
-                                    GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
-
-                                    if(characters.size() <= 10) {
-                                        gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(characters, getActivity());
-                                    }
-                                    else {
-                                        gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(characters.subList(0, 10)), getActivity());
-
-                                    }
-                                    charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
-                                }
-                                else {
-                                    recyclerLayout.setVisibility(View.GONE);
-                                }
-                                mDialog.dismiss();
+                            if(gameResponse.getResults().getCharacters().size() <= 10) {
+                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(gameResponse.getResults().getCharacters(), getActivity());
                             }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-                                mDialog.dismiss();
-
-                                if (!InternetUtils.isNetworkAvailable(getActivity())) {
-                                    AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
-                                    dialog.show();
-                                }
-                                Log.e("Giant", error.getMessage());
+                            else {
+                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(gameResponse.getResults().getCharacters().subList(0, 10)), getActivity());
                             }
-                        });
-            } else {
+                            charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
+                        }
+                        else {
+                            recyclerLayout.setVisibility(View.GONE);
+                        }
+
+                        mDialog.dismiss();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        mDialog.dismiss();
+
+                        if (!InternetUtils.isNetworkAvailable(getActivity())) {
+                            AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
+                            dialog.show();
+                        }
+                        Log.e("Giant", error.getMessage());
+                    }
+
+                });
+            }
+            else {
                 AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
                 dialog.show();
             }
@@ -303,7 +289,6 @@ public class EditGameFragment extends Fragment {
                             upDateGame();
                             ((Main)getActivity()).setShouldUpdateGameList(true);
                     ((Main)getActivity()).restoreMainScreen();
-                    getFragmentManager().popBackStack();
 //                            dialogHandler.sendEmptyMessage(0);
 //                        }
 //                    });
@@ -324,7 +309,7 @@ public class EditGameFragment extends Fragment {
 //                            }
                            ((Main)getActivity()).setShouldUpdateGameList(true);
                     ((Main)getActivity()).restoreMainScreen();
-                    getFragmentManager().popBackStack();
+
 //                            dialogHandler.sendEmptyMessage(0);
 //                        }
 //                    });
@@ -361,7 +346,16 @@ public class EditGameFragment extends Fragment {
                 realm.commitTransaction();
                 ((Main)getActivity()).setShouldUpdateGameList(true);
                 ((Main)getActivity()).restoreMainScreen();
-                getFragmentManager().popBackStack();
+            }
+        });
+
+        editGameLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (notCalled) {
+                   // expand(editGameLayout);
+                    notCalled = false;
+                }
             }
         });
 
@@ -650,7 +644,50 @@ public class EditGameFragment extends Fragment {
         }
     }
 
+    public void expand(final View v) {
+        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        final int targetHeight = v.getMeasuredHeight();
 
+        v.setVisibility(View.VISIBLE);
+        final Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.MATCH_PARENT
+                        : (int) (targetHeight * interpolatedTime);
+                v.requestLayout();
+
+            }
+
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+
+        };
+
+        // 1dp/ms
+        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!a.hasEnded()) {
+
+                }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bluredGameImage.setVisibility(View.VISIBLE);
+                        gameImageView.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }).start();
+        v.startAnimation(a);
+    }
 
     private class DownloadAsyncTask extends AsyncTask<String, Void, Bitmap> {
         private WeakReference weakReference;

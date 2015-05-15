@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -56,6 +57,8 @@ public class Main extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -211,6 +214,8 @@ public class Main extends ActionBarActivity {
         editTool.setVisibility(View.GONE);
         findViewById(R.id.deleteGameButton).setVisibility(View.INVISIBLE);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        getFragmentManager().beginTransaction().hide(getFragmentManager()
+                .findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
         getFragmentManager().beginTransaction().show(getFragmentManager()
                 .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).commit();
         ((GameRecyclerListFragment)getFragmentManager()
@@ -228,7 +233,6 @@ public class Main extends ActionBarActivity {
                 if(editGameFragment.gamePosition > -1) {
                     findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
                 }
-
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
@@ -236,7 +240,8 @@ public class Main extends ActionBarActivity {
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).realm.close();
             }
 
-            getFragmentManager().popBackStack();
+        }else {
+            super.onBackPressed();
         }
     }
 
