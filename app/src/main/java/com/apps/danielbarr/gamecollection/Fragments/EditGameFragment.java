@@ -35,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
@@ -196,7 +197,19 @@ public class EditGameFragment extends Fragment {
                         new Callback<GameResponse>() {
                     @Override
                     public void success(GameResponse gameResponse, Response response) {
-                        new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getSuper_url());
+
+                        if(searchResults.getImage() != null) {
+                            try {
+                                new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getSuper_url());
+                            }
+                            catch (NullPointerException error) {
+                                new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getThumb_url());
+                            }
+                        }else{
+                            gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
+                            bluredGameImage.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
+                            gameImageProgressBar.setVisibility(View.GONE);
+                        }
 
                         if(gameResponse.getResults().genres != null) {
                             ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().genres));
@@ -286,8 +299,9 @@ public class EditGameFragment extends Fragment {
 //                    Thread thread = new Thread(new Runnable() {
 //                        @Override
 //                        public void run() {
-                            upDateGame();
-                            ((Main)getActivity()).setShouldUpdateGameList(true);
+                    upDateGame();
+                    Toast.makeText(getActivity(), "Updated Game", Toast.LENGTH_SHORT).show();
+                    ((Main) getActivity()).setShouldUpdateGameList(true);
                     ((Main)getActivity()).restoreMainScreen();
 //                            dialogHandler.sendEmptyMessage(0);
 //                        }
@@ -305,9 +319,10 @@ public class EditGameFragment extends Fragment {
 //                        public void run() {
 //
 //                            for(int i = 0; i < 1;i++){
-                                saveGame();
+                    saveGame();
 //                            }
-                           ((Main)getActivity()).setShouldUpdateGameList(true);
+                    Toast.makeText(getActivity(), "Saved Game", Toast.LENGTH_SHORT).show();
+                    ((Main)getActivity()).setShouldUpdateGameList(true);
                     ((Main)getActivity()).restoreMainScreen();
 
 //                            dialogHandler.sendEmptyMessage(0);
@@ -344,6 +359,7 @@ public class EditGameFragment extends Fragment {
                 deleteGame.setCharacterses(null);*/
                 storedGames.get(gamePosition).setDeleted(true);
                 realm.commitTransaction();
+                Toast.makeText(getActivity(), "Game Deleted", Toast.LENGTH_SHORT).show();
                 ((Main)getActivity()).setShouldUpdateGameList(true);
                 ((Main)getActivity()).restoreMainScreen();
             }
@@ -384,7 +400,10 @@ public class EditGameFragment extends Fragment {
 
         if(!completionPercentage.getText().toString().matches("")) {
             game.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
+        } else {
+            game.setCompletionPercentage(0);
         }
+
         if(gameDescriptionRecyclearView.getVisibility() == View.VISIBLE) {
             game.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
         }
@@ -450,6 +469,9 @@ public class EditGameFragment extends Fragment {
         upDateGame.setUserRating(userRatingBar.getRating());
         if(!completionPercentage.getText().toString().matches("")) {
             upDateGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
+        }
+        else {
+            upDateGame.setCompletionPercentage(0);
         }
 
         if(gameImageView.getDrawable() != null) {

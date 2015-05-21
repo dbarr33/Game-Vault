@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.RecyclerGameListAdapter;
@@ -67,8 +66,6 @@ public class GameRecyclerListFragment extends Fragment {
         for(int i = 0; i < storedGames.size(); i++) {
             gameList.add(storedGames.get(i));
         }
-        Toast.makeText(getActivity(), String.valueOf(storedGames.size()), Toast.LENGTH_LONG).show();
-
         RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(gameList, getActivity(), newPlatform);
         gameListRecycler.setAdapter(recyclerGameListAdapter);
     }

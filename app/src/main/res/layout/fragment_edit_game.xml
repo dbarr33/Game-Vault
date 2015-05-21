@@ -51,8 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:id="@+id/edit_gameLayout"
-            android:background="@color/primary"
-
             >
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -69,7 +67,6 @@
                     android:id="@+id/edit_game_photo"
                     android:layout_centerInParent="true"
                     android:transitionName="gameImage"
-                    android:src="@android:drawable/ic_menu_delete"
 
                     />
                 <ProgressBar
@@ -169,12 +166,14 @@
                             android:textSize="18sp"
                             android:text="@string/edit_game_completion_percentage"/>
 
-                        <TextView
+                        <EditText
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:maxLength="3"
                             android:id="@+id/edit_completion_percentage_textField"
                             android:textColor="#000"
+                            android:imeOptions="actionDone"
+                            android:inputType="number"
                             android:layout_marginLeft="5dp"
                             />
                     </LinearLayout>

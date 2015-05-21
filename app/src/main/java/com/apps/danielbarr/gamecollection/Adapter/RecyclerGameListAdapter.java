@@ -70,6 +70,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
         gameViewHolder.name.setText(games.get(i).getName());
         gameViewHolder.userRating.setRating(games.get(i).getUserRating());
         gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(games.get(i).getPhoto(), 0, games.get(i).getPhoto().length));
+        gameViewHolder.completionPercentage.setText(String.valueOf(games.get(i).getCompletionPercentage()) + "%");
 
         String description;
         if(games.get(i).getDescription().length() > 500) {
@@ -93,6 +94,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
         protected ImageView gameImage;
         protected TextView description;
         protected RatingBar userRating;
+        protected TextView completionPercentage;
 
         public GameViewHolder(View itemView) {
             super(itemView);
@@ -102,6 +104,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
             gameImage = (ImageView)itemView.findViewById(R.id.recycler_gameList_gameImage);
             description = (TextView)itemView.findViewById(R.id.recycler_gameList_description);
             userRating = (RatingBar)itemView.findViewById(R.id.recycler_gameList_userRating);
+            completionPercentage = (TextView)itemView.findViewById(R.id.completionPercentage);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

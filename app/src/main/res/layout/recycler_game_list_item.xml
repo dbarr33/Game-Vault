@@ -77,6 +77,11 @@
                             android:text="@string/edit_game_completion_percentage"
                             android:id="@+id/list_item_CompletionPercentage"
                             />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/completionPercentage"
+                            android:textSize="18sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

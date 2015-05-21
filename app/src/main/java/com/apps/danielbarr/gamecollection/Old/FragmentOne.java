@@ -1,4 +1,4 @@
-package com.apps.danielbarr.gamecollection.Fragments;
+package com.apps.danielbarr.gamecollection.Old;
 
 import android.app.Fragment;
 import android.os.Bundle;

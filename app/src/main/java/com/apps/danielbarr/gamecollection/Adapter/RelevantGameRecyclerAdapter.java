@@ -91,12 +91,12 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     Rect bounds = new Rect();
                     bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
                     Paint paint = new Paint();
-                    paint.setTextSize(PictureUtils.dpTOPX(10, activity));
+                    paint.setTextSize(PictureUtils.dpTOPX(12, activity));
                     paint.getTextBounds(list.get(1), 0, list.get(1).length(), bounds);
 
                     int width = (int) Math.ceil( bounds.width());
                     String[] lines = list.get(1).split(System.getProperty("line.separator"));
-                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth() + 3);
+                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth());
 
                 }
                 else {

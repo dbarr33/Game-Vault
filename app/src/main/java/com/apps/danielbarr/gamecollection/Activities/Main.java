@@ -229,6 +229,7 @@ public class Main extends ActionBarActivity {
             if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
                getFragmentManager().beginTransaction().show(getFragmentManager().
                        findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+
                 EditGameFragment editGameFragment = (EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game));
                 if(editGameFragment.gamePosition > -1) {
                     findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
@@ -239,6 +240,8 @@ public class Main extends ActionBarActivity {
                 restoreMainScreen();
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).realm.close();
             }
+
+            getFragmentManager().popBackStack();
 
         }else {
             super.onBackPressed();
