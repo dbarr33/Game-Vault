@@ -1,9 +1,11 @@
 package com.apps.danielbarr.gamecollection.Activities;
 
 import android.app.FragmentManager;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -14,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -48,10 +52,9 @@ public class Main extends ActionBarActivity {
     private CharSequence mTitle;
     private ActionBar actionBar;
     private GameRecyclerListFragment gameRecyclerListFragment;
-    private boolean shouldUpdateGameList;
     private DragNDropAdapter adapter;
     private Realm realm;
-    private MenuItem addGame;
+    private FloatingActionButton floatingActionButton;
 
     ArrayList<DrawerItem> dataList;
 
@@ -64,10 +67,24 @@ public class Main extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Bundle args = new Bundle();
-        shouldUpdateGameList = false;
+        floatingActionButton = (FloatingActionButton)findViewById(R.id.floatingActionButton);
+        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.floating_action_selector)));
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.app.FragmentManager fm = getFragmentManager();
+                SearchFragment dialog = new SearchFragment();
+                Bundle args = new Bundle();
+
+                collapse(floatingActionButton);
+                args.putString(dialog.EXTRA_PASS_PLATFORM, mTitle.toString());
+                dialog.setArguments(args);
+                dialog.show(fm, "TAG");
+            }
+        });
 
         // Initializing
-        dataList = new ArrayList<DrawerItem>();
+        dataList = new ArrayList<>();
         mDrawerTitle  = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (DragNDropListView) findViewById(R.id.dropAndDragDrawer);
@@ -173,8 +190,6 @@ public class Main extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home, menu);
-        addGame = menu.findItem(R.id.addGame);
         return true;
 
     }
@@ -183,15 +198,7 @@ public class Main extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.addGame: {
-                android.app.FragmentManager fm = getFragmentManager();
-                SearchFragment dialog = new SearchFragment();
-                Bundle args = new Bundle();
-                args.putString(dialog.EXTRA_PASS_PLATFORM, mTitle.toString());
-                dialog.setArguments(args);
-                dialog.show(fm, "TAG");
-                return true;
-            }
+
 
             default:
                 if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -202,20 +209,23 @@ public class Main extends ActionBarActivity {
         return false;
     }
 
-    public void setShouldUpdateGameList(boolean shouldUpdateGameList) {
-        this.shouldUpdateGameList = shouldUpdateGameList;
-    }
-
-    public void restoreMainScreen() {
+    public void restoreMainScreen(boolean isEditGame) {
         Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);
         Toolbar editTool = (Toolbar)findViewById(R.id.editToolbar);
         setSupportActionBar(mainTool);
         mainTool.setVisibility(View.VISIBLE);
         editTool.setVisibility(View.GONE);
+        floatingActionButton.setVisibility(View.VISIBLE);
         findViewById(R.id.deleteGameButton).setVisibility(View.INVISIBLE);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        getFragmentManager().beginTransaction().hide(getFragmentManager()
-                .findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+
+        if(isEditGame) {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            getFragmentManager().beginTransaction().hide(getFragmentManager()
+                    .findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
+        }else {
+            getFragmentManager().beginTransaction().hide(getFragmentManager()
+                    .findFragmentByTag("John")).commit();
+        }
         getFragmentManager().beginTransaction().show(getFragmentManager()
                 .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).commit();
         ((GameRecyclerListFragment)getFragmentManager()
@@ -237,8 +247,11 @@ public class Main extends ActionBarActivity {
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
-                restoreMainScreen();
+                restoreMainScreen(true);
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).realm.close();
+            }
+            else if(getFragmentManager().findFragmentByTag("John") != null) {
+                restoreMainScreen(false);
             }
 
             getFragmentManager().popBackStack();
@@ -343,6 +356,34 @@ public class Main extends ActionBarActivity {
                     if (iv != null) iv.setVisibility(View.VISIBLE);
                 }
             };
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration(500);
+        v.startAnimation(a);
+
+    }
+
     public void createDrawerList()
     {
         realm.beginTransaction();

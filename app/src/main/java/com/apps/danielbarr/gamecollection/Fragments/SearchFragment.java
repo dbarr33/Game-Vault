@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.SearchResponse;
+import com.apps.danielbarr.gamecollection.Old.John.JohnFragment;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
@@ -54,12 +55,24 @@ public class SearchFragment extends DialogFragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (searchTextView.getText().toString().toString().equals("")) {
+                String searchText  = searchTextView.getText().toString();
+                searchText.toLowerCase();
+
+                if (searchTextView.getText().toString().equals("")) {
 
                     Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_LONG).show();
 
-                } else
-                if (InternetUtils.isNetworkAvailable(getActivity())) {
+                }
+                else if(searchText.equals("is john gay")){
+                    getFragmentManager().beginTransaction().hide(getFragmentManager()
+                            .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).commit();
+                    getFragmentManager().beginTransaction().add(R.id.content_frame, new JohnFragment(), "John").addToBackStack(null).commit();
+
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
+                    dismiss();
+                }
+                else if (InternetUtils.isNetworkAvailable(getActivity())) {
                     mDialog = ProgressDialog.show(getActivity(), "Loading", "Wait while loading...");
                     GiantBombRestClient.get().getSearchGiantBomb(GiantBombRestClient.key, GiantBombRestClient.json,
                             searchTextView.getText().toString(), "game", 30, new Callback<SearchResponse>() {

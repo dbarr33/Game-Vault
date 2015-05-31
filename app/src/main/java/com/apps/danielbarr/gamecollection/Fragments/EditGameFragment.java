@@ -9,8 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,14 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -35,7 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
@@ -54,7 +46,6 @@ import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,22 +82,14 @@ public class EditGameFragment extends Fragment {
     private RecyclerView gameDescriptionRecyclearView;
     private RecyclerView gameGenresRecyclerView;
 
-    private Game currentGame;
     public int gamePosition;
     private String currentPlatform;
     private GiantBombSearch searchResults;
-    private Bitmap searchImage;
-    private Dialog mDialog;
-
 
     private RecyclerView charactersRecyclerView;
     private LinearLayout recyclerLayout;
-    private LinearLayout editGameLayout;
     private ProgressBar gameImageProgressBar;
     public SynchronizedScrollView mScrollView;
-
-    private Boolean notCalled = true;
-
 
     public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
     {
@@ -137,10 +120,7 @@ public class EditGameFragment extends Fragment {
         currentPlatform = getArguments().getString(EXTRA_PLATFORM);
         gamePosition = getArguments().getInt(EXTRA_GAME, -1);
         searchResults = (GiantBombSearch)getArguments().getSerializable("GiantBombResponse");
-        searchImage = getArguments().getParcelable(EXTRA_SEARCH);
-
         realm = Realm.getInstance(getActivity().getApplicationContext());
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -167,7 +147,6 @@ public class EditGameFragment extends Fragment {
         gameDescriptionRecyclearView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
-        editGameLayout = (LinearLayout)v.findViewById(R.id.editGameContainer);
 
         DrawerLayout mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -178,6 +157,7 @@ public class EditGameFragment extends Fragment {
         toolbar.setVisibility(View.VISIBLE);
         toolbar.setTitle("");
         ((Main)getActivity()).setSupportActionBar(toolbar);
+        getActivity().findViewById(R.id.floatingActionButton).setVisibility(View.GONE);
 
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
         mScrollView.setToolbar(toolbar);
@@ -200,10 +180,10 @@ public class EditGameFragment extends Fragment {
 
                         if(searchResults.getImage() != null) {
                             try {
-                                new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getSuper_url());
+                                new DownloadAsyncTask().execute(searchResults.getImage().getSuper_url());
                             }
                             catch (NullPointerException error) {
-                                new DownloadAsyncTask(gameImageView).execute(searchResults.getImage().getThumb_url());
+                                new DownloadAsyncTask().execute(searchResults.getImage().getThumb_url());
                             }
                         }else{
                             gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
@@ -271,7 +251,7 @@ public class EditGameFragment extends Fragment {
         }
         else if( gamePosition != - 2){
             RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-            populateTextFields(storedGames.get(gamePosition));
+            populateFields(storedGames.get(gamePosition));
             saveGameButton.setText(getString(R.string.update_game));
             deleteGameButton.setVisibility(View.VISIBLE);
         }
@@ -294,45 +274,24 @@ public class EditGameFragment extends Fragment {
         saveGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//
                 if (gamePosition != -1 && gamePosition != -2) {
-//                    Thread thread = new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
+
                     upDateGame();
-                    Toast.makeText(getActivity(), "Updated Game", Toast.LENGTH_SHORT).show();
-                    ((Main) getActivity()).setShouldUpdateGameList(true);
-                    ((Main)getActivity()).restoreMainScreen();
-//                            dialogHandler.sendEmptyMessage(0);
-//                        }
-//                    });
-//                    mDialog = ProgressDialog.show(getActivity(), "Updating", "Wait while Updating...", true);
-//                    mDialog.show();
-//                    thread.start();
-
-
+                    ((Main)getActivity()).restoreMainScreen(true);
+                    Snackbar.make(v, "Updated Game", Snackbar.LENGTH_SHORT)
+                            .setAction("TESTING", null)
+                            .show();
                 } else {
-//                    mDialog = ProgressDialog.show(getActivity(), "Saving", "Wait while Saving...", true);
-//
-//                    Thread thread = new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            for(int i = 0; i < 1;i++){
+                    for(int i = 0; i < 1;i++){
                     saveGame();
-//                            }
-                    Toast.makeText(getActivity(), "Saved Game", Toast.LENGTH_SHORT).show();
-                    ((Main)getActivity()).setShouldUpdateGameList(true);
-                    ((Main)getActivity()).restoreMainScreen();
-
-//                            dialogHandler.sendEmptyMessage(0);
-//                        }
-//                    });
-//                    thread.start();
+                    ((Main)getActivity()).restoreMainScreen(true);
+                        Snackbar.make(v, "Saved Game", Snackbar.LENGTH_SHORT)
+                                .setActionTextColor(getResources().getColor(android.R.color.white))
+                            .show();
                 }
                 realm.close();
             }
-        });
+        }});
 
         backToTopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -347,45 +306,17 @@ public class EditGameFragment extends Fragment {
             public void onClick(View v) {
                 realm.beginTransaction();
                 RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-/*
-                if(deleteGame.getCharacterses() != null) {
-                   RealmList<GameCharacters> characters = deleteGame.getCharacterses();
-
-                    for(int i = characters.size() - 1; i > -1; i --) {
-                        characters.remove(i);
-                    }
-                    characters.clear();
-                }
-                deleteGame.setCharacterses(null);*/
                 storedGames.get(gamePosition).setDeleted(true);
                 realm.commitTransaction();
-                Toast.makeText(getActivity(), "Game Deleted", Toast.LENGTH_SHORT).show();
-                ((Main)getActivity()).setShouldUpdateGameList(true);
-                ((Main)getActivity()).restoreMainScreen();
-            }
-        });
-
-        editGameLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (notCalled) {
-                   // expand(editGameLayout);
-                    notCalled = false;
-                }
+                ((Main)getActivity()).restoreMainScreen(true);
+                Snackbar.make(v, "Delete Game", Snackbar.LENGTH_SHORT)
+                        .setActionTextColor(getResources().getColor(android.R.color.white))
+                        .show();
             }
         });
 
         return v;
     }
-
-    private Handler dialogHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            mDialog.dismiss();
-            ((Main)getActivity()).restoreMainScreen();
-            getFragmentManager().popBackStack();
-        }
-    };
 
     public void saveGame() {
 
@@ -426,7 +357,6 @@ public class EditGameFragment extends Fragment {
                 if(gameCharacterses.get(i).getPhoto() != null) {
                     realmCharacter.setPhoto(gameCharacterses.get(i).getPhoto());
                     realmCharacter.setDescription(gameCharacterses.get(i).getDescription());
-                  //  realmCharacter.setEnemies(gameCharacterses.get(i).getEnemies());
                     realmCharacter.setPhotosLoaded(true);
                 }
                 else {
@@ -485,10 +415,6 @@ public class EditGameFragment extends Fragment {
                 if(!upDateGame.getCharacterses().get(i).isPhotosLoaded() && editCharacters.get(i).isPhotosLoaded()) {
                     upDateGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
                     upDateGame.getCharacterses().get(i).setDescription(editCharacters.get(i).getDescription());
-
-                  //  if(editCharacters.get(i).getEnemies() != null) {
-                  //      upDateGame.getCharacterses().get(i).setEnemies(editCharacters.get(i).getEnemies());
-                  //  }
                     upDateGame.getCharacterses().get(i).setPhotosLoaded(true);
                 }
             }
@@ -497,21 +423,18 @@ public class EditGameFragment extends Fragment {
         upDateRealm.close();
     }
 
-    public void populateTextFields(Game game) {
+    public void populateFields(Game game) {
         gameImageProgressBar.setVisibility(View.GONE);
-        currentGame = game;
 
-        gameName.setText(currentGame.getName());
-        topViewGameName.setText(currentGame.getName());
-        userRatingBar.setRating(currentGame.getUserRating());
-        completionPercentage.setText(Float.toString(currentGame.getCompletionPercentage()));
+        gameName.setText(game.getName());
+        topViewGameName.setText(game.getName());
+        userRatingBar.setRating(game.getUserRating());
+        completionPercentage.setText(Float.toString(game.getCompletionPercentage()));
 
-
-
-         if(!currentGame.getDescription().matches("")) {
+         if(!game.getDescription().matches("")) {
             ArrayList descriptionList = new ArrayList<>();
             descriptionList.add("Description");
-            descriptionList.add(currentGame.getDescription());
+            descriptionList.add(game.getDescription());
 
             RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
                     gameDescriptionRecyclearView);
@@ -521,8 +444,8 @@ public class EditGameFragment extends Fragment {
              gameDescriptionRecyclearView.setVisibility(View.GONE);
          }
 
-        if(currentGame.getCharacterses().size() > 0) {
-            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(currentGame.getCharacterses(), getActivity());
+        if(game.getCharacterses().size() > 0) {
+            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(game.getCharacterses(), getActivity());
             charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
             gameCharactersRecyclerAdapter.notifyDataSetChanged();
         }
@@ -530,8 +453,8 @@ public class EditGameFragment extends Fragment {
             recyclerLayout.setVisibility(View.GONE);
         }
 
-        if(currentGame.getGenre().size() > 0) {
-            RealmList<com.apps.danielbarr.gamecollection.Model.Genre> savedGenres = currentGame.getGenre();
+        if(game.getGenre().size() > 0) {
+            RealmList<com.apps.danielbarr.gamecollection.Model.Genre> savedGenres = game.getGenre();
             ArrayList<String> genres = new ArrayList<>();
             genres.add("Genres");
             for(int i =0;i < savedGenres.size(); i ++) {
@@ -543,8 +466,8 @@ public class EditGameFragment extends Fragment {
             gameGenresRecyclerView .setAdapter(genreRecyclerAdapter);
         }
 
-        if(currentGame.getSimilarGames().size() > 0) {
-            RealmList<Game> similarGames = currentGame.getSimilarGames();
+        if(game.getSimilarGames().size() > 0) {
+            RealmList<Game> similarGames = game.getSimilarGames();
             ArrayList<String> games = new ArrayList<>();
             games.add("Similar Games");
             for(int i =0;i < similarGames.size(); i ++) {
@@ -559,20 +482,20 @@ public class EditGameFragment extends Fragment {
             relevantGamesRecyclerView.setVisibility(View.GONE);
         }
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(currentGame.getPhoto(), 0, currentGame.getPhoto().length);
+        Bitmap bmp = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);
         if(bmp != null) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(currentGame.getPhoto(), 0, currentGame.getPhoto().length);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);
             bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap,getActivity().getApplicationContext()));
             bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
             gameImageView.setImageBitmap(bmp);
 
         }
         else {
-            new DownloadAsyncTask(gameImageView).execute(currentGame.getPhotoURL());
+            new DownloadAsyncTask().execute(game.getPhotoURL());
             gameImageProgressBar.setVisibility(View.VISIBLE);
         }
 
-        mScrollView.setToolbarTitle(currentGame.getName());
+        mScrollView.setToolbarTitle(game.getName());
 
     }
 
@@ -622,35 +545,6 @@ public class EditGameFragment extends Fragment {
         platformSpinner.setSelection(position);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.global, menu);
-        MenuItem deleteButton = menu.findItem(R.id.customDeleteButton);
-        MenuItem addGame = menu.findItem(R.id.addGame);
-        addGame.setVisible(false);
-
-       // if (gamePosition == -1) {
-            deleteButton.setVisible(false);
-       // }
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.customDeleteButton:
-                realm.beginTransaction();
-                RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-                Log.e("Character name: ", storedGames.get(gamePosition).getCharacterses().get(0).getName());
-                storedGames.get(gamePosition).setDeleted(true);
-                realm.commitTransaction();
-                realm.close();
-                ((Main)getActivity()).getSupportFragmentManager().popBackStack();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     public String stripHtml(String html) {
         if(html != null) {
             String temp = Html.fromHtml(html).toString();
@@ -666,58 +560,7 @@ public class EditGameFragment extends Fragment {
         }
     }
 
-    public void expand(final View v) {
-        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.setVisibility(View.VISIBLE);
-        final Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? LinearLayout.LayoutParams.MATCH_PARENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-
-            }
-
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-
-        };
-
-        // 1dp/ms
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(!a.hasEnded()) {
-
-                }
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        bluredGameImage.setVisibility(View.VISIBLE);
-                        gameImageView.setVisibility(View.VISIBLE);
-                    }
-                });
-            }
-        }).start();
-        v.startAnimation(a);
-    }
-
     private class DownloadAsyncTask extends AsyncTask<String, Void, Bitmap> {
-        private WeakReference weakReference;
-
-        public DownloadAsyncTask(ImageView imageView)
-        {
-            weakReference = new WeakReference(imageView);
-        }
 
         @Override
         protected Bitmap doInBackground(String... params) {
