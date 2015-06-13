@@ -1,4 +1,6 @@
-package com.apps.danielbarr.gamecollection.Model.GiantBomb;
+package com.apps.danielbarr.gamecollection.Model.GiantBomb.Character;
+
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Image;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -6,7 +8,6 @@ package com.apps.danielbarr.gamecollection.Model.GiantBomb;
 public class GiantBombCharacter {
     public Image image;
     public String description;
-//    private Enemy test;
 
     public Image getImage() {
         return image;
@@ -23,12 +24,4 @@ public class GiantBombCharacter {
     public void setDescription(String description) {
         this.description = description;
     }
-//
-//    public Enemy getEnemies() {
-//        return test;
-//    }
-//
-//    public void setEnemies(Enemy enemies) {
-//        this.test = enemies;
-//    }
 }

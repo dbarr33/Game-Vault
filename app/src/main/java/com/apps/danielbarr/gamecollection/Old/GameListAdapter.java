@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.apps.danielbarr.gamecollection.Model.Game;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 
 import java.util.ArrayList;
@@ -23,17 +23,17 @@ import io.realm.RealmResults;
 /**
  * Created by danielbarr on 1/26/15.
  */
-public class GameListAdapter extends ArrayAdapter<Game> {
+public class GameListAdapter extends ArrayAdapter<RealmGame> {
 
     private Context context;
     private Realm realm;
-    private ArrayList<Game> games;
+    private ArrayList<RealmGame> realmGames;
 
 
-    public GameListAdapter(Context context, ArrayList<Game> games, Context applicationContext) {
-        super(context, 0, games);
+    public GameListAdapter(Context context, ArrayList<RealmGame> realmGames, Context applicationContext) {
+        super(context, 0, realmGames);
         this.context = context;
-        this.games = games;
+        this.realmGames = realmGames;
         realm = Realm.getInstance(applicationContext);
     }
 
@@ -44,7 +44,7 @@ public class GameListAdapter extends ArrayAdapter<Game> {
             convertView = inflater.inflate(R.layout.game_list_item, null);
         }
 
-        Game game = getItem(position);
+        RealmGame realmGame = getItem(position);
 
         TextView gameNameTextView = (TextView) convertView.findViewById(R.id.list_item_gameName);
         ImageView gamePhotoImageView = (ImageView) convertView.findViewById(R.id.list_item_gamePhoto);
@@ -53,12 +53,12 @@ public class GameListAdapter extends ArrayAdapter<Game> {
         TextView gameIgnRating = (TextView) convertView.findViewById(R.id.edit_game_ign_rating);
         TextView gameIgnDescription = (TextView) convertView.findViewById(R.id.edit_game_ign_description);
 
-        gameNameTextView.setText(game.getName());
-        gameUserRatingBar.setRating(game.getUserRating());
-        gameCompletionTextView.setText("Completion: " + Float.toString(game.getCompletionPercentage()) + "%");
-        gameIgnDescription.setText(game.getDescription());
+        gameNameTextView.setText(realmGame.getName());
+        gameUserRatingBar.setRating(realmGame.getUserRating());
+        gameCompletionTextView.setText("Completion: " + Float.toString(realmGame.getCompletionPercentage()) + "%");
+        gameIgnDescription.setText(realmGame.getDescription());
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);
+        Bitmap bmp = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
         gamePhotoImageView.setImageBitmap(bmp);
 
 
@@ -76,12 +76,12 @@ public class GameListAdapter extends ArrayAdapter<Game> {
     }
 
     public void updateGameList(String platform) {
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false) .findAll();
-        games.clear();
+        RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", platform).equalTo("isDeleted", false) .findAll();
+        realmGames.clear();
 
-        if (!storedGames.isEmpty()) {
-            for (int i = 0; i < storedGames.size(); i++) {
-                games.add(storedGames.get(i));
+        if (!storedRealmGames.isEmpty()) {
+            for (int i = 0; i < storedRealmGames.size(); i++) {
+                realmGames.add(storedRealmGames.get(i));
             }
         }
 

@@ -12,7 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
-import com.apps.danielbarr.gamecollection.Model.Game;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 
 import java.util.ArrayList;
@@ -22,17 +22,17 @@ import java.util.ArrayList;
  */
 public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameListAdapter.GameViewHolder> {
 
-    private ArrayList<Game> games;
+    private ArrayList<RealmGame> realmGames;
     private OnItemClickListener onClickListener;
     private int maxSize;
     private String platform;
     ArrayList<ImageView> imageViews;
 
-    public RecyclerGameListAdapter(ArrayList<Game> games, final Activity activity, final String console) {
-        this.games = games;
+    public RecyclerGameListAdapter(ArrayList<RealmGame> realmGames, final Activity activity, final String console) {
+        this.realmGames = realmGames;
         this.platform = console;
 
-        maxSize = games.size();
+        maxSize = realmGames.size();
 
         SetOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -67,17 +67,17 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
     @Override
     public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
-        gameViewHolder.name.setText(games.get(i).getName());
-        gameViewHolder.userRating.setRating(games.get(i).getUserRating());
-        gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(games.get(i).getPhoto(), 0, games.get(i).getPhoto().length));
-        gameViewHolder.completionPercentage.setText(String.valueOf(games.get(i).getCompletionPercentage()) + "%");
+        gameViewHolder.name.setText(realmGames.get(i).getName());
+        gameViewHolder.userRating.setRating(realmGames.get(i).getUserRating());
+        gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(realmGames.get(i).getPhoto(), 0, realmGames.get(i).getPhoto().length));
+        gameViewHolder.completionPercentage.setText(String.valueOf(realmGames.get(i).getCompletionPercentage()) + "%");
 
         String description;
-        if(games.get(i).getDescription().length() > 500) {
-            description = games.get(i).getDescription().substring(0, 500);
+        if(realmGames.get(i).getDescription().length() > 500) {
+            description = realmGames.get(i).getDescription().substring(0, 500);
         }
         else {
-            description = games.get(i).getDescription();
+            description = realmGames.get(i).getDescription();
         }
         gameViewHolder.description.setText(description);
 

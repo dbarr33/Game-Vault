@@ -1,7 +1,5 @@
 package com.apps.danielbarr.gamecollection.Old;
 
-import com.apps.danielbarr.gamecollection.Model.IgnResponse;
-
 import java.util.ArrayList;
 
 import retrofit.http.GET;

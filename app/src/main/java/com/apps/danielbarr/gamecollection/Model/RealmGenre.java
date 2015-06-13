@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class Genre extends RealmObject {
+public class RealmGenre extends RealmObject {
     private String name;
 
     public String getName() {

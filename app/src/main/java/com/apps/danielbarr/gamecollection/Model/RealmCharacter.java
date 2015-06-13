@@ -7,7 +7,7 @@ import io.realm.RealmObject;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class GameCharacters extends RealmObject implements Serializable {
+public class RealmCharacter extends RealmObject implements Serializable {
 
     private int ID;
     private String name;

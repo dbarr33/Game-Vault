@@ -1,4 +1,4 @@
-package com.apps.danielbarr.gamecollection.Model.GiantBomb;
+package com.apps.danielbarr.gamecollection.Model.GiantBomb.Game;
 
 /**
  * @author Daniel Barr (Fuzz)

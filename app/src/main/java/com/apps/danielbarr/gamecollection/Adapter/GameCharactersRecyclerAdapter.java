@@ -13,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
-import com.apps.danielbarr.gamecollection.Model.GameCharacters;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character;
+import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameCharacter;
 import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.BuildGameCharacter;
@@ -29,47 +29,47 @@ import io.realm.RealmList;
 
 public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameCharactersRecyclerAdapter.ListViewHolder> {
 
-    private ArrayList<Character> characters;
+    private ArrayList<GameCharacter> gameCharacters;
     private Activity activity;
     private ArrayList<Bitmap> gameImageView;
-    private ArrayList<GameCharacters> gameCharacterses;
+    private ArrayList<RealmCharacter> gameCharacterses;
     private ArrayList<RecyclerObject> recyclerObjects;
     OnItemClickListener mItemClickListener;
 
 
-    public GameCharactersRecyclerAdapter(ArrayList<com.apps.danielbarr.gamecollection.Model.GiantBomb.Character> characters, Activity activity)
+    public GameCharactersRecyclerAdapter(ArrayList<GameCharacter> gameCharacters, Activity activity)
     {
-        this.characters = characters;
+        this.gameCharacters = gameCharacters;
         gameImageView = new ArrayList<>();
         gameCharacterses = new ArrayList<>();
         recyclerObjects = new ArrayList<>();
 
-        for(int i = 0; i < characters.size(); i++) {
+        for(int i = 0; i < gameCharacters.size(); i++) {
             recyclerObjects.add(new RecyclerObject());
             recyclerObjects.get(i).setPhotosLoaded(false);
             gameImageView.add(null);
-            gameCharacterses.add(new GameCharacters());
-            gameCharacterses.get(i).setName(characters.get(i).getName());
-            gameCharacterses.get(i).setID(characters.get(i).getId());
-            new BuildGameCharacter(activity, characters.get(i), this, i);
+            gameCharacterses.add(new RealmCharacter());
+            gameCharacterses.get(i).setName(gameCharacters.get(i).getName());
+            gameCharacterses.get(i).setID(gameCharacters.get(i).getId());
+            new BuildGameCharacter(activity, gameCharacters.get(i), this, i);
         }
         this.activity = activity;
         SetOnItemClickListener(characterTransition);
     }
 
-    public GameCharactersRecyclerAdapter(RealmList<GameCharacters> characters, Activity activity) {
-        this.characters = new ArrayList<>();
+    public GameCharactersRecyclerAdapter(RealmList<RealmCharacter> characters, Activity activity) {
+        this.gameCharacters = new ArrayList<>();
         gameImageView = new ArrayList<>();
         gameCharacterses = new ArrayList<>();
         recyclerObjects = new ArrayList<>();
 
         for (int i = 0; i < characters.size(); i++) {
-            Character temp = new Character();
+            GameCharacter temp = new GameCharacter();
             gameCharacterses.add(characters.get(i));
             recyclerObjects.add(new RecyclerObject());
             recyclerObjects.get(i).setPhotosLoaded(false);
             temp.setName(characters.get(i).getName());
-            this.characters.add(temp);
+            this.gameCharacters.add(temp);
             gameImageView.add(null);
             Bitmap bmp = BitmapFactory.decodeByteArray(characters.get(i).getPhoto(), 0, characters.get(i).getPhoto().length);
             if (bmp != null) {
@@ -83,16 +83,16 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         SetOnItemClickListener(characterTransition);
     }
 
-    public void setCharactersAtPosition(int position, GameCharacters gameCharacters) {
+    public void setCharactersAtPosition(int position, RealmCharacter realmCharacter) {
         if(position < gameCharacterses.size()) {
-            gameCharacterses.set(position, gameCharacters);
+            gameCharacterses.set(position, realmCharacter);
             recyclerObjects.get(position).setPhotosLoaded(true);
-            recyclerObjects.get(position).setPhoto(gameCharacters.getPhoto());
-            recyclerObjects.get(position).setDescription(gameCharacters.getDescription());
+            recyclerObjects.get(position).setPhoto(realmCharacter.getPhoto());
+            recyclerObjects.get(position).setDescription(realmCharacter.getDescription());
            // if(gameCharacters.getEnemies() != null) {
            //     recyclerObjects.get(position).setEnemies(gameCharacters.getEnemies());
            // }
-            Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
+            Bitmap bmp = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
             if (bmp != null) {
                 gameImageView.set(position, bmp);
                 notifyDataSetChanged();
@@ -115,7 +115,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
     public void onBindViewHolder(ListViewHolder listViewHolder, int i) {
         listViewHolder.mCharacterImageView.setImageBitmap(null);
         listViewHolder.position = i;
-        String holder = characters.get(i).getName();
+        String holder = gameCharacters.get(i).getName();
         if (!holder.matches("")) {
             listViewHolder.mName.setText(holder);
         }
@@ -131,10 +131,10 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
 
     @Override
     public int getItemCount() {
-        return characters.size();
+        return gameCharacters.size();
     }
 
-    public ArrayList<GameCharacters> getGameCharacterses() {
+    public ArrayList<RealmCharacter> getGameCharacterses() {
         return gameCharacterses;
     }
 

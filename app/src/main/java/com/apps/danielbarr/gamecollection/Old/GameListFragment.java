@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
-import com.apps.danielbarr.gamecollection.Model.Game;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import io.realm.Realm;
 public class GameListFragment extends ListFragment {
 
     private GameListAdapter gameListAdapter;
-    private ArrayList<Game> games;
+    private ArrayList<RealmGame> realmGames;
     private Realm realm;
 
     public static final String ITEM_NAME = "itemName";
@@ -36,9 +36,9 @@ public class GameListFragment extends ListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        games = new ArrayList<>();
+        realmGames = new ArrayList<>();
 
-        gameListAdapter = new GameListAdapter(getActivity(),games, getActivity().getApplicationContext());
+        gameListAdapter = new GameListAdapter(getActivity(), realmGames, getActivity().getApplicationContext());
         setListAdapter(gameListAdapter);
         gameListAdapter.notifyDataSetChanged();
         realm = Realm.getInstance(getActivity().getApplicationContext());

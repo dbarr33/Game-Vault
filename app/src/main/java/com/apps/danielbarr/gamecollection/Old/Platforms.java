@@ -1,4 +1,4 @@
-package com.apps.danielbarr.gamecollection.Model;
+package com.apps.danielbarr.gamecollection.Old;
 
 /**
  * @author Daniel Barr (Fuzz)

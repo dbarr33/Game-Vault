@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.RecyclerGameListAdapter;
-import com.apps.danielbarr.gamecollection.Model.Game;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 
 import java.util.ArrayList;
@@ -45,14 +45,14 @@ public class GameRecyclerListFragment extends Fragment {
 
         realm = Realm.getInstance(getActivity().getApplicationContext());
 
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", platform).equalTo("isDeleted", false).findAll();
+        RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", platform).equalTo("isDeleted", false).findAll();
 
-        ArrayList<Game> gameList = new ArrayList<>();
-        for(int i = 0; i < storedGames.size(); i++) {
-            gameList.add(storedGames.get(i));
+        ArrayList<RealmGame> realmGameList = new ArrayList<>();
+        for(int i = 0; i < storedRealmGames.size(); i++) {
+            realmGameList.add(storedRealmGames.get(i));
         }
 
-        RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(gameList, getActivity(), platform);
+        RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(realmGameList, getActivity(), platform);
         gameListRecycler.setLayoutManager(linearLayoutManager);
         gameListRecycler.setAdapter(recyclerGameListAdapter);
 
@@ -60,13 +60,13 @@ public class GameRecyclerListFragment extends Fragment {
     }
 
     public void updateGameList(String newPlatform) {
-        RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", newPlatform).equalTo("isDeleted", false).findAll();
+        RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", newPlatform).equalTo("isDeleted", false).findAll();
 
-        ArrayList<Game> gameList = new ArrayList<>();
-        for(int i = 0; i < storedGames.size(); i++) {
-            gameList.add(storedGames.get(i));
+        ArrayList<RealmGame> realmGameList = new ArrayList<>();
+        for(int i = 0; i < storedRealmGames.size(); i++) {
+            realmGameList.add(storedRealmGames.get(i));
         }
-        RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(gameList, getActivity(), newPlatform);
+        RecyclerGameListAdapter recyclerGameListAdapter = new RecyclerGameListAdapter(realmGameList, getActivity(), newPlatform);
         gameListRecycler.setAdapter(recyclerGameListAdapter);
     }
 

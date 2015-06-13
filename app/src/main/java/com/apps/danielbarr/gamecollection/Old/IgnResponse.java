@@ -1,6 +1,6 @@
-package com.apps.danielbarr.gamecollection.Model;
+package com.apps.danielbarr.gamecollection.Old;
 
-import com.apps.danielbarr.gamecollection.Model.Platforms;
+import com.apps.danielbarr.gamecollection.Old.Platforms;
 
 /**
  * @author Daniel Barr (Fuzz)

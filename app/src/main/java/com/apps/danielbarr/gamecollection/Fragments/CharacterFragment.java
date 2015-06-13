@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
-import com.apps.danielbarr.gamecollection.Model.GameCharacters;
+import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
@@ -32,16 +32,16 @@ public class CharacterFragment extends Fragment {
     private ImageView blurredCharacterImageView;
     private TextView characterName;
     private RecyclerView characterDescriptionRecyclerView;
-    private GameCharacters gameCharacters;
+    private RealmCharacter realmCharacter;
     private SynchronizedScrollView mScrollView;
     private Button backToTopButton;
 
     public static final String EXTRA_GIANTCHARACTER = "com.apps.danielbarr.gamecollection.character";
 
 
-    public static CharacterFragment newInstance(GameCharacters gameCharacters) {
+    public static CharacterFragment newInstance(RealmCharacter realmCharacter) {
         Bundle args = new Bundle();
-        args.putSerializable(EXTRA_GIANTCHARACTER, gameCharacters);
+        args.putSerializable(EXTRA_GIANTCHARACTER, realmCharacter);
 
         CharacterFragment fragment = new CharacterFragment();
         fragment.setArguments(args);
@@ -59,7 +59,7 @@ public class CharacterFragment extends Fragment {
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.mScrollView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
-        gameCharacters = (GameCharacters) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
+        realmCharacter = (RealmCharacter) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
         getActivity().findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
@@ -69,27 +69,27 @@ public class CharacterFragment extends Fragment {
         mScrollView.setAnchorView(v.findViewById(R.id.topView));
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
         mScrollView.setToTheTopButton(backToTopButton);
-        mScrollView.setToolbarTitle(gameCharacters.getName());
+        mScrollView.setToolbarTitle(realmCharacter.getName());
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(gameCharacters.getPhoto(), 0, gameCharacters.getPhoto().length);
+        Bitmap bmp = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
         if (bmp != null) {
             characterImageView.setImageBitmap(bmp);
             blurredCharacterImageView.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
             blurredCharacterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
-        characterName.setText(gameCharacters.getName());
+        characterName.setText(realmCharacter.getName());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         ArrayList<String> descriptionList = new ArrayList<>();
         descriptionList.add("Description");
-        if(!gameCharacters.getDescription().matches("")) {
-            descriptionList.add(gameCharacters.getDescription());
+        if(!realmCharacter.getDescription().matches("")) {
+            descriptionList.add(realmCharacter.getDescription());
             TextView textView = new TextView(getActivity());
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-            textView.setText(gameCharacters.getDescription());
+            textView.setText(realmCharacter.getDescription());
             textView.measure(0, 0);
 
             characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);

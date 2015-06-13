@@ -32,10 +32,11 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
-import com.apps.danielbarr.gamecollection.Model.Game;
-import com.apps.danielbarr.gamecollection.Model.GameCharacters;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.GameResponse;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.GiantBombSearch;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
+import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
+import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
@@ -214,8 +215,8 @@ public class EditGameFragment extends Fragment {
                             gameImageProgressBar.setVisibility(View.GONE);
                         }
 
-                        if(gameResponse.getResults().genres != null) {
-                            ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().genres));
+                        if(gameResponse.getResults().getGameGenres() != null) {
+                            ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().getGameGenres()));
                             RelevantGameRecyclerAdapter genreRecycylerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
                                     gameGenresRecyclerView);
                             gameGenresRecyclerView.setAdapter(genreRecycylerAdapter);
@@ -224,7 +225,7 @@ public class EditGameFragment extends Fragment {
                             gameGenresRecyclerView.setVisibility(View.GONE);
                         }
 
-                        if(gameResponse.getResults().similar_games != null) {
+                        if(gameResponse.getResults().getSimilar_games() != null) {
                             ArrayList<String> similarGamesList = StringArrayListBuilder.createArryList("Similar Games", ((ArrayList) gameResponse.getResults().similar_games));
                             RelevantGameRecyclerAdapter similareGamesRecycylerAdapter = new RelevantGameRecyclerAdapter(similarGamesList, getActivity(),
                                     relevantGamesRecyclerView);
@@ -234,14 +235,14 @@ public class EditGameFragment extends Fragment {
                             relevantGamesRecyclerView.setVisibility(View.GONE);
                         }
 
-                        if(gameResponse.getResults().getCharacters() != null) {
+                        if(gameResponse.getResults().getGameCharacters() != null) {
                             GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
 
-                            if(gameResponse.getResults().getCharacters().size() <= 10) {
-                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(gameResponse.getResults().getCharacters(), getActivity());
+                            if(gameResponse.getResults().getGameCharacters().size() <= 10) {
+                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(gameResponse.getResults().getGameCharacters(), getActivity());
                             }
                             else {
-                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(gameResponse.getResults().getCharacters().subList(0, 10)), getActivity());
+                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(gameResponse.getResults().getGameCharacters().subList(0, 10)), getActivity());
                             }
                             charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
                         }
@@ -273,8 +274,8 @@ public class EditGameFragment extends Fragment {
             populateFromSearch(searchResults);
         }
         else if( gamePosition != - 2){
-            RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-            populateFields(storedGames.get(gamePosition));
+            RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+            populateFields(storedRealmGames.get(gamePosition));
             saveGameButton.setText(getString(R.string.update_game));
             deleteGameButton.setVisibility(View.VISIBLE);
         }
@@ -352,8 +353,8 @@ public class EditGameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 realm.beginTransaction();
-                RealmResults<Game> storedGames = realm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-                storedGames.get(gamePosition).setDeleted(true);
+                RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+                storedRealmGames.get(gamePosition).setDeleted(true);
                 realm.commitTransaction();
                 ((Main)getActivity()).restoreMainScreen(true);
                 Snackbar.make(v, "Delete Game", Snackbar.LENGTH_SHORT)
@@ -370,34 +371,34 @@ public class EditGameFragment extends Fragment {
         Realm saveRealm = Realm.getInstance(getActivity().getApplicationContext());
         saveRealm.beginTransaction();
 
-        Game game = saveRealm.createObject(Game.class);
-        game.setName(gameName.getText().toString());
-        game.setPlatform(platformSpinner.getSelectedItem().toString());
-        game.setUserRating(userRatingBar.getRating());
-        game.setDeleted(false);
+        RealmGame realmGame = saveRealm.createObject(RealmGame.class);
+        realmGame.setName(gameName.getText().toString());
+        realmGame.setPlatform(platformSpinner.getSelectedItem().toString());
+        realmGame.setUserRating(userRatingBar.getRating());
+        realmGame.setDeleted(false);
 
         if(!completionPercentage.getText().toString().matches("")) {
-            game.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
+            realmGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
         } else {
-            game.setCompletionPercentage(0);
+            realmGame.setCompletionPercentage(0);
         }
 
         if(gameDescriptionRecyclearView.getVisibility() == View.VISIBLE) {
-            game.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
+            realmGame.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
         }
 
         if(gameImageView.getDrawable() != null) {
              byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
-             game.setPhoto(bytes);
+             realmGame.setPhoto(bytes);
         }
         else {
-            game.setPhotoURL(searchResults.image.getSuper_url());
+            realmGame.setPhotoURL(searchResults.image.getSuper_url());
         }
 
         if(recyclerLayout.getVisibility() != View.GONE) {
-            ArrayList<GameCharacters> gameCharacterses = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
+            ArrayList<RealmCharacter> gameCharacterses = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
             for (int i = 0; i < gameCharacterses.size(); i++) {
-                GameCharacters realmCharacter = saveRealm.createObject(GameCharacters.class);
+                RealmCharacter realmCharacter = saveRealm.createObject(RealmCharacter.class);
                 realmCharacter.setName(gameCharacterses.get(i).getName());
                 realmCharacter.setID(gameCharacterses.get(i).getID());
 
@@ -410,25 +411,25 @@ public class EditGameFragment extends Fragment {
                     realmCharacter.setPhotosLoaded(false);
                 }
 
-                game.getCharacterses().add(realmCharacter);
+                realmGame.getCharacterses().add(realmCharacter);
             }
         }
 
         if(gameGenresRecyclerView.getVisibility() != View.GONE) {
             ArrayList<String> genreTypes = ((RelevantGameRecyclerAdapter) gameGenresRecyclerView.getAdapter()).getGameList();
             for (int i = 1; i < genreTypes.size(); i++) {
-                com.apps.danielbarr.gamecollection.Model.Genre genre = saveRealm.createObject(com.apps.danielbarr.gamecollection.Model.Genre.class);
-                genre.setName(genreTypes.get(i));
-                game.getGenre().add(genre);
+                RealmGenre realmGenre = saveRealm.createObject(RealmGenre.class);
+                realmGenre.setName(genreTypes.get(i));
+                realmGame.getRealmGenre().add(realmGenre);
             }
         }
 
         if(relevantGamesRecyclerView.getVisibility() != View.GONE) {
             ArrayList<String> similarGameNames = ((RelevantGameRecyclerAdapter) relevantGamesRecyclerView.getAdapter()).getGameList();
             for (int i = 1; i < similarGameNames.size(); i++) {
-                Game similarGame = saveRealm.createObject(Game.class);
-                similarGame.setName(similarGameNames.get(i));
-                game.getSimilarGames().add(similarGame);
+                RealmGame similarRealmGame = saveRealm.createObject(RealmGame.class);
+                similarRealmGame.setName(similarGameNames.get(i));
+                realmGame.getSimilarRealmGames().add(similarRealmGame);
             }
         }
 
@@ -439,30 +440,30 @@ public class EditGameFragment extends Fragment {
     public void upDateGame() {
         Realm upDateRealm = Realm.getInstance(getActivity().getApplicationContext());
         upDateRealm.beginTransaction();
-        RealmResults<Game> storedGames = upDateRealm.where(Game.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
-        Game upDateGame = storedGames.get(gamePosition);
+        RealmResults<RealmGame> storedRealmGames = upDateRealm.where(RealmGame.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
+        RealmGame upDateRealmGame = storedRealmGames.get(gamePosition);
 
-        upDateGame.setPlatform(platformSpinner.getSelectedItem().toString());
-        upDateGame.setUserRating(userRatingBar.getRating());
+        upDateRealmGame.setPlatform(platformSpinner.getSelectedItem().toString());
+        upDateRealmGame.setUserRating(userRatingBar.getRating());
         if(!completionPercentage.getText().toString().matches("")) {
-            upDateGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
+            upDateRealmGame.setCompletionPercentage(Float.parseFloat(completionPercentage.getText().toString()));
         }
         else {
-            upDateGame.setCompletionPercentage(0);
+            upDateRealmGame.setCompletionPercentage(0);
         }
 
         if(gameImageView.getDrawable() != null) {
             byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
-            upDateGame.setPhoto(bytes);
+            upDateRealmGame.setPhoto(bytes);
         }
 
         if(recyclerLayout.getVisibility() != View.GONE) {
             ArrayList<RecyclerObject> editCharacters = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects();
             for (int i = 0; i < editCharacters.size(); i++) {
-                if(!upDateGame.getCharacterses().get(i).isPhotosLoaded() && editCharacters.get(i).isPhotosLoaded()) {
-                    upDateGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
-                    upDateGame.getCharacterses().get(i).setDescription(editCharacters.get(i).getDescription());
-                    upDateGame.getCharacterses().get(i).setPhotosLoaded(true);
+                if(!upDateRealmGame.getCharacterses().get(i).isPhotosLoaded() && editCharacters.get(i).isPhotosLoaded()) {
+                    upDateRealmGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
+                    upDateRealmGame.getCharacterses().get(i).setDescription(editCharacters.get(i).getDescription());
+                    upDateRealmGame.getCharacterses().get(i).setPhotosLoaded(true);
                 }
             }
         }
@@ -470,18 +471,18 @@ public class EditGameFragment extends Fragment {
         upDateRealm.close();
     }
 
-    public void populateFields(Game game) {
+    public void populateFields(RealmGame realmGame) {
         gameImageProgressBar.setVisibility(View.GONE);
 
-        gameName.setText(game.getName());
-        topViewGameName.setText(game.getName());
-        userRatingBar.setRating(game.getUserRating());
-        completionPercentage.setText(Float.toString(game.getCompletionPercentage()));
+        gameName.setText(realmGame.getName());
+        topViewGameName.setText(realmGame.getName());
+        userRatingBar.setRating(realmGame.getUserRating());
+        completionPercentage.setText(Float.toString(realmGame.getCompletionPercentage()));
 
-         if(!game.getDescription().matches("")) {
+         if(!realmGame.getDescription().matches("")) {
             ArrayList descriptionList = new ArrayList<>();
             descriptionList.add("Description");
-            descriptionList.add(game.getDescription());
+            descriptionList.add(realmGame.getDescription());
 
             RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
                     gameDescriptionRecyclearView);
@@ -491,8 +492,8 @@ public class EditGameFragment extends Fragment {
              gameDescriptionRecyclearView.setVisibility(View.GONE);
          }
 
-        if(game.getCharacterses().size() > 0) {
-            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(game.getCharacterses(), getActivity());
+        if(realmGame.getCharacterses().size() > 0) {
+            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(realmGame.getCharacterses(), getActivity());
             charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
             gameCharactersRecyclerAdapter.notifyDataSetChanged();
         }
@@ -500,12 +501,12 @@ public class EditGameFragment extends Fragment {
             recyclerLayout.setVisibility(View.GONE);
         }
 
-        if(game.getGenre().size() > 0) {
-            RealmList<com.apps.danielbarr.gamecollection.Model.Genre> savedGenres = game.getGenre();
+        if(realmGame.getRealmGenre().size() > 0) {
+            RealmList<RealmGenre> savedRealmGenres = realmGame.getRealmGenre();
             ArrayList<String> genres = new ArrayList<>();
             genres.add("Genres");
-            for(int i =0;i < savedGenres.size(); i ++) {
-                genres.add(savedGenres.get(i).getName());
+            for(int i =0;i < savedRealmGenres.size(); i ++) {
+                genres.add(savedRealmGenres.get(i).getName());
             }
 
             RelevantGameRecyclerAdapter genreRecyclerAdapter = new RelevantGameRecyclerAdapter(genres, getActivity(),
@@ -513,12 +514,12 @@ public class EditGameFragment extends Fragment {
             gameGenresRecyclerView .setAdapter(genreRecyclerAdapter);
         }
 
-        if(game.getSimilarGames().size() > 0) {
-            RealmList<Game> similarGames = game.getSimilarGames();
+        if(realmGame.getSimilarRealmGames().size() > 0) {
+            RealmList<RealmGame> similarRealmGames = realmGame.getSimilarRealmGames();
             ArrayList<String> games = new ArrayList<>();
             games.add("Similar Games");
-            for(int i =0;i < similarGames.size(); i ++) {
-                games.add(similarGames.get(i).getName());
+            for(int i =0;i < similarRealmGames.size(); i ++) {
+                games.add(similarRealmGames.get(i).getName());
             }
             RelevantGameRecyclerAdapter relevantGameRecyclerAdapter = new RelevantGameRecyclerAdapter(games, getActivity(),
                     relevantGamesRecyclerView);
@@ -529,9 +530,9 @@ public class EditGameFragment extends Fragment {
             relevantGamesRecyclerView.setVisibility(View.GONE);
         }
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);
+        Bitmap bmp = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
         if(bmp != null) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(game.getPhoto(), 0, game.getPhoto().length);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
             bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap,getActivity().getApplicationContext()));
             bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
             gameImageView.setImageBitmap(bmp);
@@ -560,11 +561,11 @@ public class EditGameFragment extends Fragment {
                 }});
             thread.start();
             thread.getLooper();
-            thread.queueThumbnail(0, game.getPhotoURL());
+            thread.queueThumbnail(0, realmGame.getPhotoURL());
             gameImageProgressBar.setVisibility(View.VISIBLE);
         }
 
-        mScrollView.setToolbarTitle(game.getName());
+        mScrollView.setToolbarTitle(realmGame.getName());
 
     }
 

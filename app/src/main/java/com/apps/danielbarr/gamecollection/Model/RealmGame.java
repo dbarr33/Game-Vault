@@ -7,20 +7,28 @@ import io.realm.RealmObject;
  * Created by danielbarr on 1/17/15.
  */
 
-public class Game extends RealmObject{
+public class RealmGame extends RealmObject{
 
     private String name;
     private String platform;
     private String description;
-    private RealmList<com.apps.danielbarr.gamecollection.Model.Genre> genre;
+    private RealmList<RealmGenre> realmGenre;
     private String photoURL;
     private float completionPercentage;
     private float userRating;
     private float ignRating;
     private byte[] photo;
-    private RealmList<GameCharacters> characterses;
+    private RealmList<RealmCharacter> characterses;
     private boolean isDeleted = false;
-    private RealmList<Game> similarGames;
+    private RealmList<RealmGame> similarRealmGames;
+
+    public RealmList<RealmGame> getSimilarRealmGames() {
+        return similarRealmGames;
+    }
+
+    public void setSimilarRealmGames(RealmList<RealmGame> similarRealmGames) {
+        this.similarRealmGames = similarRealmGames;
+    }
 
     public String getName() {
         return name;
@@ -62,12 +70,12 @@ public class Game extends RealmObject{
         this.platform = platform;
     }
 
-    public RealmList<com.apps.danielbarr.gamecollection.Model.Genre> getGenre() {
-        return genre;
+    public RealmList<RealmGenre> getRealmGenre() {
+        return realmGenre;
     }
 
-    public void setGenre(RealmList<com.apps.danielbarr.gamecollection.Model.Genre> genre) {
-        this.genre = genre;
+    public void setRealmGenre(RealmList<RealmGenre> realmGenre) {
+        this.realmGenre = realmGenre;
     }
 
     public float getIgnRating() {
@@ -86,11 +94,11 @@ public class Game extends RealmObject{
         this.photo = photo;
     }
 
-    public RealmList<GameCharacters> getCharacterses() {
+    public RealmList<RealmCharacter> getCharacterses() {
         return characterses;
     }
 
-    public void setCharacterses(RealmList<GameCharacters> characterses) {
+    public void setCharacterses(RealmList<RealmCharacter> characterses) {
         this.characterses = characterses;
     }
 
@@ -110,12 +118,12 @@ public class Game extends RealmObject{
         this.photoURL = photoURL;
     }
 
-    public RealmList<Game> getSimilarGames() {
-        return similarGames;
-    }
+    //public RealmList<RealmGame> getSimilarGames() {
+      //  return similarRealmGames;
+    //}
 
-    public void setSimilarGames(RealmList<Game> similarGames) {
-        this.similarGames = similarGames;
-    }
+    //public void setSimilarGames(RealmList<RealmGame> similarRealmGames) {
+    //    this.similarRealmGames = similarRealmGames;
+   // }
 }
 

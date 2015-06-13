@@ -1,8 +1,8 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.CharacterResponse;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.GameResponse;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.SearchResponse;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character.CharacterResponse;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 
 import retrofit.Callback;
 import retrofit.http.GET;

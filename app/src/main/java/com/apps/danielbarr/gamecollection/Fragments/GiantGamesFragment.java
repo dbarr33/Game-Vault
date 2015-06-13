@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Adapter.GiantDialogListAdapter;
-import com.apps.danielbarr.gamecollection.Model.GiantBomb.GiantBombSearch;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.R;
 
 import java.util.ArrayList;

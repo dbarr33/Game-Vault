@@ -1,4 +1,6 @@
-package com.apps.danielbarr.gamecollection.Model.GiantBomb;
+package com.apps.danielbarr.gamecollection.Model.GiantBomb.Search;
+
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Image;
 
 import java.io.Serializable;
 
