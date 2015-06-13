@@ -380,7 +380,7 @@ public class Main extends ActionBarActivity {
 
         // 1dp/ms
         a.setDuration(500);
-        v.startAnimation(a);
+        //v.startAnimation(a);
 
     }
 

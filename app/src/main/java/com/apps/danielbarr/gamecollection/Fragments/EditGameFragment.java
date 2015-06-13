@@ -7,8 +7,8 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,15 +39,12 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
+import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloader;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.StringArrayListBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +67,7 @@ public class EditGameFragment extends Fragment {
     private Button saveGameButton;
     private Button backToTopButton;
     private ImageButton deleteGameButton;
+    private ImageButton saveGameButton2;
     private ImageView gameImageView;
     private ImageView bluredGameImage;
     private TextView gameName;
@@ -133,6 +131,7 @@ public class EditGameFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_edit_game, parent, false);
         saveGameButton = (Button) v.findViewById(R.id.saveGame);
         deleteGameButton = (ImageButton)getActivity().findViewById(R.id.deleteGameButton);
+        saveGameButton2 = (ImageButton)getActivity().findViewById(R.id.saveGameButton);
         gameImageView = (ImageView) v.findViewById(R.id.edit_game_photo);
         bluredGameImage = (ImageView)v.findViewById(R.id.blurredGameImage);
         gameName = (TextView) v.findViewById(R.id.edit_name_textField);
@@ -179,11 +178,35 @@ public class EditGameFragment extends Fragment {
                     public void success(GameResponse gameResponse, Response response) {
 
                         if(searchResults.getImage() != null) {
+                                ImageDownloader<Integer> thread;
+
+                                thread = new ImageDownloader<>(new Handler());
+                                thread.setListener(new ImageDownloader.Listener<Integer>() {
+                                    @Override
+                                    public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
+                                        if (thumbnail != null) {
+                                            gameImageProgressBar.setVisibility(View.GONE);
+                                            int dp = 160;
+                                            int px = PictureUtils.dpTOPX(dp, getActivity());
+                                            Bitmap bitmap = Bitmap.createBitmap(thumbnail);
+                                            Bitmap bmp = Bitmap.createBitmap(thumbnail);
+                                            bmp = PictureUtils.scaleDown(bmp, px, true);
+                                            bitmap = PictureUtils.scaleDown(bitmap,px,true);
+                                            gameImageView.setImageBitmap(bmp);
+                                            bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                                            bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                                        }
+                                    }});
+                                thread.start();
+                                thread.getLooper();
+                            gameImageProgressBar.setVisibility(View.VISIBLE);
+
                             try {
-                                new DownloadAsyncTask().execute(searchResults.getImage().getSuper_url());
+                                thread.queueThumbnail(0, searchResults.getImage().getSuper_url());
                             }
                             catch (NullPointerException error) {
-                                new DownloadAsyncTask().execute(searchResults.getImage().getThumb_url());
+                                thread.queueThumbnail(0, searchResults.getImage().getThumb_url());
                             }
                         }else{
                             gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
@@ -292,6 +315,30 @@ public class EditGameFragment extends Fragment {
                 realm.close();
             }
         }});
+
+        saveGameButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (gamePosition != -1 && gamePosition != -2) {
+
+                    upDateGame();
+                    ((Main)getActivity()).restoreMainScreen(true);
+                    Snackbar.make(v, "Updated Game", Snackbar.LENGTH_SHORT)
+                            .setAction("TESTING", null)
+                            .show();
+                } else {
+                    for (int i = 0; i < 1; i++) {
+                        saveGame();
+                        ((Main) getActivity()).restoreMainScreen(true);
+                        Snackbar.make(v, "Saved Game", Snackbar.LENGTH_SHORT)
+                                .setActionTextColor(getResources().getColor(android.R.color.white))
+                                .show();
+                    }
+                    realm.close();
+                }
+            }
+        });
 
         backToTopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -491,7 +538,29 @@ public class EditGameFragment extends Fragment {
 
         }
         else {
-            new DownloadAsyncTask().execute(game.getPhotoURL());
+            ImageDownloader<Integer> thread;
+
+            thread = new ImageDownloader<>(new Handler());
+            thread.setListener(new ImageDownloader.Listener<Integer>() {
+                @Override
+                public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
+                    if (thumbnail != null) {
+                        gameImageProgressBar.setVisibility(View.GONE);
+                        int dp = 160;
+                        int px = PictureUtils.dpTOPX(dp, getActivity());
+                        Bitmap bitmap = Bitmap.createBitmap(thumbnail);
+                        Bitmap bmp = Bitmap.createBitmap(thumbnail);
+                        bmp = PictureUtils.scaleDown(bmp, px, true);
+                        bitmap = PictureUtils.scaleDown(bitmap,px,true);
+                        gameImageView.setImageBitmap(bmp);
+                        bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                        bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                    }
+                }});
+            thread.start();
+            thread.getLooper();
+            thread.queueThumbnail(0, game.getPhotoURL());
             gameImageProgressBar.setVisibility(View.VISIBLE);
         }
 
@@ -502,6 +571,7 @@ public class EditGameFragment extends Fragment {
     public void populateFromSearch(GiantBombSearch giantBombSearch) {
         gameName.setText(giantBombSearch.getName());
         topViewGameName.setText(giantBombSearch.getName());
+        completionPercentage.setText(Float.toString(0));
 
         if(giantBombSearch.getDescription() != null) {
             ArrayList<String> descriptionList = new ArrayList<>();
@@ -557,50 +627,6 @@ public class EditGameFragment extends Fragment {
         }
         else {
             return "";
-        }
-    }
-
-    private class DownloadAsyncTask extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-
-            String URL = params[0];
-            Bitmap bitmap = null;
-            try {
-                java.net.URL imageURL = new URL(URL);
-
-                BufferedInputStream bis = new BufferedInputStream(imageURL.openStream(), 10240);
-                bitmap = BitmapFactory.decodeStream(bis);
-                bis.close();
-
-            } catch (MalformedURLException e) {
-                Log.e("error", "Downloading Image Failed");
-
-            }
-            catch (IOException e)
-            {
-                Log.e("error", "Downloading Image Failed");
-            }
-
-            return bitmap;
-        }
-        @Override
-        protected void onPostExecute(Bitmap result) {
-
-            if (result != null) {
-                gameImageProgressBar.setVisibility(View.GONE);
-                int dp = 160;
-                int px = PictureUtils.dpTOPX(dp, getActivity());
-                Bitmap bitmap = Bitmap.createBitmap(result);
-                Bitmap bmp = Bitmap.createBitmap(result);
-                bmp = PictureUtils.scaleDown(bmp, px, true);
-                bitmap = PictureUtils.scaleDown(bitmap,px,true);
-                gameImageView.setImageBitmap(bmp);
-                bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
-                bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
-
-            }
         }
     }
 }
