@@ -25,12 +25,12 @@ public class ImageDownloader<Token> extends HandlerThread {
 
     Handler mHandler;
     Map<Token, String> requestMap = Collections.synchronizedMap(new HashMap<Token, String>());
-    Handler mResponseHanler;
+    Handler mResponseHandler;
     Listener<Token> mListener;
 
-    public ImageDownloader(Handler responseHanler) {
+    public ImageDownloader(Handler responseHandler) {
         super(TAG);
-        mResponseHanler = responseHanler;
+        mResponseHandler = responseHandler;
     }
 
     public interface Listener<Token> {
@@ -71,7 +71,7 @@ public class ImageDownloader<Token> extends HandlerThread {
             byte[] bitmapBytes = getUrlBytes(url);
             final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
 
-            mResponseHanler.post(new Runnable() {
+            mResponseHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     if(requestMap.get(token) != url) {

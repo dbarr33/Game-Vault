@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloadManager;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloader;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 
@@ -30,8 +30,7 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
     private ArrayList<Bitmap> images;
     private ArrayList<Boolean> hasLoaded;
     private Activity activity;
-    private ImageDownloader<Integer> thread;
-
+    private ImageDownloadManager<Integer> imageDownloadManager;
 
     public GiantDialogListAdapter(Context context, ArrayList<GiantBombSearch> giantBombSearches, Activity activity) {
         super(context, 0, giantBombSearches);
@@ -39,8 +38,8 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
         this.activity = activity;
         images = new ArrayList<>();
         hasLoaded = new ArrayList<>();
-        thread = new ImageDownloader<>(new Handler());
-        thread.setListener(new ImageDownloader.Listener<Integer>() {
+        imageDownloadManager = new ImageDownloadManager();
+        imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
             @Override
             public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
                 images.set(position, thumbnail);
@@ -48,8 +47,6 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
                 notifyDataSetChanged();
             }
         });
-        thread.start();
-        thread.getLooper();
 
         for(int i = 0; i < giantBombSearches.size(); i++) {
             images.add(null);
@@ -57,7 +54,7 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
             if (InternetUtils.isNetworkAvailable((activity))) {
 
                 if (giantBombSearches.get(i).image != null) {
-                    thread.queueThumbnail(i, giantBombSearches.get(i).getImage().getThumb_url());
+                    imageDownloadManager.queueThumbnail(i, giantBombSearches.get(i).getImage().getThumb_url());
             }
                 else {
                     Bitmap defaultBitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.box_art);
@@ -97,7 +94,7 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
             viewHolder.progressBar.setVisibility(View.VISIBLE);
             if(InternetUtils.isNetworkAvailable((activity))) {
                 if (giantBombSearches.get(position).image != null) {
-                    thread.queueThumbnail(position, giantBombSearches.get(position).getImage().getThumb_url());
+                    imageDownloadManager.queueThumbnail(position, giantBombSearches.get(position).getImage().getThumb_url());
                 }else {
                     hasLoaded.set(position, true);
                     viewHolder.progressBar.setVisibility(View.GONE);

@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,14 +31,14 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
-import com.apps.danielbarr.gamecollection.Model.RealmGame;
-import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
+import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
-import com.apps.danielbarr.gamecollection.Model.RecyclerObject;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
+import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloadManager;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloader;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
@@ -78,7 +77,7 @@ public class EditGameFragment extends Fragment {
     public Realm realm;
     private Spinner platformSpinner;
     private RecyclerView relevantGamesRecyclerView;
-    private RecyclerView gameDescriptionRecyclearView;
+    private RecyclerView gameDescriptionRecyclerView;
     private RecyclerView gameGenresRecyclerView;
 
     public int gamePosition;
@@ -89,6 +88,7 @@ public class EditGameFragment extends Fragment {
     private LinearLayout recyclerLayout;
     private ProgressBar gameImageProgressBar;
     public SynchronizedScrollView mScrollView;
+    private ImageDownloadManager<Integer> imageDownloadManager;
 
     public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
     {
@@ -144,7 +144,7 @@ public class EditGameFragment extends Fragment {
         gameImageProgressBar = (ProgressBar)v.findViewById(R.id.gameImageProgressBar);
         topViewGameName = (TextView)v.findViewById(R.id.topViewGameName);
         relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclearView);
-        gameDescriptionRecyclearView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
+        gameDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
@@ -165,7 +165,7 @@ public class EditGameFragment extends Fragment {
         mScrollView.setAnchorView(v.findViewById(R.id.topView));
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
         mScrollView.setToTheTopButton(backToTopButton);
-
+        imageDownloadManager = new ImageDownloadManager();
 
         if(gamePosition == -1) {
             gamePosition = -2;
@@ -179,10 +179,7 @@ public class EditGameFragment extends Fragment {
                     public void success(GameResponse gameResponse, Response response) {
 
                         if(searchResults.getImage() != null) {
-                                ImageDownloader<Integer> thread;
-
-                                thread = new ImageDownloader<>(new Handler());
-                                thread.setListener(new ImageDownloader.Listener<Integer>() {
+                            imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
                                     @Override
                                     public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
                                         if (thumbnail != null) {
@@ -199,15 +196,13 @@ public class EditGameFragment extends Fragment {
 
                                         }
                                     }});
-                                thread.start();
-                                thread.getLooper();
                             gameImageProgressBar.setVisibility(View.VISIBLE);
 
                             try {
-                                thread.queueThumbnail(0, searchResults.getImage().getSuper_url());
+                                imageDownloadManager.queueThumbnail(0, searchResults.getImage().getSuper_url());
                             }
                             catch (NullPointerException error) {
-                                thread.queueThumbnail(0, searchResults.getImage().getThumb_url());
+                                imageDownloadManager.queueThumbnail(0, searchResults.getImage().getThumb_url());
                             }
                         }else{
                             gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
@@ -288,7 +283,7 @@ public class EditGameFragment extends Fragment {
         relevantGamesRecyclerView.setLayoutManager(linearLayoutManager);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        gameDescriptionRecyclearView.setLayoutManager(linearLayoutManager);
+        gameDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gameGenresRecyclerView.setLayoutManager(linearLayoutManager);
@@ -383,8 +378,8 @@ public class EditGameFragment extends Fragment {
             realmGame.setCompletionPercentage(0);
         }
 
-        if(gameDescriptionRecyclearView.getVisibility() == View.VISIBLE) {
-            realmGame.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclearView.getAdapter()).getGameList().get(1));
+        if(gameDescriptionRecyclerView.getVisibility() == View.VISIBLE) {
+            realmGame.setDescription(((RelevantGameRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getGameList().get(1));
         }
 
         if(gameImageView.getDrawable() != null) {
@@ -396,15 +391,16 @@ public class EditGameFragment extends Fragment {
         }
 
         if(recyclerLayout.getVisibility() != View.GONE) {
-            ArrayList<RealmCharacter> gameCharacterses = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getGameCharacterses();
-            for (int i = 0; i < gameCharacterses.size(); i++) {
-                RealmCharacter realmCharacter = saveRealm.createObject(RealmCharacter.class);
-                realmCharacter.setName(gameCharacterses.get(i).getName());
-                realmCharacter.setID(gameCharacterses.get(i).getID());
+            ArrayList<RealmCharacter> gameCharacteres = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects();
 
-                if(gameCharacterses.get(i).getPhoto() != null) {
-                    realmCharacter.setPhoto(gameCharacterses.get(i).getPhoto());
-                    realmCharacter.setDescription(gameCharacterses.get(i).getDescription());
+            for (int i = 0; i < gameCharacteres.size(); i++) {
+                RealmCharacter realmCharacter = saveRealm.createObject(RealmCharacter.class);
+                realmCharacter.setName(gameCharacteres.get(i).getName());
+                realmCharacter.setID(gameCharacteres.get(i).getID());
+
+                if(gameCharacteres.get(i).getPhoto() != null) {
+                    realmCharacter.setPhoto(gameCharacteres.get(i).getPhoto());
+                    realmCharacter.setDescription(gameCharacteres.get(i).getDescription());
                     realmCharacter.setPhotosLoaded(true);
                 }
                 else {
@@ -458,7 +454,7 @@ public class EditGameFragment extends Fragment {
         }
 
         if(recyclerLayout.getVisibility() != View.GONE) {
-            ArrayList<RecyclerObject> editCharacters = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects();
+            ArrayList<RealmCharacter> editCharacters = ((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects();
             for (int i = 0; i < editCharacters.size(); i++) {
                 if(!upDateRealmGame.getCharacterses().get(i).isPhotosLoaded() && editCharacters.get(i).isPhotosLoaded()) {
                     upDateRealmGame.getCharacterses().get(i).setPhoto(editCharacters.get(i).getPhoto());
@@ -485,11 +481,11 @@ public class EditGameFragment extends Fragment {
             descriptionList.add(realmGame.getDescription());
 
             RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
-                    gameDescriptionRecyclearView);
-            gameDescriptionRecyclearView.setAdapter(gameDescriptionRecyclerAdapter);
+                    gameDescriptionRecyclerView);
+             gameDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
         }
         else {
-             gameDescriptionRecyclearView.setVisibility(View.GONE);
+             gameDescriptionRecyclerView.setVisibility(View.GONE);
          }
 
         if(realmGame.getCharacterses().size() > 0) {
@@ -539,10 +535,7 @@ public class EditGameFragment extends Fragment {
 
         }
         else {
-            ImageDownloader<Integer> thread;
-
-            thread = new ImageDownloader<>(new Handler());
-            thread.setListener(new ImageDownloader.Listener<Integer>() {
+            imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
                 @Override
                 public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
                     if (thumbnail != null) {
@@ -559,9 +552,7 @@ public class EditGameFragment extends Fragment {
 
                     }
                 }});
-            thread.start();
-            thread.getLooper();
-            thread.queueThumbnail(0, realmGame.getPhotoURL());
+            imageDownloadManager.queueThumbnail(0, realmGame.getPhotoURL());
             gameImageProgressBar.setVisibility(View.VISIBLE);
         }
 
@@ -580,12 +571,12 @@ public class EditGameFragment extends Fragment {
             descriptionList.add(stripHtml(giantBombSearch.getDescription()));
 
             RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
-                    gameDescriptionRecyclearView);
-            gameDescriptionRecyclearView.setAdapter(gameDescriptionRecyclerAdapter);
+                    gameDescriptionRecyclerView);
+            gameDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
             mScrollView.setToolbarTitle(giantBombSearch.getName());
         }
         else {
-            gameDescriptionRecyclearView.setVisibility(View.GONE);
+            gameDescriptionRecyclerView.setVisibility(View.GONE);
         }
 
     }
