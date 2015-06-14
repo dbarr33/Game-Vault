@@ -217,6 +217,7 @@ public class Main extends ActionBarActivity {
         editTool.setVisibility(View.GONE);
         floatingActionButton.setVisibility(View.VISIBLE);
         findViewById(R.id.deleteGameButton).setVisibility(View.INVISIBLE);
+        findViewById(R.id.saveGameButton).setVisibility(View.GONE);
 
         if(isEditGame) {
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -244,6 +245,7 @@ public class Main extends ActionBarActivity {
                 if(editGameFragment.gamePosition > -1) {
                     findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
                 }
+                findViewById(R.id.saveGameButton).setVisibility(View.VISIBLE);
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {

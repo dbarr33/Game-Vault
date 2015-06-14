@@ -69,7 +69,7 @@ public class EditGameFragment extends Fragment {
     private ImageButton deleteGameButton;
     private ImageButton saveGameButton2;
     private ImageView gameImageView;
-    private ImageView bluredGameImage;
+    private ImageView blurredGameImage;
     private TextView gameName;
     private TextView completionPercentage;
     private TextView topViewGameName;
@@ -134,7 +134,7 @@ public class EditGameFragment extends Fragment {
         deleteGameButton = (ImageButton)getActivity().findViewById(R.id.deleteGameButton);
         saveGameButton2 = (ImageButton)getActivity().findViewById(R.id.saveGameButton);
         gameImageView = (ImageView) v.findViewById(R.id.edit_game_photo);
-        bluredGameImage = (ImageView)v.findViewById(R.id.blurredGameImage);
+        blurredGameImage = (ImageView)v.findViewById(R.id.blurredGameImage);
         gameName = (TextView) v.findViewById(R.id.edit_name_textField);
         platformSpinner = (Spinner) v.findViewById(R.id.edit_platform_spinner);
         userRatingBar = (RatingBar) v.findViewById(R.id.userRatingStars);
@@ -143,9 +143,9 @@ public class EditGameFragment extends Fragment {
         recyclerLayout = (LinearLayout)v.findViewById(R.id.recyclerviewLayout);
         gameImageProgressBar = (ProgressBar)v.findViewById(R.id.gameImageProgressBar);
         topViewGameName = (TextView)v.findViewById(R.id.topViewGameName);
-        relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclearView);
-        gameDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclearView);
-        gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclearView);
+        relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclerView);
+        gameDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclerView);
+        gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclerView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
         DrawerLayout mDrawerLayout = (DrawerLayout)getActivity().findViewById(R.id.drawer_layout);
@@ -155,6 +155,8 @@ public class EditGameFragment extends Fragment {
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
         toolbar.setAlpha(0);
         toolbar.setVisibility(View.VISIBLE);
+        saveGameButton2.setVisibility(View.VISIBLE);
+        saveGameButton.setVisibility(View.GONE);
         toolbar.setTitle("");
         ((Main)getActivity()).setSupportActionBar(toolbar);
         getActivity().findViewById(R.id.floatingActionButton).setVisibility(View.GONE);
@@ -191,30 +193,31 @@ public class EditGameFragment extends Fragment {
                                             bmp = PictureUtils.scaleDown(bmp, px, true);
                                             bitmap = PictureUtils.scaleDown(bitmap,px,true);
                                             gameImageView.setImageBitmap(bmp);
-                                            bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
-                                            bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                                            blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                                            blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
                                         }
                                     }});
                             gameImageProgressBar.setVisibility(View.VISIBLE);
 
-                            try {
+                            if(searchResults.getImage().getSuper_url() != null){
                                 imageDownloadManager.queueThumbnail(0, searchResults.getImage().getSuper_url());
                             }
-                            catch (NullPointerException error) {
+                            else if(searchResults.getImage().getThumb_url() != null) {
                                 imageDownloadManager.queueThumbnail(0, searchResults.getImage().getThumb_url());
                             }
+
                         }else{
                             gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
-                            bluredGameImage.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
+                            blurredGameImage.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
                             gameImageProgressBar.setVisibility(View.GONE);
                         }
 
                         if(gameResponse.getResults().getGameGenres() != null) {
                             ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().getGameGenres()));
-                            RelevantGameRecyclerAdapter genreRecycylerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
+                            RelevantGameRecyclerAdapter genreRecyclerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
                                     gameGenresRecyclerView);
-                            gameGenresRecyclerView.setAdapter(genreRecycylerAdapter);
+                            gameGenresRecyclerView.setAdapter(genreRecyclerAdapter);
                         }
                         else {
                             gameGenresRecyclerView.setVisibility(View.GONE);
@@ -222,9 +225,9 @@ public class EditGameFragment extends Fragment {
 
                         if(gameResponse.getResults().getSimilar_games() != null) {
                             ArrayList<String> similarGamesList = StringArrayListBuilder.createArryList("Similar Games", ((ArrayList) gameResponse.getResults().similar_games));
-                            RelevantGameRecyclerAdapter similareGamesRecycylerAdapter = new RelevantGameRecyclerAdapter(similarGamesList, getActivity(),
+                            RelevantGameRecyclerAdapter similarGamesRecyclerAdapter = new RelevantGameRecyclerAdapter(similarGamesList, getActivity(),
                                     relevantGamesRecyclerView);
-                            relevantGamesRecyclerView.setAdapter(similareGamesRecycylerAdapter);
+                            relevantGamesRecyclerView.setAdapter(similarGamesRecyclerAdapter);
                         }
                         else {
                             relevantGamesRecyclerView.setVisibility(View.GONE);
@@ -529,8 +532,8 @@ public class EditGameFragment extends Fragment {
         Bitmap bmp = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
         if(bmp != null) {
             Bitmap bitmap = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
-            bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap,getActivity().getApplicationContext()));
-            bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+            blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap,getActivity().getApplicationContext()));
+            blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
             gameImageView.setImageBitmap(bmp);
 
         }
@@ -547,8 +550,8 @@ public class EditGameFragment extends Fragment {
                         bmp = PictureUtils.scaleDown(bmp, px, true);
                         bitmap = PictureUtils.scaleDown(bitmap,px,true);
                         gameImageView.setImageBitmap(bmp);
-                        bluredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
-                        bluredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                        blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                        blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
                     }
                 }});

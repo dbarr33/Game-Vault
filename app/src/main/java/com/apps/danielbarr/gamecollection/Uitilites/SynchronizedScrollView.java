@@ -41,27 +41,12 @@ public class SynchronizedScrollView extends ScrollView {
         alphaValue = 0;
     }
 
-    /**
-     * Attach the appropriate child view to monitor during scrolling
-     * as the anchoring space for the floating view.  This view MUST
-     * be an existing child.
-     *
-     * @param v View to manage as the anchoring space
-     */
     public void setAnchorView(View v) {
         mAnchorView = v;
-       // syncViews();
     }
 
-    /**
-     * Attach the appropriate child view to managed during scrolling
-     * as the floating view.  This view MUST be an existing child.
-     *
-     * @param v View to manage as the floating view
-     */
     public void setSynchronizedView(View v) {
         mSyncView = v;
-       // syncViews();
     }
 
     public void setToolbar(Toolbar toolbar) {
@@ -73,23 +58,8 @@ public class SynchronizedScrollView extends ScrollView {
         this.toolbarTitle = toolbarTitle;
     }
 
-    public Button getToTheTopButton() {
-        return toTheTopButton;
-    }
-
     public void setToTheTopButton(Button toTheTopButton) {
         this.toTheTopButton = toTheTopButton;
-    }
-
-    //Position the views together
-    private void syncViews() {
-        if(mAnchorView == null || mSyncView == null) {
-            return;
-        }
-
-        //Distance between the anchor view and the header view
-        int distance = mAnchorView.getBottom() - mSyncView.getTop();
-        mSyncView.offsetTopAndBottom(distance);
     }
 
     @Override
@@ -99,10 +69,6 @@ public class SynchronizedScrollView extends ScrollView {
             return;
         }
         position =  mSyncView.getTop() - (mSyncView.getTop() - mSyncView.getBottom()) ;
-
-        //Calling this here attaches the views together if they were added
-        // before layout finished
-       // syncViews();
     }
 
     @Override
@@ -129,12 +95,9 @@ public class SynchronizedScrollView extends ScrollView {
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-
                     }
-
                     @Override
                     public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
             }
@@ -151,39 +114,27 @@ public class SynchronizedScrollView extends ScrollView {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         animating = false;
-
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-
                     }
-
                     @Override
                     public void onAnimationRepeat(Animator animation) {
-
                     }
                 });
             }
         }
 
-
         float temp = position - t;
         alphaValue = temp/ position;
-
         mSyncView.setAlpha(alphaValue);
         toolbar.setAlpha(1 - alphaValue);
-
-        //Distance between the anchor view and the scroll position
         int matchDistance = mSyncView.getTop() - getScrollY();
-        //Distance between scroll position and sync view
-        int offset = getScrollY() - mSyncView.getTop();
-        //Check if anchor is scrolled off screen
 
         if(matchDistance < 0) {
             toolbarTextView.setText(toolbarTitle);
         } else {
-
             toolbarTextView.setText("");
         }
     }

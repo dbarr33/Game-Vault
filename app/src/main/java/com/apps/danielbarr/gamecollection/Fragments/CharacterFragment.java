@@ -55,12 +55,13 @@ public class CharacterFragment extends Fragment {
         characterImageView = (ImageView) v.findViewById(R.id.character_ImageView);
         blurredCharacterImageView = (ImageView)v.findViewById(R.id.blurredCharacterImage);
         characterName = (TextView) v.findViewById(R.id.character_name_textField);
-        characterDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.characterDescriptionsRecyclearView);
+        characterDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.characterDescriptionsRecyclerView);
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.mScrollView);
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
         realmCharacter = (RealmCharacter) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
         getActivity().findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.saveGameButton).setVisibility(View.GONE);
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
         toolbar.setAlpha(0);

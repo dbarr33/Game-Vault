@@ -176,6 +176,11 @@
                             android:inputType="number"
                             android:layout_marginLeft="5dp"
                             />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:text="%"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -238,19 +243,26 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:id="@+id/relevantGamesRecyclearView">
+                android:id="@+id/relevantGamesRecyclerView"
+                android:overScrollMode="never"
+                >
             </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:id="@+id/gameGenresRecyclearView">
+                android:id="@+id/gameGenresRecyclerView"
+                android:overScrollMode="never"
+                >
+
             </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:id="@+id/gameDescriptionRecyclearView">
+                android:id="@+id/gameDescriptionRecyclerView"
+                android:overScrollMode="never"
+                >
             </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>

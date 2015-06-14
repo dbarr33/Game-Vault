@@ -58,8 +58,11 @@ public class ImageDownloader<Token> extends HandlerThread {
 
     public void queueThumbnail(Token token, String url) {
         requestMap.put(token, url);
-        mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
-                .sendToTarget();
+
+        if(mHandler != null) {
+            mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
+                    .sendToTarget();
+        }
     }
 
     private void handleRequest(final Token token) {

@@ -23,11 +23,12 @@
                 />
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:src="@drawable/plus_icon"
                 android:layout_alignParentRight="true"
                 android:id="@+id/plus_minus_icon"
+                android:layout_centerInParent="true"
                 />
         </RelativeLayout>
 

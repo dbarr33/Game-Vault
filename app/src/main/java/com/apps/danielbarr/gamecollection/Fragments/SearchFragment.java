@@ -60,7 +60,7 @@ public class SearchFragment extends DialogFragment {
 
                 if (searchTextView.getText().toString().equals("")) {
 
-                    Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_SHORT).show();
 
                 }
                 else if(searchText.equals("is john gay")){

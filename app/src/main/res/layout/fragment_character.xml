@@ -86,13 +86,17 @@
                     <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
-                        android:id="@+id/characterDescriptionsRecyclearView">
+                        android:id="@+id/characterDescriptionsRecyclerView"
+                        android:overScrollMode="never"
+                        >
                     </android.support.v7.widget.RecyclerView>
 
                     <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/characterEnemiesRecyclearView">
+                        android:id="@+id/characterEnemiesRecyclerView"
+                        android:overScrollMode="never"
+                        >
                     </android.support.v7.widget.RecyclerView>
 
                 </LinearLayout>

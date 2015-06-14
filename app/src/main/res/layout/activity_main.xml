@@ -32,11 +32,6 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-
-
-                    <!-- As the main content view, the view below consumes the entire
-                         space available using match_parent in both dimensions. -->
-
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
@@ -57,31 +52,39 @@
                             android:visibility="gone"
                             >
                             <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="54dp"
-                                android:gravity="left|center_vertical">
-
-                                <ImageButton
-                                    android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="35dp"
+                                android:layout_marginLeft="35dp"
+                                android:gravity="center">
+                                <TextView
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:background="@android:color/transparent"
-                                    android:src="@android:drawable/ic_menu_save"
-                                    android:id="@+id/saveGameButton"
-                                    android:layout_marginRight="16dp"
-                                    android:visibility="visible"/>
+                                    android:textSize="20sp"
+                                    android:textColor="@color/primary"
+                                    android:maxLines="1"
+                                    android:ellipsize="end"
+                                    android:gravity="center"
+                                    android:id="@+id/toolbar_title"
+                                    />
                             </LinearLayout>
 
-                            <TextView
-                                android:layout_width="300dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:textSize="20sp"
-                                android:textColor="@color/primary"
-                                android:maxLines="1"
-                                android:ellipsize="end"
-                                android:id="@+id/toolbar_title" />
+                        </android.support.v7.widget.Toolbar>
 
-                            </android.support.v7.widget.Toolbar>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="54dp"
+                            android:gravity="left|center_vertical">
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:src="@android:drawable/checkbox_on_background"
+                                android:id="@+id/saveGameButton"
+                                android:layout_marginLeft="8dp"
+                                android:visibility="gone"/>
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -94,7 +97,7 @@
                                 android:background="@android:color/transparent"
                                 android:src="@android:drawable/ic_menu_delete"
                                 android:id="@+id/deleteGameButton"
-                                android:layout_marginRight="16dp"
+                                android:layout_marginRight="8dp"
                                 android:visibility="gone"/>
                         </LinearLayout>
 
