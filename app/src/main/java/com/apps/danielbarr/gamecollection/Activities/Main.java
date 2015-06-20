@@ -36,6 +36,8 @@ import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.DrawerList;
 import com.apps.danielbarr.gamecollection.Model.FirstInstall;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
+import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 
 import java.util.ArrayList;
 
@@ -198,8 +200,6 @@ public class Main extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
-
             default:
                 if (mDrawerToggle.onOptionsItemSelected(item)) {
                     return true;
@@ -209,54 +209,31 @@ public class Main extends ActionBarActivity {
         return false;
     }
 
-    public void restoreMainScreen(boolean isEditGame) {
-        Toolbar mainTool = (Toolbar)findViewById(R.id.toolbar);
-        Toolbar editTool = (Toolbar)findViewById(R.id.editToolbar);
-        setSupportActionBar(mainTool);
-        mainTool.setVisibility(View.VISIBLE);
-        editTool.setVisibility(View.GONE);
-        floatingActionButton.setVisibility(View.VISIBLE);
-        findViewById(R.id.deleteGameButton).setVisibility(View.INVISIBLE);
-        findViewById(R.id.saveGameButton).setVisibility(View.GONE);
-
-        if(isEditGame) {
-            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            getFragmentManager().beginTransaction().hide(getFragmentManager()
-                    .findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
-        }else {
-            getFragmentManager().beginTransaction().hide(getFragmentManager()
-                    .findFragmentByTag("John")).commit();
-        }
-        getFragmentManager().beginTransaction().show(getFragmentManager()
-                .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).commit();
-        ((GameRecyclerListFragment)getFragmentManager()
-                .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).notifyDataSetChanged(mTitle.toString());
-
-    }
-
     @Override
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
-            if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
-               getFragmentManager().beginTransaction().show(getFragmentManager().
-                       findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).commit();
 
+            FragmentController fragmentController = new FragmentController(getFragmentManager());
+
+            if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_character)) != null) {
+
+                fragmentController.showFramentCommand(getResources().getString(R.string.fragment_edit_game));
                 EditGameFragment editGameFragment = (EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game));
+                editGameFragment.mScrollView.setViewAlpha();
+
                 if(editGameFragment.gamePosition > -1) {
-                    findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
+                    ScreenSetupController.currentScreenEditGame(this, false);
                 }
-                findViewById(R.id.saveGameButton).setVisibility(View.VISIBLE);
-                ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).mScrollView.setViewAlpha();
+                else {
+                    ScreenSetupController.currentScreenEditGame(this, true);
+                }
+                getFragmentManager().popBackStack();
+
             }
             else if(getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game)) != null) {
-                restoreMainScreen(true);
+                ScreenSetupController.currentScreenGameList(this);
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).realm.close();
             }
-            else if(getFragmentManager().findFragmentByTag("John") != null) {
-                restoreMainScreen(false);
-            }
-
-            getFragmentManager().popBackStack();
 
         }else {
             super.onBackPressed();

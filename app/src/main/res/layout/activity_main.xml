@@ -77,10 +77,11 @@
                             android:gravity="left|center_vertical">
 
                             <ImageButton
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:scaleType="fitXY"
                                 android:background="@android:color/transparent"
-                                android:src="@android:drawable/checkbox_on_background"
+                                android:src="@drawable/checked"
                                 android:id="@+id/saveGameButton"
                                 android:layout_marginLeft="8dp"
                                 android:visibility="gone"/>
@@ -92,23 +93,18 @@
                             android:gravity="right|center_vertical">
 
                             <ImageButton
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:scaleType="fitXY"
                                 android:background="@android:color/transparent"
-                                android:src="@android:drawable/ic_menu_delete"
+                                android:src="@drawable/delete"
                                 android:id="@+id/deleteGameButton"
                                 android:layout_marginRight="8dp"
-                                android:visibility="gone"/>
+                                android:visibility="gone" />
                         </LinearLayout>
 
                     </RelativeLayout>
                 </LinearLayout>
-                <!-- android:layout_gravity="start" tells DrawerLayout to treat
-                     this as a sliding drawer on the left side for left-to-right
-                     languages and on the right side for right-to-left languages.
-                     The drawer is given a fixed width in dp and extends the full height of
-                     the container. A solid background is used for contrast
-                     with the content view. -->
 
                 <com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropListView
                     android:id="@+id/dropAndDragDrawer"
@@ -120,16 +116,6 @@
                     android:dividerHeight="1dp"
                     android:background="#ffff"/>
 
-            <!--    <ListView
-                    android:id="@+id/left_drawer"
-                    android:layout_width="240dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="start"
-                    android:choiceMode="singleChoice"
-                    android:divider="@android:color/holo_blue_light"
-                    android:dividerHeight="1dp"
-                    android:background="#ffff"/>
-                    -->
             </android.support.v4.widget.DrawerLayout>
         </LinearLayout>
         <android.support.design.widget.FloatingActionButton

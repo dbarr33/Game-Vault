@@ -19,6 +19,7 @@ import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
+import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 
 import java.util.ArrayList;
@@ -60,8 +61,6 @@ public class CharacterFragment extends Fragment {
         backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
         realmCharacter = (RealmCharacter) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
-        getActivity().findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.saveGameButton).setVisibility(View.GONE);
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
         toolbar.setAlpha(0);
@@ -72,6 +71,14 @@ public class CharacterFragment extends Fragment {
         mScrollView.setToTheTopButton(backToTopButton);
         mScrollView.setToolbarTitle(realmCharacter.getName());
 
+        backToTopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mScrollView.smoothScrollTo(0,0);
+                backToTopButton.setVisibility(View.GONE);
+            }
+        });
+
         Bitmap bmp = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
         Bitmap bitmap = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
         if (bmp != null) {
@@ -80,6 +87,7 @@ public class CharacterFragment extends Fragment {
             blurredCharacterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
         characterName.setText(realmCharacter.getName());
+        ScreenSetupController.currentScreenCharacter(getActivity());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

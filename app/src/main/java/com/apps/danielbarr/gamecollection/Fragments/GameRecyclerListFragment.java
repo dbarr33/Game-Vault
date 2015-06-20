@@ -62,6 +62,8 @@ public class GameRecyclerListFragment extends Fragment {
     public void updateGameList(String newPlatform) {
         RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", newPlatform).equalTo("isDeleted", false).findAll();
 
+        platform = newPlatform;
+        
         ArrayList<RealmGame> realmGameList = new ArrayList<>();
         for(int i = 0; i < storedRealmGames.size(); i++) {
             realmGameList.add(storedRealmGames.get(i));
@@ -70,8 +72,8 @@ public class GameRecyclerListFragment extends Fragment {
         gameListRecycler.setAdapter(recyclerGameListAdapter);
     }
 
-    public void notifyDataSetChanged(String newPlatform) {
-        updateGameList(newPlatform);
+    public void notifyDataSetChanged() {
+        updateGameList(platform);
     }
 
     @Override
