@@ -17,6 +17,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.BuildGameCharacter;
+import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,11 +111,10 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         public void onItemClick(View v, int position) {
 
             if(realmCharacters.get(position).isPhotosLoaded()) {
-                CharacterFragment characterFragment = CharacterFragment.newInstance(realmCharacters.get(position));
-                activity.getFragmentManager().beginTransaction().hide(activity.getFragmentManager().
-                        findFragmentByTag(activity.getResources().getString(R.string.fragment_edit_game))).commit();
-                activity.getFragmentManager().beginTransaction().add(R.id.content_frame, characterFragment, activity.getResources().getString(R.string.fragment_character))
-                        .addToBackStack(null).commit();
+                FragmentController fragmentController = new FragmentController(activity.getFragmentManager());
+                fragmentController.hideFramentCommand(activity.getResources().getString(R.string.fragment_edit_game));
+                fragmentController.addFragmentCommand(CharacterFragment.newInstance(realmCharacters.get(position)),
+                        activity.getResources().getString(R.string.fragment_character));
             }
             else {
                 Toast.makeText(activity.getApplicationContext(),  "Wait for " + realmCharacters.get(position).getName() + " to load",

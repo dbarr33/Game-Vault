@@ -17,7 +17,11 @@ public class FragmentController {
     }
 
     public void replaceFragmentCommand(Fragment fragment, String tag) {
-        fragmentManager.beginTransaction().replace(R.id.content_frame,fragment, tag);
+        fragmentManager.beginTransaction().replace(R.id.content_frame,fragment, tag).addToBackStack(null).commit();
+    }
+
+    public void addFragmentCommand(Fragment fragment, String tag) {
+        fragmentManager.beginTransaction().add(R.id.content_frame,fragment, tag).addToBackStack(null).commit();
     }
 
     public void showFramentCommand(String fragmentName) {

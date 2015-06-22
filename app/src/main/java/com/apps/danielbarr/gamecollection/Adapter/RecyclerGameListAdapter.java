@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
 
 import java.util.ArrayList;
 
@@ -38,17 +39,10 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
             @Override
             public void onItemClick(View view, int position) {
 
-                EditGameFragment editGameFragment = EditGameFragment.newInstance(platform, position);
-               // editGameFragment.setEnterTransition(new Slide());
-               // editGameFragment.setSharedElementEnterTransition(new Slide());
-                activity.getFragmentManager().beginTransaction()
-                        .hide(activity.getFragmentManager().findFragmentByTag(activity.getResources().getString(R.string.fragment_game_list))).commit();
-
-                activity.getFragmentManager().beginTransaction()
-                        .add(R.id.content_frame, editGameFragment, activity.getResources().getString(R.string.fragment_edit_game))
-                        .addToBackStack(null).commit();
-                       // .addSharedElement(activity.findViewById(R.id.recycler_gameList_gameName), "gameName")
-                       // .addSharedElement(activity.findViewById(R.id.recycler_gameList_gameImage), "gameImage").commit();
+                FragmentController fragmentController = new FragmentController(activity.getFragmentManager());
+                fragmentController.hideFramentCommand(activity.getResources().getString(R.string.fragment_game_list));
+                fragmentController.addFragmentCommand(EditGameFragment.newInstance(platform, position),
+                        activity.getResources().getString(R.string.fragment_edit_game));
             }
         });
     }
