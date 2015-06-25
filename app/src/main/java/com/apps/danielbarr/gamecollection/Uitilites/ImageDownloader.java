@@ -58,11 +58,8 @@ public class ImageDownloader<Token> extends HandlerThread {
 
     public void queueThumbnail(Token token, String url) {
         requestMap.put(token, url);
-
-        if(mHandler != null) {
-            mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
-                    .sendToTarget();
-        }
+        mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
+                .sendToTarget();
     }
 
     private void handleRequest(final Token token) {
@@ -92,8 +89,10 @@ public class ImageDownloader<Token> extends HandlerThread {
     }
 
     public void clearQueue() {
-        mHandler.removeMessages(MESSAGE_DOWNLOAD);
-        requestMap.clear();
+        if(mHandler != null) {
+            mHandler.removeMessages(MESSAGE_DOWNLOAD);
+            requestMap.clear();
+        }
     }
 
     public byte[] getUrlBytes(String urlSpect)throws IOException {

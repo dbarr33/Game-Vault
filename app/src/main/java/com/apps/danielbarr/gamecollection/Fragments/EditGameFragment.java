@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -87,7 +88,8 @@ public class EditGameFragment extends Fragment {
     private LinearLayout recyclerLayout;
     private ProgressBar gameImageProgressBar;
     public SynchronizedScrollView mScrollView;
-    private ImageDownloadManager<Integer> imageDownloadManager;
+    private final ImageDownloadManager<Integer> imageDownloadManager = new ImageDownloadManager<Integer>();
+
 
     public static EditGameFragment newInstance(String platform, Bitmap image, GiantBombSearch giantBombSearch)
     {
@@ -151,7 +153,6 @@ public class EditGameFragment extends Fragment {
         mScrollView.setAnchorView(v.findViewById(R.id.topView));
         mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
         mScrollView.setToTheTopButton(backToTopButton);
-        imageDownloadManager = new ImageDownloadManager();
 
         if(gamePosition == -1) {
             gamePosition = -2;
@@ -166,32 +167,32 @@ public class EditGameFragment extends Fragment {
 
                         if(searchResults.getImage() != null) {
                             imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
-                                    @Override
-                                    public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
-                                        if (thumbnail != null) {
-                                            gameImageProgressBar.setVisibility(View.GONE);
-                                            int dp = 160;
-                                            int px = PictureUtils.dpTOPX(dp, getActivity());
-                                            Bitmap bitmap = Bitmap.createBitmap(thumbnail);
-                                            Bitmap bmp = Bitmap.createBitmap(thumbnail);
-                                            bmp = PictureUtils.scaleDown(bmp, px, true);
-                                            bitmap = PictureUtils.scaleDown(bitmap,px,true);
-                                            gameImageView.setImageBitmap(bmp);
-                                            blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
-                                            blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                                @Override
+                                public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
+                                    if (thumbnail != null) {
+                                        gameImageProgressBar.setVisibility(View.GONE);
+                                        int dp = 160;
+                                        int px = PictureUtils.dpTOPX(dp, getActivity());
+                                        Bitmap bitmap = Bitmap.createBitmap(thumbnail);
+                                        Bitmap bmp = Bitmap.createBitmap(thumbnail);
+                                        bmp = PictureUtils.scaleDown(bmp, px, true);
+                                        bitmap = PictureUtils.scaleDown(bitmap, px, true);
+                                        gameImageView.setImageBitmap(bmp);
+                                        blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                                        blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                                        }
-                                    }});
+                                    }
+                                }
+                            });
                             gameImageProgressBar.setVisibility(View.VISIBLE);
 
-                            if(searchResults.getImage().getSuper_url() != null){
+                            if (searchResults.getImage().getSuper_url() != null) {
                                 imageDownloadManager.queueThumbnail(0, searchResults.getImage().getSuper_url());
-                            }
-                            else if(searchResults.getImage().getThumb_url() != null) {
+                            } else if (searchResults.getImage().getThumb_url() != null) {
                                 imageDownloadManager.queueThumbnail(0, searchResults.getImage().getThumb_url());
                             }
-
-                        }else{
+                        }
+                        else{
                             gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
                             blurredGameImage.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
                             gameImageProgressBar.setVisibility(View.GONE);
@@ -425,7 +426,8 @@ public class EditGameFragment extends Fragment {
         upDateRealm.close();
     }
 
-    public void populateFields(RealmGame realmGame) {
+    public void populateFields(final RealmGame realmGame) {
+
         gameImageProgressBar.setVisibility(View.GONE);
 
         gameName.setText(realmGame.getName());
@@ -510,6 +512,7 @@ public class EditGameFragment extends Fragment {
 
                     }
                 }});
+
             imageDownloadManager.queueThumbnail(0, realmGame.getPhotoURL());
             gameImageProgressBar.setVisibility(View.VISIBLE);
         }
@@ -535,6 +538,16 @@ public class EditGameFragment extends Fragment {
         }
         else {
             gameDescriptionRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(imageDownloadManager != null) {
+            imageDownloadManager.imageDownloader.clearQueue();
+            imageDownloadManager.imageDownloader.quit();
         }
     }
 

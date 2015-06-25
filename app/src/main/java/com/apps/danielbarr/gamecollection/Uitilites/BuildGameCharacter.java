@@ -25,6 +25,9 @@ public class BuildGameCharacter {
         imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
             @Override
             public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
+                imageDownloadManager.imageDownloader.clearQueue();
+                imageDownloadManager.imageDownloader.quit();
+
                 int dp = 120;
                 int px = PictureUtils.dpTOPX(dp, activity);
 

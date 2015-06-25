@@ -12,7 +12,7 @@ public class SnackbarController {
     private Snackbar snackbar;
 
     public SnackbarController(View parent, String text) {
-        snackbar =  Snackbar.make(parent, "Saved Game", Snackbar.LENGTH_SHORT);
+        snackbar =  Snackbar.make(parent, text, Snackbar.LENGTH_SHORT);
         TextView textView = (TextView)snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
     }

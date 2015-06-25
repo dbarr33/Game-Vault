@@ -70,6 +70,7 @@ public class GiantGamesFragment extends DialogFragment {
 
 
                 if(giantDialogListAdapter.getImages().get(position) != null) {
+                    giantDialogListAdapter.clearQueue();
                     getDialog().dismiss();
                     EditGameFragment editGameFragment = EditGameFragment.newInstance(getArguments().getString("platform"),
                             giantDialogListAdapter.getImages().get(position), giantDialogListAdapter.getItem(position));

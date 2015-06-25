@@ -38,7 +38,7 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
         this.activity = activity;
         images = new ArrayList<>();
         hasLoaded = new ArrayList<>();
-        imageDownloadManager = new ImageDownloadManager();
+        imageDownloadManager = new ImageDownloadManager<Integer>();
         imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
             @Override
             public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
@@ -112,6 +112,12 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
 
         return convertView;
     }
+
+    public void clearQueue(){
+        imageDownloadManager.imageDownloader.clearQueue();
+        imageDownloadManager.imageDownloader.quit();
+    }
+
 
     private static class ViewHolder
     {

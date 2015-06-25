@@ -8,12 +8,15 @@ import android.os.Handler;
 public class ImageDownloadManager<Token> {
     public  ImageDownloader<Token> imageDownloader;
 
+    public ImageDownloadManager(){
+        imageDownloader = new ImageDownloader(new Handler());
+        imageDownloader.start();
+        imageDownloader.getLooper();
+
+    }
     public void setListener(ImageDownloader.Listener<Token> listener){
 
-        if(imageDownloader == null) {
-            init();
-        }
-        else {
+        if(imageDownloader != null) {
             imageDownloader.clearQueue();
         }
 
@@ -21,17 +24,7 @@ public class ImageDownloadManager<Token> {
     }
 
     public void queueThumbnail(Token position,String url) {
-        if(imageDownloader == null) {
-            init();
-        }
 
         imageDownloader.queueThumbnail(position, url);
     }
-
-    private  void init() {
-        imageDownloader = new ImageDownloader(new Handler());
-        imageDownloader.start();
-        imageDownloader.getLooper();
-    }
-
 }
