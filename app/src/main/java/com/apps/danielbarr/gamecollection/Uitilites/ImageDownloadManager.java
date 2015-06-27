@@ -15,16 +15,10 @@ public class ImageDownloadManager<Token> {
 
     }
     public void setListener(ImageDownloader.Listener<Token> listener){
-
-        if(imageDownloader != null) {
-            imageDownloader.clearQueue();
-        }
-
         imageDownloader.setListener(listener);
     }
 
     public void queueThumbnail(Token position,String url) {
-
         imageDownloader.queueThumbnail(position, url);
     }
 }

@@ -60,6 +60,10 @@ public class GameRecyclerListFragment extends Fragment {
     }
 
     public void updateGameList(String newPlatform) {
+        if(realm == null) {
+            realm = Realm.getInstance(getActivity());
+        }
+
         RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", newPlatform).equalTo("isDeleted", false).findAll();
 
         platform = newPlatform;

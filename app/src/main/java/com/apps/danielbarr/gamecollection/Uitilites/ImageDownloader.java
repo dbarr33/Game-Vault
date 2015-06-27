@@ -57,6 +57,13 @@ public class ImageDownloader<Token> extends HandlerThread {
     }
 
     public void queueThumbnail(Token token, String url) {
+        if(mHandler == null) {
+            try {
+                currentThread().sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         requestMap.put(token, url);
         mHandler.obtainMessage(MESSAGE_DOWNLOAD, token)
                 .sendToTarget();
