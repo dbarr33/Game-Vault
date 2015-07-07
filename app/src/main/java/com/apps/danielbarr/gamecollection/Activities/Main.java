@@ -39,6 +39,7 @@ import com.apps.danielbarr.gamecollection.Model.DrawerList;
 import com.apps.danielbarr.gamecollection.Model.FirstInstall;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
+import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.SimpleItemTouchHelperCallback;
 
@@ -66,7 +67,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
-
+        GameApplication.setContext(this);
         setContentView(R.layout.activity_main);
 
         Bundle args = new Bundle();
@@ -150,6 +151,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
 
 
     public void SelectItem(int position) {
+        gameRecyclerListFragment = (GameRecyclerListFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_game_list));
         gameRecyclerListFragment.updateGameList(drawerListAdapter.getDrawerList().get(position).getName());
         setTitle(drawerListAdapter.getDrawerList().get(position).getName());
         mDrawerLayout.closeDrawers();
@@ -260,6 +262,12 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         a.setDuration(500);
         //v.startAnimation(a);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onPause();
+        mDrawerLayout.closeDrawers();
     }
 
     public void createDrawerList()

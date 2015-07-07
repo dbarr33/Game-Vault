@@ -260,19 +260,13 @@ public class EditGameFragment extends Fragment {
                     SnackbarController snackbarController = new SnackbarController(v, "Updated Game");
                     snackbarController.show();
                 } else {
-                    for (int i = 0; i < 15; i++) {
-
-                        saveGame();
-                    }
-                        ScreenSetupController.currentScreenGameList(getActivity());
-                        SnackbarController snackbarController = new SnackbarController(v, "Saved Game");
-                        snackbarController.show();
-                        realm.close();
+                    saveGame();
+                    ScreenSetupController.currentScreenGameList(getActivity());
+                    SnackbarController snackbarController = new SnackbarController(v, "Saved Game");
+                    snackbarController.show();
+                    realm.close();
                 }
-            }
-            }
-
-            );
+            }});
 
             deleteGameButton.setOnClickListener(new View.OnClickListener()
 

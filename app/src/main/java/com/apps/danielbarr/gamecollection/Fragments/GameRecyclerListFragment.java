@@ -15,6 +15,7 @@ import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.RecyclerGameListAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.SnackbarController;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class GameRecyclerListFragment extends Fragment {
 
     public void updateGameList(String newPlatform) {
         if(realm == null) {
-            realm = Realm.getInstance(getActivity());
+            realm = Realm.getInstance(GameApplication.getContext());
         }
 
         RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", newPlatform).equalTo("isDeleted", false).findAll();

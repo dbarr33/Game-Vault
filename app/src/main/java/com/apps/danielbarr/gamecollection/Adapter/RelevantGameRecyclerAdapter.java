@@ -95,7 +95,6 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                     paint.getTextBounds(list.get(1), 0, list.get(1).length(), bounds);
 
                     int width = (int) Math.ceil( bounds.width());
-                    String[] lines = list.get(1).split(System.getProperty("line.separator"));
                     recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth());
 
                 }
