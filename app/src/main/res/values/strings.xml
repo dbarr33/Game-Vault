@@ -35,7 +35,7 @@
     <string name="edit_game_genre">Genre: </string>
     <string name="edit_game_user_rating">User Rating:</string>
     <string name="edit_game_ign_rating">IGN Rating:</string>
-    <string name="edit_game_completion_percentage">Completion :</string>
+    <string name="edit_game_completion_percentage">Completion: </string>
     <string name="save_game">Save Game</string>
     <string name="get_ign_info">Search</string>
     <string name="update_game">Update Game</string>

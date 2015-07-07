@@ -7,7 +7,7 @@ import io.realm.RealmObject;
  */
 public class FirstInstall extends RealmObject{
 
-    private static boolean isFirstInstall;
+    private boolean isFirstInstall;
 
     public boolean isFirstInstall() {
         return isFirstInstall;

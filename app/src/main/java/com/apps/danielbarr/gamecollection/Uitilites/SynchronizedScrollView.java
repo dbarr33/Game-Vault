@@ -1,6 +1,7 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
 import android.animation.Animator;
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
@@ -16,7 +17,6 @@ import com.apps.danielbarr.gamecollection.R;
  */
 public class SynchronizedScrollView extends ScrollView {
 
-    private View mAnchorView;
     private View mSyncView;
     private float position = new Float(0.0);
     private Button toTheTopButton;
@@ -33,7 +33,6 @@ public class SynchronizedScrollView extends ScrollView {
     public SynchronizedScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
         alphaValue = 1;
-
     }
 
     public SynchronizedScrollView(Context context, AttributeSet attrs, int defStyle) {
@@ -41,31 +40,29 @@ public class SynchronizedScrollView extends ScrollView {
         alphaValue = 0;
     }
 
-    public void setAnchorView(View v) {
-        mAnchorView = v;
-    }
-
-    public void setSynchronizedView(View v) {
-        mSyncView = v;
-    }
-
-    public void setToolbar(Toolbar toolbar) {
-        this.toolbar = toolbar;
+    public void init(Activity activity, View view){
+        toolbar = (Toolbar)activity.findViewById(R.id.editToolbar);
         toolbarTextView = (TextView)toolbar.findViewById(R.id.toolbar_title);
+        toTheTopButton = (Button)view.findViewById(R.id.backToTheTopButton);
+        mSyncView = view.findViewById(R.id.sync);
+
+        toTheTopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                smoothScrollTo(0, 0);
+                toTheTopButton.setVisibility(View.GONE);
+            }
+        });
     }
 
     public void setToolbarTitle(String toolbarTitle) {
         this.toolbarTitle = toolbarTitle;
     }
 
-    public void setToTheTopButton(Button toTheTopButton) {
-        this.toTheTopButton = toTheTopButton;
-    }
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        if(mAnchorView == null || mSyncView == null) {
+        if(mSyncView == null) {
             return;
         }
         position =  mSyncView.getTop() - (mSyncView.getTop() - mSyncView.getBottom()) ;
@@ -74,7 +71,7 @@ public class SynchronizedScrollView extends ScrollView {
     @Override
     protected void onScrollChanged(int l, final int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if(mAnchorView == null || mSyncView == null) {
+        if(mSyncView == null) {
             return;
         }
 
@@ -140,7 +137,12 @@ public class SynchronizedScrollView extends ScrollView {
     }
 
     public void setViewAlpha() {
-        mSyncView.setAlpha(alphaValue);
-        toolbar.setAlpha(1 - alphaValue);
+        if(mSyncView != null) {
+            mSyncView.setAlpha(alphaValue);
+        }
+
+        if(toolbar != null) {
+            toolbar.setAlpha(1 - alphaValue);
+        }
     }
 }

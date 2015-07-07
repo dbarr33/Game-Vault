@@ -1,10 +1,12 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -105,7 +107,6 @@ public class ImageDownloader<Token> extends HandlerThread {
     public byte[] getUrlBytes(String urlSpect)throws IOException {
         URL url = new URL(urlSpect);
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-
         try{
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             InputStream in = connection.getInputStream();

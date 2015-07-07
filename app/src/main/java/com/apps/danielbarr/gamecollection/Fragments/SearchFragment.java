@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 import com.apps.danielbarr.gamecollection.Old.John.JohnFragment;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 
@@ -33,16 +34,13 @@ public class SearchFragment extends DialogFragment {
 
     private TextView searchTextView;
     private Button searchButton;
-    private ProgressDialog mDialog;
     private boolean isBackgrounded = false;
-
-    public SearchFragment() {
-        mDialog = null;
-    }
+    private ApiHandler apiHandler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        apiHandler = new ApiHandler(getActivity());
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         getDialog().setTitle("Search Online Database");
@@ -59,9 +57,7 @@ public class SearchFragment extends DialogFragment {
                 searchText.toLowerCase();
 
                 if (searchTextView.getText().toString().equals("")) {
-
                     Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_SHORT).show();
-
                 }
                 else if(searchText.equals("is john gay")){
                     getFragmentManager().beginTransaction().hide(getFragmentManager()
@@ -72,41 +68,28 @@ public class SearchFragment extends DialogFragment {
                     imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
                     dismiss();
                 }
-                else if (InternetUtils.isNetworkAvailable(getActivity())) {
-                    mDialog = ProgressDialog.show(getActivity(), "Loading", "Wait while loading...");
-                    GiantBombRestClient.get().getSearchGiantBomb(GiantBombRestClient.key, GiantBombRestClient.json,
-                            searchTextView.getText().toString(), "game", 30, new Callback<SearchResponse>() {
-                                @Override
-                                public void success(SearchResponse SearchResponse, retrofit.client.Response response) {
-                                    mDialog.dismiss();
-                                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-                                            Context.INPUT_METHOD_SERVICE);
-                                    imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
-
-                                    android.app.FragmentManager fm = getActivity().getFragmentManager();
-                                    GiantGamesFragment dialog = GiantGamesFragment.newInstance(SearchResponse.getResults(), getArguments().getString(EXTRA_PASS_PLATFORM));
-                                    dialog.setTargetFragment(SearchFragment.this, REQUEST_CHOICE);
-                                    if (!isBackgrounded) {
-                                        dialog.show(fm, "TAG");
-                                        getDialog().dismiss();
-
-                                    }
-                                }
-
-                                @Override
-                                public void failure(RetrofitError error) {
-                                    mDialog.dismiss();
-                                    if (!InternetUtils.isNetworkAvailable(getActivity())) {
-                                        AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
-                                        dialog.show();
-                                    }
-                                    Log.e("Giant", error.getMessage());
-                                }
-                            });
-                }
                 else {
-                    AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
-                    dialog.show();
+                    apiHandler.getSearchGiantBomb(searchTextView.getText().toString(), new Callback<SearchResponse>() {
+                        @Override
+                        public void success(SearchResponse SearchResponse, retrofit.client.Response response) {
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                                    Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
+
+                            android.app.FragmentManager fm = getActivity().getFragmentManager();
+                            GiantGamesFragment dialog = GiantGamesFragment.newInstance(SearchResponse.getResults(), getArguments().getString(EXTRA_PASS_PLATFORM));
+                            dialog.setTargetFragment(SearchFragment.this, REQUEST_CHOICE);
+                            if (!isBackgrounded) {
+                                dialog.show(fm, "TAG");
+                                getDialog().dismiss();
+
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                        }
+                    });
                 }
             }
         });
@@ -117,9 +100,7 @@ public class SearchFragment extends DialogFragment {
     public void onPause() {
         super.onPause();
         isBackgrounded = true;
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
+        apiHandler.dismissDialog();
     }
 
     @Override

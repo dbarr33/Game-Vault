@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character.CharacterResponse;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
+import com.apps.danielbarr.gamecollection.R;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -27,9 +28,7 @@ public class BuildGameCharacter {
             public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
                 imageDownloadManager.imageDownloader.clearQueue();
                 imageDownloadManager.imageDownloader.quit();
-
-                int dp = 120;
-                int px = PictureUtils.dpTOPX(dp, activity);
+                int px = PictureUtils.dpTOPX(120, activity);
 
                 if (thumbnail != null) {
                     Bitmap bmp = PictureUtils.scaleDown(thumbnail, px, true);
@@ -39,31 +38,25 @@ public class BuildGameCharacter {
             }
         });
 
-        GiantBombRestClient.get().getCharacterGiantBomb(id, GiantBombRestClient.key, GiantBombRestClient.json,
-                new Callback<CharacterResponse>() {
-                    @Override
-                    public void success(CharacterResponse characterResponse, Response response) {
-                        if(characterResponse.getResults().getImage() != null) {
-                            imageDownloadManager.queueThumbnail(0, characterResponse.getResults().getImage().getThumb_url());
-                        }
+        ApiHandler apiHandler = new ApiHandler(activity);
+        apiHandler.getCharacterGiantBomb(realmCharacter.getID(), new Callback<CharacterResponse>() {
+            @Override
+            public void success(CharacterResponse characterResponse, Response response) {
+                if (characterResponse.getResults().getImage() != null) {
+                    imageDownloadManager.queueThumbnail(0, characterResponse.getResults().getImage().getThumb_url());
+                }
 
-                        if(characterResponse.getResults().getDescription() == null) {
-                            realmCharacter.setDescription("");
-                        }
-                        else {
-                            realmCharacter.setDescription(HTMLUtil.stripHtml(characterResponse.getResults().getDescription()));
-                        }
-                    }
+                if (characterResponse.getResults().getDescription() == null) {
+                    realmCharacter.setDescription("");
+                } else {
+                    realmCharacter.setDescription(HTMLUtil.stripHtml(characterResponse.getResults().getDescription()));
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (!InternetUtils.isNetworkAvailable(activity)) {
-                            AlertDialog.Builder dialog = InternetUtils.buildDialog(activity);
-                            dialog.show();
-                        }
-                        Log.e("Giant", error.getMessage());
-                        callback.failure(error);
-                    }
-                });
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
     }
 }

@@ -35,7 +35,6 @@ public class CharacterFragment extends Fragment {
     private RecyclerView characterDescriptionRecyclerView;
     private RealmCharacter realmCharacter;
     private SynchronizedScrollView mScrollView;
-    private Button backToTopButton;
 
     public static final String EXTRA_GIANTCHARACTER = "com.apps.danielbarr.gamecollection.character";
 
@@ -58,26 +57,14 @@ public class CharacterFragment extends Fragment {
         characterName = (TextView) v.findViewById(R.id.character_name_textField);
         characterDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.characterDescriptionsRecyclerView);
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.mScrollView);
-        backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
         realmCharacter = (RealmCharacter) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
         toolbar.setAlpha(0);
 
-        mScrollView.setToolbar(toolbar);
-        mScrollView.setAnchorView(v.findViewById(R.id.topView));
-        mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
-        mScrollView.setToTheTopButton(backToTopButton);
         mScrollView.setToolbarTitle(realmCharacter.getName());
-
-        backToTopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mScrollView.smoothScrollTo(0,0);
-                backToTopButton.setVisibility(View.GONE);
-            }
-        });
+        mScrollView.init(getActivity(), v);
 
         Bitmap bmp = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
         Bitmap bitmap = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);

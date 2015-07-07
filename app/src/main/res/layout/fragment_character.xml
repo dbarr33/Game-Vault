@@ -12,17 +12,6 @@
         android:orientation="vertical"
         android:id="@+id/characterContainer"
         >
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:id="@+id/topView"
-            android:visibility="gone"
-            android:animateLayoutChanges="true"
-            android:layout_alignTop="@+id/mScrollView"
-            android:orientation="vertical"
-            >
-        </LinearLayout>
 
         <com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView
             xmlns:android="http://schemas.android.com/apk/res/android"

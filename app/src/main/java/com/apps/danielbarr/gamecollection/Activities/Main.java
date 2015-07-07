@@ -11,7 +11,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,15 +23,14 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.apps.danielbarr.gamecollection.DragAndDropList.DragListener;
-import com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropAdapter;
-import com.apps.danielbarr.gamecollection.DragAndDropList.DragNDropListView;
-import com.apps.danielbarr.gamecollection.DragAndDropList.DropListener;
-import com.apps.danielbarr.gamecollection.DragAndDropList.RemoveListener;
+import com.apps.danielbarr.gamecollection.Adapter.DrawerListAdapter;
+import com.apps.danielbarr.gamecollection.Old.DragAndDropList.DragListener;
+import com.apps.danielbarr.gamecollection.Old.DragAndDropList.DragNDropAdapter;
+import com.apps.danielbarr.gamecollection.Old.DragAndDropList.DropListener;
+import com.apps.danielbarr.gamecollection.Old.DragAndDropList.RemoveListener;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
 import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
@@ -38,27 +40,26 @@ import com.apps.danielbarr.gamecollection.Model.FirstInstall;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
+import com.apps.danielbarr.gamecollection.Uitilites.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class Main extends ActionBarActivity {
+public class Main extends ActionBarActivity implements DrawerListAdapter.OnStartDragListner, DrawerListAdapter.OnDrawerClickListener{
 
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    private RecyclerView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ActionBar actionBar;
     private GameRecyclerListFragment gameRecyclerListFragment;
-    private DragNDropAdapter adapter;
+    private DrawerListAdapter drawerListAdapter;
     private Realm realm;
     private FloatingActionButton floatingActionButton;
-
-    ArrayList<DrawerItem> dataList;
+    private ItemTouchHelper mItemTouchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,38 +87,29 @@ public class Main extends ActionBarActivity {
         });
 
         // Initializing
-        dataList = new ArrayList<>();
         mDrawerTitle  = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (DragNDropListView) findViewById(R.id.dropAndDragDrawer);
+        mDrawerList = (RecyclerView)findViewById(R.id.drawerList);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
         realm = Realm.getInstance(getApplicationContext());
         RealmResults<FirstInstall> realmResults = realm.where(FirstInstall.class).findAll();
 
-        if(realmResults.isEmpty())
-        {
+        if(realmResults.isEmpty()) {
             createDrawerList();
         }
 
         RealmResults<DrawerItem> drawerItems = realm.allObjects(DrawerItem.class);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        for(int i =0; i < drawerItems.size(); i++)
-        {
-            dataList.add(drawerItems.get(i));
-        }
+        drawerListAdapter = new DrawerListAdapter(drawerItems, this, this, this);
+        mDrawerList.setLayoutManager(linearLayoutManager);
+        mDrawerList.setAdapter(drawerListAdapter);
 
-        adapter = new DragNDropAdapter(getApplicationContext(), dataList);
-
-        mDrawerList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-
-        if (mDrawerList instanceof DragNDropListView) {
-            ((DragNDropListView) mDrawerList).setDropListener(mDropListener);
-            ((DragNDropListView) mDrawerList).setRemoveListener(mRemoveListener);
-            ((DragNDropListView) mDrawerList).setDragListener(mDragListener);
-        }
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(drawerListAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mDrawerList);
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -131,20 +123,18 @@ public class Main extends ActionBarActivity {
             public void onDrawerClosed(View view) {
                 actionBar.setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
                 actionBar.setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to
-                // onPrepareOptionsMenu()
             }
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         gameRecyclerListFragment = new GameRecyclerListFragment();
-        mTitle = dataList.get(0).getName();
+        mTitle = drawerItems.get(0).getName();
         args.putString(GameRecyclerListFragment.GAME_PLATFORM, mTitle.toString());
 
         gameRecyclerListFragment.setArguments(args);
@@ -154,20 +144,15 @@ public class Main extends ActionBarActivity {
                     .commit();
         }
 
-        getSupportActionBar().setTitle(dataList.get(0).getName());
-        mDrawerList.setItemChecked(0,true);
+        getSupportActionBar().setTitle(drawerItems.get(0).getName());
     }
 
 
 
     public void SelectItem(int position) {
-
-        gameRecyclerListFragment.updateGameList(dataList.get(position).getName());
-
-        mDrawerList.setItemChecked(position, true);
-        setTitle(dataList.get(position).getName());
-        mDrawerLayout.closeDrawer(mDrawerList);
-
+        gameRecyclerListFragment.updateGameList(drawerListAdapter.getDrawerList().get(position).getName());
+        setTitle(drawerListAdapter.getDrawerList().get(position).getName());
+        mDrawerLayout.closeDrawers();
     }
 
     @Override
@@ -205,7 +190,6 @@ public class Main extends ActionBarActivity {
                     return true;
                 }
         }
-
         return false;
     }
 
@@ -234,107 +218,22 @@ public class Main extends ActionBarActivity {
                 ScreenSetupController.currentScreenGameList(this);
                 ((EditGameFragment)getFragmentManager().findFragmentByTag(getResources().getString(R.string.fragment_edit_game))).realm.close();
             }
-
         }else {
             super.onBackPressed();
         }
     }
 
-    private class DrawerItemClickListener implements
-            ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            if (dataList.get(position).getName() != null) {
-                SelectItem(position);
-            }
-
-        }
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 
-    private DropListener mDropListener =
-            new DropListener() {
-                public void onDrop(int from, int to) {
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-                    ListAdapter adapter = mDrawerList.getAdapter();
-                    if (adapter instanceof DragNDropAdapter) {
-
-                        realm.beginTransaction();
-
-                        RealmResults<DrawerItem> results = realm.allObjects(DrawerItem.class);
-
-                        String tempName  = results.get(from).getName();
-                        int tempIcon = results.get(from).getIconID();
-
-                        if(to - from >= 0) {
-                            for (int i = from; i < to ; i++) {
-                                results.get(i).setName(results.get(i + 1).getName());
-                                results.get(i).setIconID(results.get(i + 1).getIconID());
-                            }
-                        }
-                        else {
-                            for (int i = from; i > to ; i--)
-                            {
-                                results.get(i).setName(results.get(i - 1).getName());
-                                results.get(i).setIconID(results.get(i-1).getIconID());                            }
-                        }
-                        results.get(to).setName(tempName);
-                        results.get(to).setIconID(tempIcon);
-
-                        realm.commitTransaction();
-                        ((DragNDropAdapter) adapter).notifyDataSetChanged();
-                    }
-                }
-            };
-
-    private RemoveListener mRemoveListener =
-            new RemoveListener() {
-                public void onRemove(int which) {
-                    ListAdapter adapter = mDrawerList.getAdapter();
-                    if (adapter instanceof DragNDropAdapter) {
-                        ((DragNDropAdapter)adapter).onRemove(which);
-                    }
-                }
-            };
-
-    private DragListener mDragListener =
-            new DragListener() {
-
-                int backgroundColor = 0xe0103010;
-                int defaultBackground = 0;
-
-                public void onDrag(int x, int y, ListView listView) {
-
-                }
-
-                public void onStartDrag(View itemView) {
-
-                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-                    itemView.setVisibility(View.INVISIBLE);
-                    defaultBackground = itemView.getDrawingCacheBackgroundColor();
-                    itemView.setBackgroundColor(backgroundColor);
-                    TextView textView = (TextView)itemView.findViewById(R.id.drawer_item_platformName);
-                    textView.setTextColor(getResources().getColor(android.R.color.white));
-                    ImageView iv = (ImageView)itemView.findViewById(R.id.drawer_item_dragIcon);
-                    if (iv != null) iv.setVisibility(View.INVISIBLE);
-                }
-
-                public void onStopDrag(View itemView) {
-                    mDrawerList.setSelector(R.drawable.drawer_states);
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        itemView.setBackground(getResources().getDrawable(R.drawable.drawer_states));
-                    }
-                    else
-                    {
-                        itemView.setDrawingCacheBackgroundColor(defaultBackground);
-                    }
-                    itemView.setVisibility(View.VISIBLE);
-                    TextView textView = (TextView)itemView.findViewById(R.id.drawer_item_platformName);
-                    textView.setTextColor(getResources().getColorStateList(R.color.drawer_text_states));
-                    ImageView iv = (ImageView)itemView.findViewById(R.id.drawer_item_dragIcon);
-                    if (iv != null) iv.setVisibility(View.VISIBLE);
-                }
-            };
+    @Override
+    public void onClick(int position) {
+        if (((DrawerListAdapter)mDrawerList.getAdapter()).getDrawerList().get(position).getName() != null) {
+            SelectItem(position);
+        }
+    }
 
     public static void collapse(final View v) {
         final int initialHeight = v.getMeasuredHeight();

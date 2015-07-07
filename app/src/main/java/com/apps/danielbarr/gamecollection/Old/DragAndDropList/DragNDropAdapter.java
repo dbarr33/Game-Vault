@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.apps.danielbarr.gamecollection.DragAndDropList;
+package com.apps.danielbarr.gamecollection.Old.DragAndDropList;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -51,6 +51,11 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
         this.platform = platform;
     }
 
+    public void removeGame(int position) {
+        realmGames.remove(position);
+        maxSize = realmGames.size();
+    }
+
     @Override
     public GameViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
@@ -107,7 +112,6 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
                     }
                 }
             });
-
         }
     }
 

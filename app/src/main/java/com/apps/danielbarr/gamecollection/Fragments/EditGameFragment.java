@@ -35,6 +35,7 @@ import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
 import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloadManager;
@@ -65,14 +66,12 @@ public class EditGameFragment extends Fragment {
     public static final String EXTRA_PLATFORM = "com.apps.danielbarr.gamecollection.platform";
     public static final String EXTRA_SEARCH = "com.apps.danielbarr.gamecollection.search";
 
-    private Button backToTopButton;
     private ImageButton deleteGameButton;
     private ImageButton saveGameButton;
     private ImageView gameImageView;
     private ImageView blurredGameImage;
     private TextView gameName;
     private TextView completionPercentage;
-    private TextView topViewGameName;
     private RatingBar userRatingBar;
     public Realm realm;
     private Spinner platformSpinner;
@@ -137,11 +136,9 @@ public class EditGameFragment extends Fragment {
         charactersRecyclerView = (RecyclerView)v.findViewById(R.id.edit_characterRecyclerView);
         recyclerLayout = (LinearLayout)v.findViewById(R.id.recyclerviewLayout);
         gameImageProgressBar = (ProgressBar)v.findViewById(R.id.gameImageProgressBar);
-        topViewGameName = (TextView)v.findViewById(R.id.topViewGameName);
         relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclerView);
         gameDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclerView);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclerView);
-        backToTopButton = (Button)v.findViewById(R.id.backToTheTopButton);
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
         toolbar.setAlpha(0);
@@ -149,110 +146,86 @@ public class EditGameFragment extends Fragment {
         ((Main)getActivity()).setSupportActionBar(toolbar);
 
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
-        mScrollView.setToolbar(toolbar);
-        mScrollView.setAnchorView(v.findViewById(R.id.topView));
-        mScrollView.setSynchronizedView(v.findViewById(R.id.sync));
-        mScrollView.setToTheTopButton(backToTopButton);
+        mScrollView.init(getActivity(), v);
 
         if(gamePosition == -1) {
             gamePosition = -2;
             ScreenSetupController.currentScreenEditGame(getActivity(), true);
-            if (InternetUtils.isNetworkAvailable(getActivity())) {
-                final Dialog mDialog = ProgressDialog.show(getActivity(), "Loading", "Wait while loading...");
-
-                GiantBombRestClient.get().getGameGiantBomb(searchResults.getId(), GiantBombRestClient.key , GiantBombRestClient.json,
-                        new Callback<GameResponse>() {
-                    @Override
-                    public void success(GameResponse gameResponse, Response response) {
-
-                        if(searchResults.getImage() != null) {
-                            imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
-                                @Override
-                                public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
-                                    if (thumbnail != null) {
-                                        gameImageProgressBar.setVisibility(View.GONE);
-                                        int dp = 160;
-                                        int px = PictureUtils.dpTOPX(dp, getActivity());
-                                        Bitmap bitmap = Bitmap.createBitmap(thumbnail);
-                                        Bitmap bmp = Bitmap.createBitmap(thumbnail);
-                                        bmp = PictureUtils.scaleDown(bmp, px, true);
-                                        bitmap = PictureUtils.scaleDown(bitmap, px, true);
-                                        gameImageView.setImageBitmap(bmp);
-                                        blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
-                                        blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                                    }
-                                }
-                            });
-                            gameImageProgressBar.setVisibility(View.VISIBLE);
-
-                            if (searchResults.getImage().getSuper_url() != null) {
-                                imageDownloadManager.queueThumbnail(0, searchResults.getImage().getSuper_url());
-                            } else if (searchResults.getImage().getThumb_url() != null) {
-                                imageDownloadManager.queueThumbnail(0, searchResults.getImage().getThumb_url());
+            ApiHandler apiHandler = new ApiHandler(getActivity());
+            apiHandler.getGameGiantBomb(searchResults.getId(), new Callback<GameResponse>(){
+                @Override
+                public void success(GameResponse gameResponse, Response response) {
+                    if(searchResults.getImage() != null) {
+                        imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
+                            @Override
+                            public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
+                            if (thumbnail != null) {
+                                gameImageProgressBar.setVisibility(View.GONE);
+                                int px = PictureUtils.dpTOPX(160, getActivity());
+                                Bitmap bitmap = Bitmap.createBitmap(thumbnail);
+                                Bitmap bmp = Bitmap.createBitmap(thumbnail);
+                                bmp = PictureUtils.scaleDown(bmp, px, true);
+                                bitmap = PictureUtils.scaleDown(bitmap, px, true);
+                                gameImageView.setImageBitmap(bmp);
+                                blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
+                                blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
                             }
-                        }
-                        else{
-                            gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
-                            blurredGameImage.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
-                            gameImageProgressBar.setVisibility(View.GONE);
-                        }
-
-                        if(gameResponse.getResults().getGameGenres() != null) {
-                            ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().getGameGenres()));
-                            RelevantGameRecyclerAdapter genreRecyclerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
-                                    gameGenresRecyclerView);
-                            gameGenresRecyclerView.setAdapter(genreRecyclerAdapter);
-                        }
-                        else {
-                            gameGenresRecyclerView.setVisibility(View.GONE);
-                        }
-
-                        if(gameResponse.getResults().getSimilar_games() != null) {
-                            ArrayList<String> similarGamesList = StringArrayListBuilder.createArryList("Similar Games", ((ArrayList) gameResponse.getResults().similar_games));
-                            RelevantGameRecyclerAdapter similarGamesRecyclerAdapter = new RelevantGameRecyclerAdapter(similarGamesList, getActivity(),
-                                    relevantGamesRecyclerView);
-                            relevantGamesRecyclerView.setAdapter(similarGamesRecyclerAdapter);
-                        }
-                        else {
-                            relevantGamesRecyclerView.setVisibility(View.GONE);
-                        }
-
-                        if(gameResponse.getResults().getGameCharacters() != null) {
-                            GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
-
-                            if(gameResponse.getResults().getGameCharacters().size() <= 10) {
-                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(gameResponse.getResults().getGameCharacters(), getActivity());
                             }
-                            else {
-                                gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(gameResponse.getResults().getGameCharacters().subList(0, 10)), getActivity());
-                            }
-                            charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
-                        }
-                        else {
-                            recyclerLayout.setVisibility(View.GONE);
-                        }
+                        });
+                        gameImageProgressBar.setVisibility(View.VISIBLE);
 
-                        mDialog.dismiss();
+                        if (searchResults.getImage().getSuper_url() != null) {
+                            imageDownloadManager.queueThumbnail(0, searchResults.getImage().getSuper_url());
+                        } else if (searchResults.getImage().getThumb_url() != null) {
+                            imageDownloadManager.queueThumbnail(0, searchResults.getImage().getThumb_url());
+                        }
+                    }
+                    else{
+                        gameImageView.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
+                        blurredGameImage.setImageDrawable(getResources().getDrawable(R.drawable.box_art));
+                        gameImageProgressBar.setVisibility(View.GONE);
                     }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        mDialog.dismiss();
-
-                        if (!InternetUtils.isNetworkAvailable(getActivity())) {
-                            AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
-                            dialog.show();
-                        }
-                        Log.e("Giant", error.getMessage());
+                    if(gameResponse.getResults().getGameGenres() != null) {
+                        ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().getGameGenres()));
+                        RelevantGameRecyclerAdapter genreRecyclerAdapter = new RelevantGameRecyclerAdapter(genreList, getActivity(),
+                                gameGenresRecyclerView);
+                        gameGenresRecyclerView.setAdapter(genreRecyclerAdapter);
+                    }
+                    else {
+                        gameGenresRecyclerView.setVisibility(View.GONE);
                     }
 
-                });
-            }
-            else {
-                AlertDialog.Builder dialog = InternetUtils.buildDialog(getActivity());
-                dialog.show();
-            }
+                    if(gameResponse.getResults().getSimilar_games() != null) {
+                        ArrayList<String> similarGamesList = StringArrayListBuilder.createArryList("Similar Games", ((ArrayList) gameResponse.getResults().similar_games));
+                        RelevantGameRecyclerAdapter similarGamesRecyclerAdapter = new RelevantGameRecyclerAdapter(similarGamesList, getActivity(),
+                                relevantGamesRecyclerView);
+                        relevantGamesRecyclerView.setAdapter(similarGamesRecyclerAdapter);
+                    }
+                    else {
+                        relevantGamesRecyclerView.setVisibility(View.GONE);
+                    }
+
+                    if(gameResponse.getResults().getGameCharacters() != null) {
+                        GameCharactersRecyclerAdapter gameCharactersRecyclerAdapter;
+
+                        if(gameResponse.getResults().getGameCharacters().size() <= 10) {
+                            gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter(gameResponse.getResults().getGameCharacters(), getActivity());
+                        }
+                        else {
+                            gameCharactersRecyclerAdapter = new GameCharactersRecyclerAdapter( new ArrayList<>(gameResponse.getResults().getGameCharacters().subList(0, 10)), getActivity());
+                        }
+                        charactersRecyclerView.setAdapter(gameCharactersRecyclerAdapter);
+                    }
+                    else {
+                        recyclerLayout.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                }
+            });
 
             populateFromSearch(searchResults);
         }
@@ -287,26 +260,25 @@ public class EditGameFragment extends Fragment {
                     SnackbarController snackbarController = new SnackbarController(v, "Updated Game");
                     snackbarController.show();
                 } else {
-                    saveGame();
-                    ScreenSetupController.currentScreenGameList(getActivity());
-                    SnackbarController snackbarController = new SnackbarController(v, "Saved Game");
-                    snackbarController.show();
-                    realm.close();
+                    for (int i = 0; i < 15; i++) {
+
+                        saveGame();
+                    }
+                        ScreenSetupController.currentScreenGameList(getActivity());
+                        SnackbarController snackbarController = new SnackbarController(v, "Saved Game");
+                        snackbarController.show();
+                        realm.close();
                 }
             }
-        });
-
-        backToTopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mScrollView.smoothScrollTo(0,0);
-                backToTopButton.setVisibility(View.GONE);
             }
-        });
 
-        deleteGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            );
+
+            deleteGameButton.setOnClickListener(new View.OnClickListener()
+
+            {
+                @Override
+                public void onClick (View v){
                 realm.beginTransaction();
                 RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", currentPlatform).equalTo("isDeleted", false).findAll();
                 storedRealmGames.get(gamePosition).setDeleted(true);
@@ -431,7 +403,6 @@ public class EditGameFragment extends Fragment {
         gameImageProgressBar.setVisibility(View.GONE);
 
         gameName.setText(realmGame.getName());
-        topViewGameName.setText(realmGame.getName());
         userRatingBar.setRating(realmGame.getUserRating());
         completionPercentage.setText(Float.toString(realmGame.getCompletionPercentage()));
 
@@ -523,7 +494,6 @@ public class EditGameFragment extends Fragment {
 
     public void populateFromSearch(GiantBombSearch giantBombSearch) {
         gameName.setText(giantBombSearch.getName());
-        topViewGameName.setText(giantBombSearch.getName());
         completionPercentage.setText(Float.toString(0));
 
         if(giantBombSearch.getDescription() != null) {

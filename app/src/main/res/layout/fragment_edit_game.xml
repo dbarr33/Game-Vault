@@ -13,26 +13,6 @@
     android:background="@android:color/white"
     android:layout_centerInParent="true"
     >
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:gravity="center"
-    android:id="@+id/topView"
-    android:visibility="gone"
-    android:animateLayoutChanges="true"
-    android:layout_alignTop="@+id/scroll"
-       >
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/primary"
-        android:ellipsize="end"
-        android:lines="1"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:id="@+id/topViewGameName"/>
-</LinearLayout>
 
 <com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView
     android:layout_width="match_parent"

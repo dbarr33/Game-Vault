@@ -7,7 +7,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.BaseObject;
 
  */
 public class GameCharacter extends BaseObject {
-    int id;
+    private int id;
 
     public int getId() {
         return id;
