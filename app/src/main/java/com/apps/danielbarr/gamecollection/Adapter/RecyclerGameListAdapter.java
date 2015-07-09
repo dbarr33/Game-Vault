@@ -56,6 +56,11 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
         maxSize = realmGames.size();
     }
 
+    public void addGame(int position, RealmGame game) {
+        realmGames.add(position, game);
+        maxSize = realmGames.size();
+    }
+
     @Override
     public GameViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 

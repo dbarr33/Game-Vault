@@ -9,14 +9,13 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.RecyclerGameListAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
-import com.apps.danielbarr.gamecollection.Uitilites.SnackbarController;
+import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
 
 import java.util.ArrayList;
 
@@ -105,17 +104,36 @@ public class GameRecyclerListFragment extends Fragment {
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
                 // callback for swipe to dismiss, removing item from data and adapter
+                final int position = viewHolder.getAdapterPosition();
                 realm.beginTransaction();
                 RealmResults<RealmGame> storedRealmGames = realm.where(RealmGame.class).equalTo("platform", platform).equalTo("isDeleted", false).findAll();
-                storedRealmGames.get(viewHolder.getPosition()).setDeleted(true);
+                final RealmGame realmGame= storedRealmGames.get(position);
+                realmGame.setDeleted(true);
                 realm.commitTransaction();
 
-                recyclerGameListAdapter.removeGame(viewHolder.getPosition());
-                recyclerGameListAdapter.notifyItemRemoved(viewHolder.getPosition());
-                SnackbarController snackbarController = new SnackbarController(viewHolder.itemView, "Game Deleted");
-                snackbarController.show();
+                recyclerGameListAdapter.removeGame(position);
+                recyclerGameListAdapter.notifyItemRemoved(position);
+                SnackbarBuilder snackbarBuilder = new SnackbarBuilder(viewHolder.itemView, "Game Deleted");
+                snackbarBuilder.setOnClickListner(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        realm.beginTransaction();
+                        realmGame.setDeleted(false);
+                        realm.commitTransaction();
+                        recyclerGameListAdapter.addGame(position, realmGame
+                        );
+                        recyclerGameListAdapter.notifyItemInserted(position);
+                        if(position == 0) {
+                            gameListRecycler.scrollToPosition(position);
+                        }
+                        else if(position == recyclerGameListAdapter.getItemCount() -1) {
+                            gameListRecycler.scrollToPosition(position);
+                        }
+                    }
+                });
+                snackbarBuilder.show();
             }
         });
         swipeToDismissTouchHelper.attachToRecyclerView(gameListRecycler);

@@ -1,23 +1,17 @@
 package com.apps.danielbarr.gamecollection.Fragments;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,14 +30,12 @@ import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
-import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
 import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloadManager;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloader;
-import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
-import com.apps.danielbarr.gamecollection.Uitilites.SnackbarController;
+import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.StringArrayListBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 
@@ -257,13 +249,13 @@ public class EditGameFragment extends Fragment {
                 if (gamePosition != -1 && gamePosition != -2) {
                     upDateGame();
                     ScreenSetupController.currentScreenGameList(getActivity());
-                    SnackbarController snackbarController = new SnackbarController(v, "Updated Game");
-                    snackbarController.show();
+                    SnackbarBuilder snackbarBuilder = new SnackbarBuilder(v, "Updated Game");
+                    snackbarBuilder.show();
                 } else {
                     saveGame();
                     ScreenSetupController.currentScreenGameList(getActivity());
-                    SnackbarController snackbarController = new SnackbarController(v, "Saved Game");
-                    snackbarController.show();
+                    SnackbarBuilder snackbarBuilder = new SnackbarBuilder(v, "Saved Game");
+                    snackbarBuilder.show();
                     realm.close();
                 }
             }});
@@ -278,8 +270,8 @@ public class EditGameFragment extends Fragment {
                 storedRealmGames.get(gamePosition).setDeleted(true);
                 realm.commitTransaction();
                 ScreenSetupController.currentScreenGameList(getActivity());
-                SnackbarController snackbarController = new SnackbarController(v, "Deleted Game");
-                snackbarController.show();
+                SnackbarBuilder snackbarBuilder = new SnackbarBuilder(v, "Deleted Game");
+                snackbarBuilder.show();
             }
         });
 
