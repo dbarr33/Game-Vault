@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.apps.danielbarr.gamecollection.Adapter.GiantDialogListAdapter;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
+import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 
 import java.util.ArrayList;
 
@@ -75,18 +77,15 @@ public class GiantGamesFragment extends DialogFragment {
                     EditGameFragment editGameFragment = EditGameFragment.newInstance(getArguments().getString("platform"),
                             giantDialogListAdapter.getImages().get(position), giantDialogListAdapter.getItem(position));
 
-                    getActivity().getFragmentManager().beginTransaction().hide(getActivity().getFragmentManager()
-                            .findFragmentByTag(getResources().getString(R.string.fragment_game_list)))
-                            .commit();
-                    getActivity().getFragmentManager().beginTransaction()
-                            .add(R.id.content_frame, editGameFragment, getResources().getString(R.string.fragment_edit_game))
-                            .addToBackStack(null).commit();
+                    HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(getActivity(), GameRecyclerListFragment.class.getName());
+                    hideFragmentCommand.execute();
+                    AddFragmentCommand addFragmentCommand = new AddFragmentCommand(editGameFragment, getActivity());
+                    addFragmentCommand.execute();
                 }
                 else {
                     Toast.makeText(getActivity().getApplicationContext(), "Wait for " + giantDialogListAdapter.getItem(position).getName() + " to load",
                             Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 

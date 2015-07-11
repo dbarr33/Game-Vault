@@ -13,11 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
+import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.BuildGameCharacter;
-import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
+import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,10 +113,10 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         public void onItemClick(View v, int position) {
 
             if(realmCharacters.get(position).isPhotosLoaded()) {
-                FragmentController fragmentController = new FragmentController(activity.getFragmentManager());
-                fragmentController.hideFramentCommand(activity.getResources().getString(R.string.fragment_edit_game));
-                fragmentController.addFragmentCommand(CharacterFragment.newInstance(realmCharacters.get(position)),
-                        activity.getResources().getString(R.string.fragment_character));
+                HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(activity, EditGameFragment.class.getName());
+                hideFragmentCommand.execute();
+                AddFragmentCommand addFragmentCommand = new AddFragmentCommand(CharacterFragment.newInstance(realmCharacters.get(position)), activity);
+                addFragmentCommand.execute();
             }
             else {
                 Toast.makeText(activity.getApplicationContext(),  "Wait for " + realmCharacters.get(position).getName() + " to load",

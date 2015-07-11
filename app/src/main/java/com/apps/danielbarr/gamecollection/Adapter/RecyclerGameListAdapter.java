@@ -12,9 +12,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
+import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
-import com.apps.danielbarr.gamecollection.Uitilites.FragmentController;
+import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
+import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 
 import java.util.ArrayList;
 
@@ -27,7 +29,6 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
     private OnItemClickListener onClickListener;
     private int maxSize;
     private String platform;
-    ArrayList<ImageView> imageViews;
 
     public RecyclerGameListAdapter(ArrayList<RealmGame> realmGames, final Activity activity, final String console) {
         this.realmGames = realmGames;
@@ -39,10 +40,10 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
             @Override
             public void onItemClick(View view, int position) {
 
-                FragmentController fragmentController = new FragmentController(activity.getFragmentManager());
-                fragmentController.hideFramentCommand(activity.getResources().getString(R.string.fragment_game_list));
-                fragmentController.addFragmentCommand(EditGameFragment.newInstance(platform, position),
-                        activity.getResources().getString(R.string.fragment_edit_game));
+                AddFragmentCommand addFragmentCommand = new AddFragmentCommand(EditGameFragment.newInstance(platform, position), activity);
+                addFragmentCommand.execute();
+                HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(activity, GameRecyclerListFragment.class.getName());
+                hideFragmentCommand.execute();
             }
         });
     }

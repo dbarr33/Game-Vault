@@ -1,11 +1,8 @@
 package com.apps.danielbarr.gamecollection.Fragments;
 
-import android.app.AlertDialog;
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +15,6 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 import com.apps.danielbarr.gamecollection.Old.John.JohnFragment;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
-import com.apps.danielbarr.gamecollection.Uitilites.GiantBombRestClient;
-import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -61,7 +56,7 @@ public class SearchFragment extends DialogFragment {
                 }
                 else if(searchText.equals("is john gay")){
                     getFragmentManager().beginTransaction().hide(getFragmentManager()
-                            .findFragmentByTag(getResources().getString(R.string.fragment_game_list))).commit();
+                            .findFragmentByTag(GameRecyclerListFragment.class.getName())).commit();
                     getFragmentManager().beginTransaction().add(R.id.content_frame, new JohnFragment(), "John").addToBackStack(null).commit();
 
                     InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -44,10 +44,4 @@
     <string name="actionbar__color_action_down">#4b4949</string>
     <string name="actionbar_color_action_up">#22222222</string>
 
-    //Fragments
-    <string name="fragment_edit_game">EditGameFragment</string>
-    <string name="fragment_game_list">GameListFragment</string>
-    <string name="fragment_character">CharacterFragment</string>
-
-
 </resources>

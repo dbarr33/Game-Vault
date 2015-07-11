@@ -83,6 +83,14 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListAdapter.Dr
             }
         });
 
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onStartDragListner.onStartDrag(holder);
+                return false;
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -48,12 +48,11 @@ public class ScreenSetupController {
         DrawerLayout mDrawerLayout = (DrawerLayout)activity.findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-        FragmentController fragmentController = new FragmentController(activity.getFragmentManager());
-        fragmentController.showFramentCommand(activity.getResources().getString(R.string.fragment_game_list));
-
-        GameRecyclerListFragment gameRecyclerListFragment = (GameRecyclerListFragment)activity.getFragmentManager()
-                .findFragmentByTag(activity.getResources().getString(R.string.fragment_game_list));
-        gameRecyclerListFragment.notifyDataSetChanged();
         activity.getFragmentManager().popBackStack();
+        ShowFragmentCommand showFragmentCommand = new ShowFragmentCommand(activity, GameRecyclerListFragment.class.getName());
+        showFragmentCommand.execute();
+        GameRecyclerListFragment gameRecyclerListFragment = (GameRecyclerListFragment)activity.getFragmentManager()
+                .findFragmentByTag(GameRecyclerListFragment.class.getName());
+        gameRecyclerListFragment.notifyDataSetChanged();
     }
 }

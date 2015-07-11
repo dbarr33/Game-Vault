@@ -115,7 +115,7 @@ public class GameRecyclerListFragment extends Fragment {
 
                 recyclerGameListAdapter.removeGame(position);
                 recyclerGameListAdapter.notifyItemRemoved(position);
-                SnackbarBuilder snackbarBuilder = new SnackbarBuilder(viewHolder.itemView, "Game Deleted");
+                SnackbarBuilder snackbarBuilder = new SnackbarBuilder(viewHolder.itemView, "Deleted Game");
                 snackbarBuilder.setOnClickListner(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
