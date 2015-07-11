@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Game Collection</string>
+    <string name="app_name">Game Storage</string>
 
     <string name="ps4_drawer_title">PS4</string>
     <string name="ps3_drawer_title">PS3</string>

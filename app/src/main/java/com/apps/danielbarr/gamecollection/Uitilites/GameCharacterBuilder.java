@@ -1,9 +1,8 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.graphics.drawable.BitmapDrawable;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character.CharacterResponse;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
@@ -16,7 +15,7 @@ import retrofit.client.Response;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class BuildGameCharacter {
+public class GameCharacterBuilder {
 
     public static void getCharacterInfo(int id, String name, final Callback<RealmCharacter> callback, final Activity activity ) {
         final ImageDownloadManager<Integer> imageDownloadManager = new ImageDownloadManager();
@@ -34,6 +33,12 @@ public class BuildGameCharacter {
                     Bitmap bmp = PictureUtils.scaleDown(thumbnail, px, true);
                     realmCharacter.setPhoto(PictureUtils.convertBitmapToByteArray(bmp));
                 }
+                else {
+                    byte[] picture =  PictureUtils
+                            .convertBitmapToByteArray(((BitmapDrawable) activity.getResources().getDrawable(R.drawable.default_character)).getBitmap());
+                    realmCharacter.setPhoto(picture);
+                    callback.success(realmCharacter, null);
+                }
                 callback.success(realmCharacter, null);
             }
         });
@@ -44,6 +49,12 @@ public class BuildGameCharacter {
             public void success(CharacterResponse characterResponse, Response response) {
                 if (characterResponse.getResults().getImage() != null) {
                     imageDownloadManager.queueThumbnail(0, characterResponse.getResults().getImage().getThumb_url());
+                }
+                else {
+                    byte[] picture =  PictureUtils
+                            .convertBitmapToByteArray(((BitmapDrawable) activity.getResources().getDrawable(R.drawable.default_character)).getBitmap());
+                    realmCharacter.setPhoto(picture);
+                    callback.success(realmCharacter, response);
                 }
 
                 if (characterResponse.getResults().getDescription() == null) {

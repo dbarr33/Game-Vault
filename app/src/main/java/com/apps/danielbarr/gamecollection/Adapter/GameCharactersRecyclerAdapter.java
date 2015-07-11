@@ -18,7 +18,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
-import com.apps.danielbarr.gamecollection.Uitilites.BuildGameCharacter;
+import com.apps.danielbarr.gamecollection.Uitilites.GameCharacterBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             realmCharacters.get(i).setName(gameCharacters.get(i).getName());
             realmCharacters.get(i).setID(gameCharacters.get(i).getId());
             positions.put(gameCharacters.get(i).getId(), i);
-            BuildGameCharacter.getCharacterInfo(gameCharacters.get(i).getId(), gameCharacters.get(i).getName(), retroCallback, activity);
+            GameCharacterBuilder.getCharacterInfo(gameCharacters.get(i).getId(), gameCharacters.get(i).getName(), retroCallback, activity);
         }
     }
 
@@ -61,7 +61,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             Bitmap bmp = BitmapFactory.decodeByteArray(characters.get(i).getPhoto(), 0, characters.get(i).getPhoto().length);
             if (bmp == null) {
                 positions.put(realmCharacters.get(i).getID(), i);
-                BuildGameCharacter.getCharacterInfo(realmCharacters.get(i).getID(),realmCharacters.get(i).getName(), retroCallback, activity);
+                GameCharacterBuilder.getCharacterInfo(realmCharacters.get(i).getID(), realmCharacters.get(i).getName(), retroCallback, activity);
             }
         }
     }

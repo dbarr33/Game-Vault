@@ -81,7 +81,7 @@
                                 android:layout_height="35dp"
                                 android:scaleType="fitXY"
                                 android:background="@android:color/transparent"
-                                android:src="@drawable/checked"
+                                android:src="@drawable/save_game_selector"
                                 android:id="@+id/saveGameButton"
                                 android:layout_marginLeft="8dp"
                                 android:visibility="gone"/>
@@ -97,7 +97,7 @@
                                 android:layout_height="35dp"
                                 android:scaleType="fitXY"
                                 android:background="@android:color/transparent"
-                                android:src="@drawable/delete"
+                                android:src="@drawable/delete_game_selector"
                                 android:id="@+id/deleteGameButton"
                                 android:layout_marginRight="8dp"
                                 android:visibility="gone" />

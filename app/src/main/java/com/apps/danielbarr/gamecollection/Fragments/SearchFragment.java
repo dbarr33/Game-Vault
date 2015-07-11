@@ -3,9 +3,11 @@ package com.apps.danielbarr.gamecollection.Fragments;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,6 +43,16 @@ public class SearchFragment extends DialogFragment {
         getDialog().setTitle("Search Online Database");
         searchTextView = (TextView)view.findViewById(R.id.searchTextField);
         searchButton = (Button)view.findViewById(R.id.searchButton);
+        searchButton.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    performSearch();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -48,47 +60,51 @@ public class SearchFragment extends DialogFragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String searchText  = searchTextView.getText().toString();
-                searchText.toLowerCase();
-
-                if (searchTextView.getText().toString().equals("")) {
-                    Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_SHORT).show();
-                }
-                else if(searchText.equals("is john gay")){
-                    getFragmentManager().beginTransaction().hide(getFragmentManager()
-                            .findFragmentByTag(GameRecyclerListFragment.class.getName())).commit();
-                    getFragmentManager().beginTransaction().add(R.id.content_frame, new JohnFragment(), "John").addToBackStack(null).commit();
-
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
-                    dismiss();
-                }
-                else {
-                    apiHandler.getSearchGiantBomb(searchTextView.getText().toString(), new Callback<SearchResponse>() {
-                        @Override
-                        public void success(SearchResponse SearchResponse, retrofit.client.Response response) {
-                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                                    Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
-
-                            android.app.FragmentManager fm = getActivity().getFragmentManager();
-                            GiantGamesFragment dialog = GiantGamesFragment.newInstance(SearchResponse.getResults(), getArguments().getString(EXTRA_PASS_PLATFORM));
-                            dialog.setTargetFragment(SearchFragment.this, REQUEST_CHOICE);
-                            if (!isBackgrounded) {
-                                dialog.show(fm, "TAG");
-                                getDialog().dismiss();
-
-                            }
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                        }
-                    });
-                }
+               performSearch();
             }
         });
         return view;
+    }
+
+    public void performSearch(){
+        String searchText  = searchTextView.getText().toString();
+        searchText.toLowerCase();
+
+        if (searchTextView.getText().toString().equals("")) {
+            Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_SHORT).show();
+        }
+        else if(searchText.equals("is john gay")){
+            getFragmentManager().beginTransaction().hide(getFragmentManager()
+                    .findFragmentByTag(GameRecyclerListFragment.class.getName())).commit();
+            getFragmentManager().beginTransaction().add(R.id.content_frame, new JohnFragment(), "John").addToBackStack(null).commit();
+
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
+            dismiss();
+        }
+        else {
+            apiHandler.getSearchGiantBomb(searchTextView.getText().toString(), new Callback<SearchResponse>() {
+                @Override
+                public void success(SearchResponse SearchResponse, retrofit.client.Response response) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
+
+                    android.app.FragmentManager fm = getActivity().getFragmentManager();
+                    GiantGamesFragment dialog = GiantGamesFragment.newInstance(SearchResponse.getResults(), getArguments().getString(EXTRA_PASS_PLATFORM));
+                    dialog.setTargetFragment(SearchFragment.this, REQUEST_CHOICE);
+                    if (!isBackgrounded) {
+                        dialog.show(fm, "TAG");
+                        getDialog().dismiss();
+
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                }
+            });
+        }
     }
 
     @Override
