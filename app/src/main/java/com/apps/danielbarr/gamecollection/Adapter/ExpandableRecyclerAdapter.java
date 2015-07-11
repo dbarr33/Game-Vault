@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private ArrayList<String> list;
@@ -29,7 +29,7 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     private RecyclerView recyclerView;
     private ArrayList<String> gameList;
 
-    public RelevantGameRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView)
+    public ExpandableRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView)
     {
         this.backupList = list;
         gameList = list;
@@ -81,12 +81,13 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
     private View.OnClickListener collapseList = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ArrayList<String> temp = new ArrayList<>();
+            temp = list;
+            list = backupList;
+            backupList = temp;
 
             if(headerMode) {
                 headerMode = false;
-                ArrayList<String> temp = new ArrayList<>();
-                list = backupList;
-
                 if(list.get(0) == "Description") {
                     Rect bounds = new Rect();
                     bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
@@ -100,20 +101,18 @@ public class RelevantGameRecyclerAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
                 else {
                     recyclerView.getLayoutParams().height = v.getMeasuredHeight() * list.size();
-
                 }
-                notifyItemRangeChanged(0, list.size());
+                notifyItemRangeInserted(1, list.size() -1);
                 ((ImageView)v.findViewById(R.id.plus_minus_icon)).setImageDrawable(activity.getResources().getDrawable(R.drawable.minus_icon));
 
             }
             else {
                 headerMode = true;
-                notifyItemRangeChanged(0, 1);
+                notifyItemRangeRemoved(1, list.size() -1);
                 recyclerView.getLayoutParams().height = v.getMeasuredHeight();
                 ((ImageView)v.findViewById(R.id.plus_minus_icon)).setImageDrawable(activity.getResources().getDrawable(R.drawable.plus_icon));
 
             }
-            notifyDataSetChanged();
         }
     };
 

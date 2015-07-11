@@ -11,11 +11,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.apps.danielbarr.gamecollection.Adapter.RelevantGameRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
@@ -89,7 +88,7 @@ public class CharacterFragment extends Fragment {
             textView.measure(0, 0);
 
             characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
-            RelevantGameRecyclerAdapter gameDescriptionRecyclerAdapter = new RelevantGameRecyclerAdapter(descriptionList, getActivity(),
+            ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList, getActivity(),
                     characterDescriptionRecyclerView);
             characterDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
             characterDescriptionRecyclerView.setVisibility(View.VISIBLE);

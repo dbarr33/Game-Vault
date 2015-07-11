@@ -96,7 +96,12 @@ public class GameRecyclerListFragment extends Fragment {
     private void setUpSwipeToDismiss() {
         // init swipe to dismiss logic
         final ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return false;
+            }
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 // callback for drag-n-drop, false to skip this feature
@@ -112,7 +117,6 @@ public class GameRecyclerListFragment extends Fragment {
                 final RealmGame realmGame= storedRealmGames.get(position);
                 realmGame.setDeleted(true);
                 realm.commitTransaction();
-
                 recyclerGameListAdapter.removeGame(position);
                 recyclerGameListAdapter.notifyItemRemoved(position);
                 SnackbarBuilder snackbarBuilder = new SnackbarBuilder(viewHolder.itemView, "Deleted Game");
@@ -122,13 +126,9 @@ public class GameRecyclerListFragment extends Fragment {
                         realm.beginTransaction();
                         realmGame.setDeleted(false);
                         realm.commitTransaction();
-                        recyclerGameListAdapter.addGame(position, realmGame
-                        );
+                        recyclerGameListAdapter.addGame(position, realmGame);
                         recyclerGameListAdapter.notifyItemInserted(position);
-                        if(position == 0) {
-                            gameListRecycler.scrollToPosition(position);
-                        }
-                        else if(position == recyclerGameListAdapter.getItemCount() -1) {
+                        if(position == 0 || position == recyclerGameListAdapter.getItemCount() -1) {
                             gameListRecycler.scrollToPosition(position);
                         }
                     }
