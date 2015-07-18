@@ -19,102 +19,51 @@ import java.util.ArrayList;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRecyclerAdapter.ExpandableViewHolder> {
 
     private ArrayList<String> list;
-    private ArrayList<String> backupList;
     private Activity activity;
     private boolean headerMode;
     private RecyclerView recyclerView;
-    private ArrayList<String> gameList;
+    private int length;
+    private boolean longTextMode;
 
-    public ExpandableRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView)
-    {
-        this.backupList = list;
-        gameList = list;
+    public ExpandableRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView, Boolean longTextMode) {
         this.activity = activity;
         headerMode = true;
         this.list = new ArrayList<>();
-        this.list.add(backupList.get(0));
+        this.list = list;
         this.recyclerView = recyclerView;
-
+        this.length = 1;
+        this.longTextMode = longTextMode;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ExpandableViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView;
         if(i == 0) {
             itemView  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_header, viewGroup, false);
-            itemView.setOnClickListener(collapseList);
             return new HeaderListViewHolder(itemView);
-        }else
-        {
+        }else {
             itemView  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_item, viewGroup, false);
             return  new ListViewHolder(itemView);
         }
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int i) {
-        if(viewHolder instanceof HeaderListViewHolder) {
-            ((HeaderListViewHolder)viewHolder).mHeader.setText(list.get(0));
-        }
-        else {
-            ((ListViewHolder)viewHolder).mName.setText(list.get(i));
-        }
+    public void onBindViewHolder(final ExpandableViewHolder viewHolder, int i) {
+        viewHolder.update(i);
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return length;
     }
 
-    public ArrayList<String> getGameList() {
-        return gameList;
+    public ArrayList<String> getList() {
+        return list;
     }
 
-    public void setGameList(ArrayList<String> gameList) {
-        this.gameList = gameList;
-    }
-
-    private View.OnClickListener collapseList = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            ArrayList<String> temp = new ArrayList<>();
-            temp = list;
-            list = backupList;
-            backupList = temp;
-
-            if(headerMode) {
-                headerMode = false;
-                if(list.get(0) == "Description") {
-                    Rect bounds = new Rect();
-                    bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
-                    Paint paint = new Paint();
-                    paint.setTextSize(PictureUtils.dpTOPX(12, activity));
-                    paint.getTextBounds(list.get(1), 0, list.get(1).length(), bounds);
-
-                    int width = (int) Math.ceil( bounds.width());
-                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth());
-
-                }
-                else {
-                    recyclerView.getLayoutParams().height = v.getMeasuredHeight() * list.size();
-                }
-                notifyItemRangeInserted(1, list.size() -1);
-                ((ImageView)v.findViewById(R.id.plus_minus_icon)).setImageDrawable(activity.getResources().getDrawable(R.drawable.minus_icon));
-
-            }
-            else {
-                headerMode = true;
-                notifyItemRangeRemoved(1, list.size() -1);
-                recyclerView.getLayoutParams().height = v.getMeasuredHeight();
-                ((ImageView)v.findViewById(R.id.plus_minus_icon)).setImageDrawable(activity.getResources().getDrawable(R.drawable.plus_icon));
-
-            }
-        }
-    };
 
     @Override
     public int getItemViewType(int position) {
@@ -125,17 +74,64 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
-    public class HeaderListViewHolder extends RecyclerView.ViewHolder {
-        protected TextView mHeader;
+    public abstract class ExpandableViewHolder extends RecyclerView.ViewHolder{
+
+        public ExpandableViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public void update(int position){
+
+        }
+    }
+
+    public class HeaderListViewHolder extends ExpandableViewHolder {
+        protected TextView mName;
         protected LinearLayout mHeaderLayout;
+        protected ImageView mHeaderImage;
 
         public HeaderListViewHolder(View itemView) {
             super(itemView);
-            mHeader = (TextView)itemView.findViewById(R.id.similar_game_header_textview);
+            mName = (TextView)itemView.findViewById(R.id.similar_game_header_textview);
             mHeaderLayout = (LinearLayout)itemView.findViewById(R.id.similar_game_hearderLayout);
+            mHeaderImage = (ImageView)itemView.findViewById(R.id.plus_minus_icon);
+
+            mHeaderLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (headerMode) {
+                        if (longTextMode) {
+                            int width = widthOfText(activity, list.get(1), v);
+                            length = width / v.getMeasuredHeight();
+                            recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth());
+
+                        } else {
+                            length = list.size();
+                            recyclerView.getLayoutParams().height = v.getMeasuredHeight() * list.size();
+                        }
+                        length = list.size();
+                        headerMode = false;
+                        notifyItemRangeInserted(1, list.size() - 1);
+                        mHeaderImage.setImageDrawable(activity.getResources().getDrawable(R.drawable.minus_icon));
+
+                    } else {
+                        length = 1;
+                        headerMode = true;
+                        notifyItemRangeRemoved(1, list.size() - 1);
+                        recyclerView.getLayoutParams().height = v.getMeasuredHeight();
+                        mHeaderImage.setImageDrawable(activity.getResources().getDrawable(R.drawable.plus_icon));
+                    }
+
+                }
+            });
+        }
+
+        @Override
+        public void update(int position) {
+            mName.setText(list.get(position));
         }
     }
-    public class ListViewHolder extends RecyclerView.ViewHolder{
+    public class ListViewHolder extends ExpandableViewHolder{
 
         protected TextView mName;
 
@@ -143,6 +139,21 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.similar_game_name_textview);
         }
+
+        @Override
+        public void update(int position) {
+            mName.setText(list.get(position));
+        }
+    }
+
+    public int widthOfText(Activity activity, String text, View v){
+        Rect bounds = new Rect();
+        bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
+        Paint paint = new Paint();
+        paint.setTextSize(PictureUtils.dpTOPX(14, activity));
+        paint.getTextBounds(text, 0, text.length(), bounds);
+
+        return (int) Math.ceil( bounds.width());
     }
 }
 

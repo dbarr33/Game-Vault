@@ -89,7 +89,7 @@ public class CharacterFragment extends Fragment {
 
             characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
             ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList, getActivity(),
-                    characterDescriptionRecyclerView);
+                    characterDescriptionRecyclerView, true);
             characterDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
             characterDescriptionRecyclerView.setVisibility(View.VISIBLE);
         }else {

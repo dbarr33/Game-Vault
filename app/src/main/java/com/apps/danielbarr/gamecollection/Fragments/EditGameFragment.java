@@ -21,8 +21,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
-import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
@@ -181,7 +181,7 @@ public class EditGameFragment extends Fragment {
                     if(gameResponse.getResults().getGameGenres() != null) {
                         ArrayList<String> genreList = StringArrayListBuilder.createArryList("Genres", ((ArrayList) gameResponse.getResults().getGameGenres()));
                         ExpandableRecyclerAdapter genreRecyclerAdapter = new ExpandableRecyclerAdapter(genreList, getActivity(),
-                                gameGenresRecyclerView);
+                                gameGenresRecyclerView, false);
                         gameGenresRecyclerView.setAdapter(genreRecyclerAdapter);
                     }
                     else {
@@ -191,7 +191,7 @@ public class EditGameFragment extends Fragment {
                     if(gameResponse.getResults().getSimilar_games() != null) {
                         ArrayList<String> similarGamesList = StringArrayListBuilder.createArryList("Similar Games", ((ArrayList) gameResponse.getResults().similar_games));
                         ExpandableRecyclerAdapter similarGamesRecyclerAdapter = new ExpandableRecyclerAdapter(similarGamesList, getActivity(),
-                                relevantGamesRecyclerView);
+                                relevantGamesRecyclerView, false);
                         relevantGamesRecyclerView.setAdapter(similarGamesRecyclerAdapter);
                     }
                     else {
@@ -305,7 +305,7 @@ public class EditGameFragment extends Fragment {
         }
 
         if(gameDescriptionRecyclerView.getVisibility() == View.VISIBLE) {
-            realmGame.setDescription(((ExpandableRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getGameList().get(1));
+            realmGame.setDescription(((ExpandableRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getList().get(1));
         }
 
         if(gameImageView.getDrawable() != null) {
@@ -338,7 +338,7 @@ public class EditGameFragment extends Fragment {
         }
 
         if(gameGenresRecyclerView.getVisibility() != View.GONE) {
-            ArrayList<String> genreTypes = ((ExpandableRecyclerAdapter) gameGenresRecyclerView.getAdapter()).getGameList();
+            ArrayList<String> genreTypes = ((ExpandableRecyclerAdapter) gameGenresRecyclerView.getAdapter()).getList();
             for (int i = 1; i < genreTypes.size(); i++) {
                 RealmGenre realmGenre = saveRealm.createObject(RealmGenre.class);
                 realmGenre.setName(genreTypes.get(i));
@@ -347,7 +347,7 @@ public class EditGameFragment extends Fragment {
         }
 
         if(relevantGamesRecyclerView.getVisibility() != View.GONE) {
-            ArrayList<String> similarGameNames = ((ExpandableRecyclerAdapter) relevantGamesRecyclerView.getAdapter()).getGameList();
+            ArrayList<String> similarGameNames = ((ExpandableRecyclerAdapter) relevantGamesRecyclerView.getAdapter()).getList();
             for (int i = 1; i < similarGameNames.size(); i++) {
                 RealmGame similarRealmGame = saveRealm.createObject(RealmGame.class);
                 similarRealmGame.setName(similarGameNames.get(i));
@@ -407,7 +407,7 @@ public class EditGameFragment extends Fragment {
             descriptionList.add(realmGame.getDescription());
 
             ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList, getActivity(),
-                    gameDescriptionRecyclerView);
+                    gameDescriptionRecyclerView, true);
              gameDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
         }
         else {
@@ -432,7 +432,7 @@ public class EditGameFragment extends Fragment {
             }
 
             ExpandableRecyclerAdapter genreRecyclerAdapter = new ExpandableRecyclerAdapter(genres, getActivity(),
-                    gameGenresRecyclerView);
+                    gameGenresRecyclerView, false);
             gameGenresRecyclerView .setAdapter(genreRecyclerAdapter);
         }
 
@@ -444,7 +444,7 @@ public class EditGameFragment extends Fragment {
                 games.add(similarRealmGames.get(i).getName());
             }
             ExpandableRecyclerAdapter relevantGameRecyclerAdapter = new ExpandableRecyclerAdapter(games, getActivity(),
-                    relevantGamesRecyclerView);
+                    relevantGamesRecyclerView, false);
             relevantGamesRecyclerView .setAdapter(relevantGameRecyclerAdapter);
             relevantGamesRecyclerView.setMinimumHeight(PictureUtils.dpTOPX(40, getActivity()));
         }
@@ -497,7 +497,7 @@ public class EditGameFragment extends Fragment {
             descriptionList.add(HTMLUtil.stripHtml(giantBombSearch.getDescription()));
 
             ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList, getActivity(),
-                    gameDescriptionRecyclerView);
+                    gameDescriptionRecyclerView, true);
             gameDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
             mScrollView.setToolbarTitle(giantBombSearch.getName());
         }

@@ -17,7 +17,7 @@
 <com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="20dp"
     android:id="@+id/scroll"
     android:fillViewport="true"
     >
@@ -221,6 +221,7 @@
         </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
+                android:isScrollContainer="false"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/relevantGamesRecyclerView"
@@ -229,6 +230,7 @@
             </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
+                android:isScrollContainer="false"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/gameGenresRecyclerView"
@@ -238,13 +240,13 @@
             </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
+                android:isScrollContainer="false"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/gameDescriptionRecyclerView"
                 android:overScrollMode="never"
                 >
             </android.support.v7.widget.RecyclerView>
-
         </LinearLayout>
 
         <LinearLayout
