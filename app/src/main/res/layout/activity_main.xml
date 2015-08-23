@@ -125,6 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/white_plus_icon"
+            app:borderWidth="0dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
             app:fabSize="mini"

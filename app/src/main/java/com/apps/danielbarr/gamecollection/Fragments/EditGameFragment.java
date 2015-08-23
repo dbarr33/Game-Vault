@@ -254,14 +254,6 @@ public class EditGameFragment extends Fragment {
                 } else {
 
                     saveGame();
-                    saveGame();
-                    saveGame();
-                    saveGame();
-                    saveGame();
-                    saveGame();
-                    saveGame();
-                    saveGame();
-
                     ScreenSetupController.currentScreenGameList(getActivity());
                     SnackbarBuilder snackbarBuilder = new SnackbarBuilder(v, "Saved Game");
                     snackbarBuilder.show();
@@ -286,8 +278,7 @@ public class EditGameFragment extends Fragment {
 
         return v;
     }
-
-    public void saveGame() {
+     public void saveGame() {
 
         Realm saveRealm = Realm.getInstance(getActivity().getApplicationContext());
         saveRealm.beginTransaction();

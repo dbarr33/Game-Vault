@@ -1,7 +1,6 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.util.Log;
@@ -13,8 +12,6 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.http.Path;
-import retrofit.http.Query;
 
 /**
  * Created by danielbarr on 6/27/15.
