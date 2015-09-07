@@ -1,5 +1,7 @@
 package com.apps.danielbarr.gamecollection.Model;
 
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.NameInterface;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -7,7 +9,7 @@ import io.realm.RealmObject;
  * Created by danielbarr on 1/17/15.
  */
 
-public class RealmGame extends RealmObject{
+public class RealmGame extends RealmObject implements NameInterface{
 
     private String name;
     private String platform;
@@ -16,11 +18,47 @@ public class RealmGame extends RealmObject{
     private String photoURL;
     private float completionPercentage;
     private float userRating;
-    private float ignRating;
     private byte[] photo;
-    private RealmList<RealmCharacter> characterses;
-    private boolean isDeleted = false;
+    private RealmList<RealmCharacter> characters;
     private RealmList<RealmGame> similarRealmGames;
+    private boolean hasImage;
+    private long date;
+
+    public RealmGame(){
+
+    }
+
+    public RealmGame(RealmGame realmGame){
+        this.characters = new RealmList<>();
+        for(RealmCharacter tempCharacter: realmGame.getCharacters()){
+            RealmCharacter copy = new RealmCharacter(tempCharacter);
+            this.characters.add(copy);
+        }
+
+        if(realmGame.getSimilarRealmGames() != null) {
+            this.similarRealmGames = new RealmList<>();
+            for (RealmGame tempGame: realmGame.getSimilarRealmGames()){
+                RealmGame copy = new RealmGame();
+                copy.setName(tempGame.getName());
+                this.similarRealmGames.add(copy);
+            }
+        }
+
+        this.realmGenre = new RealmList<>();
+        for(RealmGenre tempGenre: realmGame.getRealmGenre()){
+            RealmGenre copy = new RealmGenre();
+            copy.setName(tempGenre.getName());
+            realmGenre.add(copy);
+        }
+        this.name = realmGame.getName();
+        this.description = realmGame.getDescription();
+        this.completionPercentage = realmGame.getCompletionPercentage();
+        this.userRating = realmGame.getUserRating();
+        this.photo = realmGame.getPhoto();
+        this.platform = realmGame.getPlatform();
+        this.hasImage = realmGame.isHasImage();
+        this.date = realmGame.getDate();
+    }
 
     public RealmList<RealmGame> getSimilarRealmGames() {
         return similarRealmGames;
@@ -78,14 +116,6 @@ public class RealmGame extends RealmObject{
         this.realmGenre = realmGenre;
     }
 
-    public float getIgnRating() {
-        return ignRating;
-    }
-
-    public void setIgnRating(float mataCriticRating) {
-        this.ignRating = mataCriticRating;
-    }
-
     public byte[] getPhoto() {
         return photo;
     }
@@ -94,20 +124,12 @@ public class RealmGame extends RealmObject{
         this.photo = photo;
     }
 
-    public RealmList<RealmCharacter> getCharacterses() {
-        return characterses;
+    public RealmList<RealmCharacter> getCharacters() {
+        return characters;
     }
 
-    public void setCharacterses(RealmList<RealmCharacter> characterses) {
-        this.characterses = characterses;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setCharacters(RealmList<RealmCharacter> characters) {
+        this.characters = characters;
     }
 
     public String getPhotoURL() {
@@ -118,12 +140,20 @@ public class RealmGame extends RealmObject{
         this.photoURL = photoURL;
     }
 
-    //public RealmList<RealmGame> getSimilarGames() {
-      //  return similarRealmGames;
-    //}
+    public boolean isHasImage() {
+        return hasImage;
+    }
 
-    //public void setSimilarGames(RealmList<RealmGame> similarRealmGames) {
-    //    this.similarRealmGames = similarRealmGames;
-   // }
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
 }
 

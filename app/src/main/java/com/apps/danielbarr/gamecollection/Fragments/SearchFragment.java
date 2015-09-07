@@ -37,7 +37,7 @@ public class SearchFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        apiHandler = new ApiHandler(getActivity());
+        apiHandler = ApiHandler.getInstance();
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         getDialog().setTitle("Search Online Database");
@@ -75,7 +75,7 @@ public class SearchFragment extends DialogFragment {
         }
         else if(searchText.equals("is john gay")){
             getFragmentManager().beginTransaction().hide(getFragmentManager()
-                    .findFragmentByTag(GameRecyclerListFragment.class.getName())).commit();
+                    .findFragmentByTag(GameListFragment.class.getName())).commit();
             getFragmentManager().beginTransaction().add(R.id.content_frame, new JohnFragment(), "John").addToBackStack(null).commit();
 
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

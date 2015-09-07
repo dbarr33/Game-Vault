@@ -1,19 +1,22 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
-import android.content.Context;
+import android.app.Activity;
 
 /**
  * Created by danielbarr on 7/6/15.
  */
 public class GameApplication {
-    private static Context mContext;
+    private static Activity activity;
 
-    public static void setContext(Context context) {
-        mContext = context;
+    public static Activity getActivity() {
+        return activity;
     }
 
-    public static Context getContext() {
-        return mContext;
+    public static void setActivity(Activity activity) {
+        GameApplication.activity = activity;
     }
 
+    public static String getString(int id){
+        return activity.getString(id);
+    }
 }

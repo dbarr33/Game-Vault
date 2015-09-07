@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloadManager;
 import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloader;
 import com.apps.danielbarr.gamecollection.Uitilites.InternetUtils;
@@ -42,7 +43,11 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
         imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
             @Override
             public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
-                images.set(position, thumbnail);
+                if(thumbnail == null){
+                    images.set(position,BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art));
+                }else{
+                    images.set(position, thumbnail);
+                }
                 hasLoaded.set(position, true);
                 notifyDataSetChanged();
             }

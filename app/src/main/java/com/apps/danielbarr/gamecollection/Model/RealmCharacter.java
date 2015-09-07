@@ -1,5 +1,7 @@
 package com.apps.danielbarr.gamecollection.Model;
 
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.NameInterface;
+
 import java.io.Serializable;
 
 import io.realm.RealmObject;
@@ -7,14 +9,25 @@ import io.realm.RealmObject;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class RealmCharacter extends RealmObject implements Serializable {
+public class RealmCharacter extends RealmObject implements Serializable, NameInterface {
 
     private int ID;
     private String name;
     private byte[] photo;
     private String description;
-   // private RealmList<Enemy> enemies;
     private boolean photosLoaded;
+
+    public RealmCharacter(){
+
+    }
+
+    public RealmCharacter(RealmCharacter realmCharacter){
+        this.setDescription(realmCharacter.getDescription());
+        this.setID(realmCharacter.getID());
+        this.setName(realmCharacter.getName());
+        this.setPhoto(realmCharacter.getPhoto());
+        this.setPhotosLoaded(realmCharacter.isPhotosLoaded());
+    }
 
     public int getID() {
         return ID;
@@ -56,20 +69,4 @@ public class RealmCharacter extends RealmObject implements Serializable {
         this.photosLoaded = photosLoaded;
     }
 
- //   public RealmList<Enemy> getEnemies() {
- //       return enemies;
- //   }
-
-//    public void setEnemies(RealmList<Enemy> enemies) {
-//        this.enemies = enemies;
-//    }
-//    public void setEnemies(ArrayList<Enemy> enemies) {
-//
-//        if(this.enemies != null) {
-//            this.enemies.clear();
-//        }
-//        for(int i = 0; i < enemies.size(); i++) {
-//            this.enemies.add(enemies.get(i));
-//        }
-//    }
 }

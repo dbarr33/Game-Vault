@@ -1,6 +1,5 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
-import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,10 +11,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
-import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
+import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
+import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 
 import java.util.ArrayList;
@@ -23,14 +23,14 @@ import java.util.ArrayList;
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameListAdapter.GameViewHolder> {
+public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameViewHolder> {
 
     private ArrayList<RealmGame> realmGames;
     private OnItemClickListener onClickListener;
     private int maxSize;
     private String platform;
 
-    public RecyclerGameListAdapter(ArrayList<RealmGame> realmGames, final Activity activity, final String console) {
+    public GameListAdapter(ArrayList<RealmGame> realmGames, final String console) {
         this.realmGames = realmGames;
         this.platform = console;
 
@@ -40,9 +40,9 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
             @Override
             public void onItemClick(View view, int position) {
 
-                AddFragmentCommand addFragmentCommand = new AddFragmentCommand(EditGameFragment.newInstance(platform, position), activity);
+                AddFragmentCommand addFragmentCommand = new AddFragmentCommand(EditGameFragment.newInstance(platform, position), GameApplication.getActivity());
                 addFragmentCommand.execute();
-                HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(activity, GameRecyclerListFragment.class.getName());
+                HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(GameApplication.getActivity(), GameListFragment.class.getName());
                 hideFragmentCommand.execute();
             }
         });
@@ -74,7 +74,12 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
 
         gameViewHolder.name.setText(realmGames.get(i).getName());
         gameViewHolder.userRating.setRating(realmGames.get(i).getUserRating());
-        gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(realmGames.get(i).getPhoto(), 0, realmGames.get(i).getPhoto().length));
+        if(realmGames.get(i).isHasImage()) {
+            gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(realmGames.get(i).getPhoto(), 0, realmGames.get(i).getPhoto().length));
+        }
+        else {
+            gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art));
+        }
         gameViewHolder.completionPercentage.setText(String.valueOf(realmGames.get(i).getCompletionPercentage()) + "%");
 
         String description;
@@ -114,7 +119,7 @@ public class RecyclerGameListAdapter extends RecyclerView.Adapter<RecyclerGameLi
                 @Override
                 public void onClick(View v) {
                     if(onClickListener != null) {
-                        onClickListener.onItemClick(v, getPosition());
+                        onClickListener.onItemClick(v, getAdapterPosition());
                     }
                 }
             });

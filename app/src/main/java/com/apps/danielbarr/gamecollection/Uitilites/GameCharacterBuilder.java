@@ -43,7 +43,7 @@ public class GameCharacterBuilder {
             }
         });
 
-        ApiHandler apiHandler = new ApiHandler(activity);
+        ApiHandler apiHandler = ApiHandler.getInstance();
         apiHandler.getCharacterGiantBomb(realmCharacter.getID(), new Callback<CharacterResponse>() {
             @Override
             public void success(CharacterResponse characterResponse, Response response) {

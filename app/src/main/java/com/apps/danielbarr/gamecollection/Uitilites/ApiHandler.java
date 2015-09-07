@@ -17,13 +17,23 @@ import retrofit.client.Response;
  * Created by danielbarr on 6/27/15.
  */
 public class ApiHandler   {
+    private static ApiHandler apiHandler;
 
     private Activity activity;
     private Dialog mDialog;
 
-    public ApiHandler(Activity activity){
-        this.activity = activity;
+    public static ApiHandler getInstance(){
+        if(apiHandler == null){
+            apiHandler = new ApiHandler();
+        }
+
+        return apiHandler;
     }
+
+    private ApiHandler(){
+        this.activity = GameApplication.getActivity();
+    }
+
     public void getSearchGiantBomb(String gameName,  final Callback<SearchResponse> results) {
 
         if(InternetUtils.isNetworkAvailable(activity)) {

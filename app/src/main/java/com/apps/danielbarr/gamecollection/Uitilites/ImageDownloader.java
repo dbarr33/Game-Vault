@@ -1,12 +1,10 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -94,6 +92,13 @@ public class ImageDownloader<Token> extends HandlerThread {
 
         }
         catch (IOException ioe) {
+            mResponseHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    requestMap.remove(token);
+                    mListener.onThumbNailDownloaded(token, null);
+                }
+            });
         }
     }
 

@@ -75,9 +75,9 @@ public class GiantGamesFragment extends DialogFragment {
                     giantDialogListAdapter.clearQueue();
                     getDialog().dismiss();
                     EditGameFragment editGameFragment = EditGameFragment.newInstance(getArguments().getString("platform"),
-                            giantDialogListAdapter.getImages().get(position), giantDialogListAdapter.getItem(position));
+                            giantDialogListAdapter.getItem(position));
 
-                    HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(getActivity(), GameRecyclerListFragment.class.getName());
+                    HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(getActivity(), GameListFragment.class.getName());
                     hideFragmentCommand.execute();
                     AddFragmentCommand addFragmentCommand = new AddFragmentCommand(editGameFragment, getActivity());
                     addFragmentCommand.execute();

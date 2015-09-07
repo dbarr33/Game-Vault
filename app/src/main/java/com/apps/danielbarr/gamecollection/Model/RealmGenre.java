@@ -1,11 +1,13 @@
 package com.apps.danielbarr.gamecollection.Model;
 
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.NameInterface;
+
 import io.realm.RealmObject;
 
 /**
  * @author Daniel Barr (Fuzz)
  */
-public class RealmGenre extends RealmObject {
+public class RealmGenre extends RealmObject implements NameInterface {
     private String name;
 
     public String getName() {

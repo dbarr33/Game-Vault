@@ -3,7 +3,6 @@ package com.apps.danielbarr.gamecollection.Old;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.EditText;
 
 import com.apps.danielbarr.gamecollection.Activities.SingleFragmentActivity;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
-import com.apps.danielbarr.gamecollection.R;
 
 /**
  * Created by danielbarr on 1/19/15.
@@ -30,12 +28,6 @@ public class EditGameActivity extends SingleFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
-       // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-       // getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().hide();
 
         if (savedInstanceState != null) {
             //Restore the fragment's instance

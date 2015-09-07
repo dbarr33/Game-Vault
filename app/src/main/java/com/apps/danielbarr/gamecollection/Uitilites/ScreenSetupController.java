@@ -6,29 +6,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
-import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
+import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.R;
 
 /**
  * @author Daniel Barr (Fuzz)
  */
 public class ScreenSetupController {
-
-    public static void currentScreenEditGame(Activity activity, Boolean hideDelete) {
-        activity.findViewById(R.id.toolbar).setVisibility(View.GONE);
-        activity.findViewById(R.id.saveGameButton).setVisibility(View.VISIBLE);
-        activity.findViewById(R.id.floatingActionButton).setVisibility(View.GONE);
-
-        if(hideDelete) {
-            activity.findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
-        }
-        else {
-            activity.findViewById(R.id.deleteGameButton).setVisibility(View.VISIBLE);
-        }
-
-        DrawerLayout mDrawerLayout = (DrawerLayout)activity.findViewById(R.id.drawer_layout);
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-    }
 
     public static void currentScreenCharacter(Activity activity) {
         activity.findViewById(R.id.deleteGameButton).setVisibility(View.GONE);
@@ -49,10 +33,10 @@ public class ScreenSetupController {
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         activity.getFragmentManager().popBackStack();
-        ShowFragmentCommand showFragmentCommand = new ShowFragmentCommand(activity, GameRecyclerListFragment.class.getName());
+        ShowFragmentCommand showFragmentCommand = new ShowFragmentCommand(activity, GameListFragment.class.getName());
         showFragmentCommand.execute();
-        GameRecyclerListFragment gameRecyclerListFragment = (GameRecyclerListFragment)activity.getFragmentManager()
-                .findFragmentByTag(GameRecyclerListFragment.class.getName());
-        gameRecyclerListFragment.notifyDataSetChanged();
+        GameListFragment gameListFragment = (GameListFragment)activity.getFragmentManager()
+                .findFragmentByTag(GameListFragment.class.getName());
+        gameListFragment.notifyDataSetChanged();
     }
 }

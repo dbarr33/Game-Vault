@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
     private int length;
     private boolean longTextMode;
 
-    public ExpandableRecyclerAdapter(ArrayList<String> list, Activity activity, RecyclerView recyclerView, Boolean longTextMode) {
-        this.activity = activity;
+    public ExpandableRecyclerAdapter(ArrayList<String> list, RecyclerView recyclerView, Boolean longTextMode) {
+        this.activity = GameApplication.getActivity();
         headerMode = true;
         this.list = new ArrayList<>();
         this.list = list;

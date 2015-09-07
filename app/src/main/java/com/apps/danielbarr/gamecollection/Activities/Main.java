@@ -18,20 +18,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 
 import com.apps.danielbarr.gamecollection.Adapter.DrawerListAdapter;
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
-import com.apps.danielbarr.gamecollection.Fragments.GameRecyclerListFragment;
+import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
 import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.DrawerList;
 import com.apps.danielbarr.gamecollection.Model.FirstInstall;
+import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
+import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.ShowFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.SimpleItemTouchHelperCallback;
@@ -47,7 +47,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ActionBar actionBar;
-    private GameRecyclerListFragment gameRecyclerListFragment;
+    private GameListFragment gameListFragment;
     private DrawerListAdapter drawerListAdapter;
     private Realm realm;
     private FloatingActionButton floatingActionButton;
@@ -58,7 +58,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         super.onCreate(savedInstanceState);
-        GameApplication.setContext(this);
+        GameApplication.setActivity(this);
         setContentView(R.layout.activity_main);
 
         Bundle args = new Bundle();
@@ -71,7 +71,6 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
                 SearchFragment dialog = new SearchFragment();
                 Bundle args = new Bundle();
 
-                collapse(floatingActionButton);
                 args.putString(dialog.EXTRA_PASS_PLATFORM, mTitle.toString());
                 dialog.setArguments(args);
                 dialog.show(fm, "TAG");
@@ -125,25 +124,23 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        gameRecyclerListFragment = new GameRecyclerListFragment();
+        gameListFragment = new GameListFragment();
         mTitle = drawerItems.get(0).getName();
-        args.putString(GameRecyclerListFragment.GAME_PLATFORM, mTitle.toString());
+        args.putString(GameListFragment.GAME_PLATFORM, mTitle.toString());
 
-        gameRecyclerListFragment.setArguments(args);
+        gameListFragment.setArguments(args);
         FragmentManager frgManager = getFragmentManager();
-        if(frgManager.findFragmentByTag(GameRecyclerListFragment.class.getName()) == null) {
-            AddFragmentCommand addFragmentCommand = new AddFragmentCommand(gameRecyclerListFragment, this);
+        if(frgManager.findFragmentByTag(GameListFragment.class.getName()) == null) {
+            AddFragmentCommand addFragmentCommand = new AddFragmentCommand(gameListFragment, this);
             addFragmentCommand.execute();
         }
 
         getSupportActionBar().setTitle(drawerItems.get(0).getName());
     }
 
-
-
     public void SelectItem(int position) {
-        gameRecyclerListFragment = (GameRecyclerListFragment)getFragmentManager().findFragmentByTag(GameRecyclerListFragment.class.getName());
-        gameRecyclerListFragment.updateGameList(drawerListAdapter.getDrawerList().get(position).getName());
+        gameListFragment = (GameListFragment)getFragmentManager().findFragmentByTag(GameListFragment.class.getName());
+        gameListFragment.setGameList(drawerListAdapter.getDrawerList().get(position).getName());
         setTitle(drawerListAdapter.getDrawerList().get(position).getName());
         mDrawerLayout.closeDrawers();
     }
@@ -197,17 +194,16 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
                 editGameFragment.mScrollView.setViewAlpha();
 
                 if(editGameFragment.gamePosition > -1) {
-                    ScreenSetupController.currentScreenEditGame(this, false);
+                    editGameFragment.editGamePresenter.configureScreen(false);
                 }
                 else {
-                    ScreenSetupController.currentScreenEditGame(this, true);
+                    editGameFragment.editGamePresenter.configureScreen(true);
                 }
                 getFragmentManager().popBackStack();
 
             }
             else if(getFragmentManager().findFragmentByTag(EditGameFragment.class.getName()) != null) {
                 ScreenSetupController.currentScreenGameList(this);
-                ((EditGameFragment)getFragmentManager().findFragmentByTag(EditGameFragment.class.getName())).realm.close();
             }
         }else {
             super.onBackPressed();
@@ -226,37 +222,21 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         }
     }
 
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
-                    v.setVisibility(View.GONE);
-                }else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration(500);
-        //v.startAnimation(a);
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDrawerLayout.closeDrawers();
     }
 
     @Override
-    protected void onResume() {
-        super.onPause();
-        mDrawerLayout.closeDrawers();
+    protected void onDestroy() {
+        RealmManager.getInstance().closeRealm();
+        super.onDestroy();
+    }
+
+    public void removeGame(int position, RealmGame realmGame){
+        GameListFragment gameListFragment = (GameListFragment)getFragmentManager().findFragmentByTag(GameListFragment.class.getName());
+        gameListFragment.removeGame(position, realmGame);
     }
 
     public void createDrawerList()
@@ -337,6 +317,11 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         item = realm.createObject(DrawerItem.class);
         item.setName(getString(R.string.nintendo_drawer_title));
         item.setIconID(R.drawable.nintendo_icon);
+        item.setPosition(++count);
+        list.getItems().add(item);
+        item = realm.createObject(DrawerItem.class);
+        item.setName(getString(R.string.other_title));
+        item.setIconID(R.drawable.joystick);
         item.setPosition(++count);
         list.getItems().add(item);
         realm.commitTransaction();
