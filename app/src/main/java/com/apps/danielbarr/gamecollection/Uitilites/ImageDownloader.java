@@ -86,7 +86,7 @@ public class ImageDownloader<Token> extends HandlerThread {
                     }
 
                     requestMap.remove(token);
-                    mListener.onThumbNailDownloaded(token, bitmap);
+                    mListener.onThumbNailDownloaded(token, null);
                 }
             });
 

@@ -16,8 +16,7 @@
 
 <com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp"
+    android:layout_height="match_parent"
     android:id="@+id/scroll"
     android:fillViewport="true"
     >
@@ -253,25 +252,6 @@
                 android:overScrollMode="never"
                 >
             </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:layout_marginTop="20dp"
-            >
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/saveGame"
-                android:gravity="center"
-                android:text="@string/save_game"
-                android:textColor="#fff"
-                android:background="@color/edit_game_button_states"/>
-
         </LinearLayout>
     </LinearLayout>
 </com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView>

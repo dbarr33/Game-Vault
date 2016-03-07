@@ -37,6 +37,7 @@ import com.apps.danielbarr.gamecollection.Uitilites.ShowFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.SimpleItemTouchHelperCallback;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class Main extends ActionBarActivity implements DrawerListAdapter.OnStartDragListner, DrawerListAdapter.OnDrawerClickListener{
@@ -241,6 +242,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
 
     public void createDrawerList()
     {
+
         realm.beginTransaction();
         FirstInstall addPerson = realm.createObject(FirstInstall.class);
         addPerson.setFirstInstall(false);

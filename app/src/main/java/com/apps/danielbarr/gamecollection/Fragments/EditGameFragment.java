@@ -154,10 +154,10 @@ public class EditGameFragment extends Fragment implements EditGameView{
         saveGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gamePosition != -1 && gamePosition != -2) {
-                    editGamePresenter.updateGame(createGame(), currentPlatform, gamePosition);
-                } else {
+                if (gamePosition < 0) {
                     editGamePresenter.saveGame(createGame());
+                } else {
+                    editGamePresenter.updateGame(createGame(), currentPlatform, gamePosition);
                 }
             }
         });

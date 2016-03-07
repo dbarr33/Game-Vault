@@ -58,4 +58,6 @@
     <string name="realm_game_platform">platform</string>
     <string name="realm_game_date">date</string>
 
+    <string name="legal_copy">Powered By Giant Bomb</string>
+
 </resources>

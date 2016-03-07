@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
-import com.apps.danielbarr.gamecollection.Old.John.JohnFragment;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 
@@ -72,15 +71,6 @@ public class SearchFragment extends DialogFragment {
 
         if (searchTextView.getText().toString().equals("")) {
             Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_SHORT).show();
-        }
-        else if(searchText.equals("is john gay")){
-            getFragmentManager().beginTransaction().hide(getFragmentManager()
-                    .findFragmentByTag(GameListFragment.class.getName())).commit();
-            getFragmentManager().beginTransaction().add(R.id.content_frame, new JohnFragment(), "John").addToBackStack(null).commit();
-
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
-            dismiss();
         }
         else {
             apiHandler.getSearchGiantBomb(searchTextView.getText().toString(), new Callback<SearchResponse>() {

@@ -6,6 +6,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 
 import retrofit.Callback;
 import retrofit.http.GET;
+import retrofit.http.Headers;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -14,6 +15,9 @@ import retrofit.http.Query;
  */
 public interface GiantBombInterface {
 
+    @Headers({
+            "User-Agent: Game Vault Android App"
+    })
     @GET("/search")
     void getSearchGiantBomb(
             @Query("api_key") String apiKey,
@@ -23,6 +27,9 @@ public interface GiantBombInterface {
             @Query("limit") int limit,
             Callback<SearchResponse> results);
 
+    @Headers({
+            "User-Agent: Game Vault Android App"
+    })
     @GET("/game/{path}")
     void getGameGiantBomb(
             @Path("path") int gameId,
@@ -30,6 +37,9 @@ public interface GiantBombInterface {
             @Query("format") String format,
             Callback<GameResponse> results);
 
+    @Headers({
+            "User-Agent: Game Vault Android App"
+    })
     @GET("/character/{path}")
     void getCharacterGiantBomb(
             @Path("path") int gameId,

@@ -4,9 +4,12 @@ import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -18,8 +21,11 @@ public class RealmManager {
     private Realm realm;
 
     private RealmManager() {
-        realm = Realm.getInstance(GameApplication.getActivity());
-
+        RealmConfiguration myConfig = new RealmConfiguration.Builder(GameApplication.getActivity())
+                .name("myrealm.realm")
+                .schemaVersion(1)
+                .build();
+        realm = Realm.getInstance(myConfig);
     }
 
     public static RealmManager getInstance() {
@@ -69,7 +75,19 @@ public class RealmManager {
     }
 
     public RealmGame getRealmGameByPosition(String platform, int position) {
-        return getAllGames(platform).get(position);
+        List<RealmGame> games = getAllGames(platform);
+        try {
+            if(games.size() > 0) {
+                return getAllGames(platform).get(position);
+            }
+            else {
+                throw new IOException();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void removeGame(String platform, int position) {
