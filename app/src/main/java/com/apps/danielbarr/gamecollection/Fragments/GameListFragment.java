@@ -8,6 +8,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
@@ -33,6 +34,7 @@ public class GameListFragment extends Fragment {
 
     private GameListAdapter gameListAdapter;
     private String platform;
+    private Button filter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class GameListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_recycleview_game_list, container, false);
         gameListRecycler = (RecyclerView)v.findViewById(R.id.recycler_gameList);
         emptyView = (LinearLayout)v.findViewById(R.id.emptyView);
+        filter = (Button)getActivity().findViewById(R.id.filter);
         return v;
     }
 
@@ -53,6 +56,7 @@ public class GameListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
         setGameList(platform);
+        setupFilter();
     }
 
     private void setupRecyclerView(){
@@ -136,6 +140,16 @@ public class GameListFragment extends Fragment {
             }
         });
         snackbarBuilder.show();
+    }
+
+    private void setupFilter() {
+        filter.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  gameListAdapter.filterList();
+
+              }
+        });
     }
 
 }

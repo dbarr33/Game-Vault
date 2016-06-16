@@ -19,6 +19,8 @@ import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -27,14 +29,13 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
     private ArrayList<RealmGame> realmGames;
     private OnItemClickListener onClickListener;
-    private int maxSize;
+    private ArrayList<RealmGame> filteredList;
     private String platform;
 
     public GameListAdapter(ArrayList<RealmGame> realmGames, final String console) {
         this.realmGames = realmGames;
+        this.filteredList = realmGames;
         this.platform = console;
-
-        maxSize = realmGames.size();
 
         SetOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -54,12 +55,20 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
     public void removeGame(int position) {
         realmGames.remove(position);
-        maxSize = realmGames.size();
     }
 
     public void addGame(int position, RealmGame game) {
         realmGames.add(position, game);
-        maxSize = realmGames.size();
+    }
+
+    public void filterList() {
+        Collections.sort(filteredList, new Comparator<RealmGame>() {
+            @Override
+            public int compare(RealmGame lhs, RealmGame rhs) {
+                return lhs.getName().compareToIgnoreCase(rhs.getName());
+            }
+        });
+        notifyDataSetChanged();
     }
 
     @Override
@@ -95,7 +104,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
     @Override
     public int getItemCount() {
-        return maxSize;
+        return filteredList.size();
     }
 
     public class GameViewHolder extends RecyclerView.ViewHolder  {
