@@ -16,6 +16,9 @@ import android.widget.Toast;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
+import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -68,7 +71,13 @@ public class SearchFragment extends DialogFragment {
     public void performSearch(){
         String searchText  = searchTextView.getText().toString();
         searchText.toLowerCase();
-
+        GameApplication application = (GameApplication) getActivity().getApplication();
+        Tracker mTracker = application.mTracker;
+        mTracker.setScreenName("Game List");
+        mTracker.send(new HitBuilders.EventBuilder().setAction("Search Performed")
+                .setCategory("Search")
+                .setLabel(searchText)
+                .build());
         if (searchTextView.getText().toString().equals("")) {
             Toast.makeText(getActivity().getApplicationContext(), "The game name must not be empty", Toast.LENGTH_SHORT).show();
         }

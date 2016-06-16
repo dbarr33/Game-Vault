@@ -37,7 +37,7 @@ public class RealmManager {
     }
 
     private RealmResults<RealmGame> getAllGames(String platform){
-        return realm.where(RealmGame.class).equalTo(GameApplication.getString(R.string.realm_game_platform), platform).findAllSorted(GameApplication.getString(R.string.realm_game_date));
+        return realm.where(RealmGame.class).equalTo(GameApplication.getResourceString(R.string.realm_game_platform), platform).findAllSorted(GameApplication.getResourceString(R.string.realm_game_date));
     }
 
     public void saveGame(RealmGame realmGame) {

@@ -111,14 +111,14 @@ public class EditGamePresenter implements EditGamePresenterInterface {
     @Override
     public void saveGame(RealmGame realmGame) {
         RealmManager.getInstance().saveGame(realmGame);
-        editGameView.showConfirmationMessage(GameApplication.getString(R.string.snackbar_text_save));
+        editGameView.showConfirmationMessage(GameApplication.getResourceString(R.string.snackbar_text_save));
         transitionBack();
     }
 
     @Override
     public void updateGame(RealmGame realmGame, String platform, int position) {
         RealmManager.getInstance().updateGame(realmGame, platform, position);
-        editGameView.showConfirmationMessage(GameApplication.getString(R.string.snackbar_text_update));
+        editGameView.showConfirmationMessage(GameApplication.getResourceString(R.string.snackbar_text_update));
         transitionBack();
     }
 
@@ -164,18 +164,18 @@ public class EditGamePresenter implements EditGamePresenterInterface {
     }
 
     public void createGenreData(ArrayList<GameGenre> genres) {
-        editGameView.configureGeneRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getString(R.string.recycler_header_genres), (ArrayList) genres));
+        editGameView.configureGeneRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getResourceString(R.string.recycler_header_genres), (ArrayList) genres));
     }
 
     public void createGenreData(RealmList<RealmGenre> realmGenres) {
-        editGameView.configureGeneRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getString(R.string.recycler_header_genres), (RealmList) realmGenres));
+        editGameView.configureGeneRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getResourceString(R.string.recycler_header_genres), (RealmList) realmGenres));
     }
 
     public void createSimilarGameData(ArrayList<GameSimilarGames> genres) {
-        editGameView.configureSimilarGamesRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getString(R.string.recycler_header_similar_games), (ArrayList) genres));
+        editGameView.configureSimilarGamesRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getResourceString(R.string.recycler_header_similar_games), (ArrayList) genres));
     }
 
     public void createSimilarGameData(RealmList<RealmGame> realmGenres) {
-        editGameView.configureSimilarGamesRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getString(R.string.recycler_header_similar_games), (RealmList) realmGenres));
+        editGameView.configureSimilarGamesRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getResourceString(R.string.recycler_header_similar_games), (RealmList) realmGenres));
     }
 }

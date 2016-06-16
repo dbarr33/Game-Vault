@@ -51,7 +51,6 @@ public class GameListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupRecyclerView();
         setGameList(platform);
     }
@@ -124,7 +123,7 @@ public class GameListFragment extends Fragment {
             emptyView.setVisibility(View.VISIBLE);
         }
 
-        SnackbarBuilder snackbarBuilder = new SnackbarBuilder(getView(), GameApplication.getString(R.string.snackbar_text_deleted));
+        SnackbarBuilder snackbarBuilder = new SnackbarBuilder(getView(), GameApplication.getResourceString(R.string.snackbar_text_deleted));
         snackbarBuilder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
