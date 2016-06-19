@@ -12,8 +12,10 @@ import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameGenre;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameSimilarGames;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Publisher;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
+import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
@@ -67,6 +69,10 @@ public class EditGamePresenter implements EditGamePresenterInterface {
 
                 if (gameResponse.getResults().getSimilar_games() != null) {
                     createSimilarGameData(gameResponse.getResults().getSimilar_games());
+                }
+
+                if(gameResponse.getResults().getPublishers() != null) {
+                    createPublisherGameData(gameResponse.getResults().getPublishers());
                 }
 
                 if (gameResponse.getResults().getGameCharacters() != null) {
@@ -145,5 +151,13 @@ public class EditGamePresenter implements EditGamePresenterInterface {
 
     public void createSimilarGameData(RealmList<RealmGame> realmGenres) {
         editGameView.configureSimilarGamesRecyclerView(ListObjectBuilder.createArrayList(GameApplication.getResourceString(R.string.recycler_header_similar_games), (RealmList) realmGenres));
+    }
+
+    public void createPublisherGameData(ArrayList<Publisher> realmPublisher) {
+        editGameView.configurePublisherRecyclerView(ListObjectBuilder.createArrayList("Publisher", (ArrayList)realmPublisher));
+    }
+
+    public void createPublisherGameData(RealmList<RealmPublisher> realmPublisher) {
+        editGameView.configurePublisherRecyclerView(ListObjectBuilder.createArrayList("Publisher", (RealmList)realmPublisher));
     }
 }

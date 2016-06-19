@@ -92,13 +92,14 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         gameViewHolder.completionPercentage.setText(String.valueOf(realmGames.get(i).getCompletionPercentage()) + "%");
 
         String description;
-        if(realmGames.get(i).getDescription().length() > 500) {
-            description = realmGames.get(i).getDescription().substring(0, 500);
+        if(realmGames.get(i).getDescription() != null) {
+            if (realmGames.get(i).getDescription().length() > 500) {
+                description = realmGames.get(i).getDescription().substring(0, 500);
+            } else {
+                description = realmGames.get(i).getDescription();
+            }
+            gameViewHolder.description.setText(description);
         }
-        else {
-            description = realmGames.get(i).getDescription();
-        }
-        gameViewHolder.description.setText(description);
 
     }
 

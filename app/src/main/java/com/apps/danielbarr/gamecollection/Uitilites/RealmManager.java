@@ -123,6 +123,10 @@ public class RealmManager {
             if(oldVersion == 1) {
                 realm.getSchema().get("RealmCharacter")
                         .addField("imageURL", String.class);
+                realm.getSchema().create("RealmPublisher")
+                        .addField("name", String.class);
+                realm.getSchema().get("RealmGame")
+                        .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"));
             }
         }
     };

@@ -23,6 +23,7 @@ public class RealmGame extends RealmObject implements NameInterface{
     private RealmList<RealmGame> similarRealmGames;
     private boolean hasImage;
     private long date;
+    private RealmList<RealmPublisher> publishers;
 
     public RealmGame(){
 
@@ -41,6 +42,15 @@ public class RealmGame extends RealmObject implements NameInterface{
                 RealmGame copy = new RealmGame();
                 copy.setName(tempGame.getName());
                 this.similarRealmGames.add(copy);
+            }
+        }
+
+        if(realmGame.getPublishers() != null) {
+            this.publishers = new RealmList<>();
+            for (RealmPublisher realmPublisher: realmGame.getPublishers()){
+                RealmPublisher copy = new RealmPublisher();
+                copy.setName(realmPublisher.getName());
+                this.publishers.add(copy);
             }
         }
 
@@ -66,6 +76,14 @@ public class RealmGame extends RealmObject implements NameInterface{
 
     public void setSimilarRealmGames(RealmList<RealmGame> similarRealmGames) {
         this.similarRealmGames = similarRealmGames;
+    }
+
+    public RealmList<RealmPublisher> getPublishers() {
+        return publishers;
+    }
+
+    public void setPublishers(RealmList<RealmPublisher> publishers) {
+        this.publishers = publishers;
     }
 
     public String getName() {

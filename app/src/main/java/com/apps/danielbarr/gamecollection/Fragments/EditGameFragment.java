@@ -24,6 +24,7 @@ import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
+import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
@@ -63,10 +64,12 @@ public class EditGameFragment extends Fragment implements EditGameView{
     private RecyclerView gameDescriptionRecyclerView;
     private RecyclerView gameGenresRecyclerView;
     private RecyclerView charactersRecyclerView;
+    private RecyclerView publisherRecyclerview;
     private ProgressBar gameImageProgressBar;
     private LinearLayout characterLayout;
     private String currentPlatform;
     private GiantBombSearch searchResults;
+
 
     public SynchronizedScrollView mScrollView;
     public int gamePosition;
@@ -115,6 +118,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
         gameImageProgressBar = (ProgressBar)v.findViewById(R.id.gameImageProgressBar);
         relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclerView);
         gameDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclerView);
+        publisherRecyclerview = (RecyclerView)v.findViewById(R.id.publisher);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclerView);
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
 
@@ -172,7 +176,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
         userRatingBar.setRating(realmGame.getUserRating());
         completionPercentage.setText(Float.toString(realmGame.getCompletionPercentage()));
 
-        if(!realmGame.getDescription().matches("")){
+        if(realmGame.getDescription() != null){
             configureDescriptionRecyclerView(realmGame.getDescription());
         }
         if(realmGame.getCharacters().size() > 0) {
@@ -183,6 +187,9 @@ public class EditGameFragment extends Fragment implements EditGameView{
         }
         if(realmGame.getSimilarRealmGames().size() > 0) {
             editGamePresenter.createSimilarGameData(realmGame.getSimilarRealmGames());
+        }
+        if(realmGame.getPublishers().size() > 0) {
+            editGamePresenter.createPublisherGameData(realmGame.getPublishers());
         }
 
         if(realmGame.getPhoto() != null) {
@@ -261,6 +268,17 @@ public class EditGameFragment extends Fragment implements EditGameView{
     }
 
     @Override
+    public void configurePublisherRecyclerView(ArrayList<String> strings) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        publisherRecyclerview.setLayoutManager(linearLayoutManager);
+        ExpandableRecyclerAdapter publisherAdapter = new ExpandableRecyclerAdapter(strings,
+                publisherRecyclerview, false);
+        publisherRecyclerview.setAdapter(publisherAdapter);
+        publisherRecyclerview.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void configureCharacterRecyclerView(GameCharactersRecyclerAdapter adapter) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -325,6 +343,17 @@ public class EditGameFragment extends Fragment implements EditGameView{
                 realmGames.add(similarRealmGame);
             }
             realmGame.setSimilarRealmGames(realmGames);
+        }
+
+        if(publisherRecyclerview.getVisibility() == View.VISIBLE) {
+            RealmList<RealmPublisher> realmPublishers = new RealmList<>();
+            ArrayList<String> publisherNames = ((ExpandableRecyclerAdapter)publisherRecyclerview.getAdapter()).getList();
+            for (int i = 1; i < publisherNames.size(); i++) {
+                RealmPublisher publisher = new RealmPublisher();
+                publisher.setName(publisherNames.get(i));
+                realmPublishers.add(publisher);
+            }
+            realmGame.setPublishers(realmPublishers);
         }
 
         if(blurredGameImage.getDrawable() != null) {
