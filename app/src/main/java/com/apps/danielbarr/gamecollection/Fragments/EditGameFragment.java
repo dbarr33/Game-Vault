@@ -3,7 +3,6 @@ package com.apps.danielbarr.gamecollection.Fragments;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +31,10 @@ import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 import com.apps.danielbarr.gamecollection.presenter.EditGamePresenter;
 import com.apps.danielbarr.gamecollection.presenter.EditGameView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -185,11 +188,11 @@ public class EditGameFragment extends Fragment implements EditGameView{
         Bitmap bmp = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
         if(bmp != null) {
             Bitmap bitmap = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
-            setupGameImages(bmp, bitmap);
+            //setupGameImages(bmp, bitmap);
         }
         else if(!realmGame.isHasImage()){
             Bitmap bitmap = BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art);
-            setupGameImages(bitmap, null);
+            //setupGameImages(bitmap, null);
         }
         else {
             editGamePresenter.downloadImage(realmGame.getPhotoURL());
@@ -214,11 +217,22 @@ public class EditGameFragment extends Fragment implements EditGameView{
     }
 
     @Override
-    public void setupGameImages(Bitmap mainImage, Bitmap blurredImage) {
-        gameImageView.setImageBitmap(mainImage);
-        if(blurredImage != null) {
-            blurredGameImage.setImageBitmap(PictureUtils.blurBitmap(blurredImage, GameApplication.getActivity().getApplicationContext()));
-        }
+    public void setupGameImages(String imageURL) {
+        Glide.with(this)
+                .load(imageURL)
+                .into(gameImageView);
+        Glide.with(this)
+                .load(imageURL)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(1200, 800) {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        Bitmap bitmap  = PictureUtils.blurBitmap(resource, getActivity());
+                        blurredGameImage.setImageBitmap(bitmap);
+                        blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                        blurredGameImage.setVisibility(View.VISIBLE);
+                    }
+                });
     }
 
     @Override
@@ -311,7 +325,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
         }
 
         if(blurredGameImage.getDrawable() != null) {
-            byte[] bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
+            byte[] bytes = PictureUtils.convertBitmapToByteArray(((GlideBitmapDrawable) gameImageView.getDrawable()).getBitmap());
             realmGame.setPhoto(bytes);
             realmGame.setHasImage(true);
         }

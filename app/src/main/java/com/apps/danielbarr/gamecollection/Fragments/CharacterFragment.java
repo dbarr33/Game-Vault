@@ -39,7 +39,6 @@ public class CharacterFragment extends Fragment {
 
     public static final String EXTRA_GIANTCHARACTER = "com.apps.danielbarr.gamecollection.character";
 
-
     public static CharacterFragment newInstance(RealmCharacter realmCharacter) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_GIANTCHARACTER, realmCharacter);

@@ -1,7 +1,5 @@
 package com.apps.danielbarr.gamecollection.presenter;
 
-import android.graphics.Bitmap;
-
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 
@@ -13,7 +11,7 @@ import java.util.ArrayList;
 public interface EditGameView {
     public void showProgressBar();
     public void hideProgressBar();
-    public void setupGameImages(Bitmap mainImage, Bitmap blurredImage);
+    public void setupGameImages(String imageURL);
     public void configureGeneRecyclerView(ArrayList<String> strings);
     public void configureSimilarGamesRecyclerView(ArrayList<String> strings);
     public void configureCharacterRecyclerView(GameCharactersRecyclerAdapter adapter);

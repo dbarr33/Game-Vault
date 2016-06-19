@@ -69,23 +69,21 @@ public class GiantGamesFragment extends DialogFragment {
         gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //TODO add check for image loaded
+            if(true) {
+                getDialog().dismiss();
+                EditGameFragment editGameFragment = EditGameFragment.newInstance(getArguments().getString("platform"),
+                        giantDialogListAdapter.getItem(position));
 
-
-                if(giantDialogListAdapter.getImages().get(position) != null) {
-                    giantDialogListAdapter.clearQueue();
-                    getDialog().dismiss();
-                    EditGameFragment editGameFragment = EditGameFragment.newInstance(getArguments().getString("platform"),
-                            giantDialogListAdapter.getItem(position));
-
-                    HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(getActivity(), GameListFragment.class.getName());
-                    hideFragmentCommand.execute();
-                    AddFragmentCommand addFragmentCommand = new AddFragmentCommand(editGameFragment, getActivity());
-                    addFragmentCommand.execute();
-                }
-                else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Wait for " + giantDialogListAdapter.getItem(position).getName() + " to load",
-                            Toast.LENGTH_SHORT).show();
-                }
+                HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(getActivity(), GameListFragment.class.getName());
+                hideFragmentCommand.execute();
+                AddFragmentCommand addFragmentCommand = new AddFragmentCommand(editGameFragment, getActivity());
+                addFragmentCommand.execute();
+            }
+            else {
+                Toast.makeText(getActivity().getApplicationContext(), "Wait for " + giantDialogListAdapter.getItem(position).getName() + " to load",
+                        Toast.LENGTH_SHORT).show();
+            }
             }
         });
 

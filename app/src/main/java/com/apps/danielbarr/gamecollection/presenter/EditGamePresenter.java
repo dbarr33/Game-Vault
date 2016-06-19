@@ -17,8 +17,6 @@ import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
-import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloadManager;
-import com.apps.danielbarr.gamecollection.Uitilites.ImageDownloader;
 import com.apps.danielbarr.gamecollection.Uitilites.ListObjectBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
@@ -79,6 +77,7 @@ public class EditGamePresenter implements EditGamePresenterInterface {
                         editGameView.configureCharacterRecyclerView(new GameCharactersRecyclerAdapter(new ArrayList<>(gameResponse.getResults().getGameCharacters().subList(0, 10))));
                     }
                 }
+
             }
 
             @Override
@@ -87,10 +86,10 @@ public class EditGamePresenter implements EditGamePresenterInterface {
         });
 
         if (url != null) {
-            downloadImage(url);
+            editGameView.setupGameImages(url);
         } else {
             Bitmap bitmap = BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art);
-            editGameView.setupGameImages(bitmap, null);
+            //editGameView.setupGameImages(bitmap, null);
             editGameView.hideProgressBar();
         }
     }
@@ -129,25 +128,6 @@ public class EditGamePresenter implements EditGamePresenterInterface {
         transitionBack();
     }
 
-    @Override
-    public void downloadImage(String url){
-        ImageDownloadManager<Integer> imageDownloadManager = new ImageDownloadManager<Integer>();
-        imageDownloadManager.queueThumbnail(0, url);
-        imageDownloadManager.setListener(new ImageDownloader.Listener<Integer>() {
-            @Override
-            public void onThumbNailDownloaded(Integer position, Bitmap thumbnail) {
-                if (thumbnail != null) {
-                    configureDownloadedImage(thumbnail);
-                }else{
-                    Bitmap bitmap = BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art);
-                    editGameView.setupGameImages(bitmap, null);
-                    editGameView.hideProgressBar();
-                }
-            }
-        });
-
-        editGameView.showProgressBar();
-    }
 
     private void configureDownloadedImage(Bitmap thumbnail) {
         int px = PictureUtils.dpTOPX(160, GameApplication.getActivity());
@@ -155,7 +135,7 @@ public class EditGamePresenter implements EditGamePresenterInterface {
         Bitmap bmp = Bitmap.createBitmap(thumbnail);
         bmp = PictureUtils.scaleDown(bmp, px, true);
         bitmap = PictureUtils.scaleDown(bitmap, px, true);
-        editGameView.setupGameImages(bmp, bitmap);
+       // editGameView.setupGameImages(bmp, bitmap);
         editGameView.hideProgressBar();
     }
 
