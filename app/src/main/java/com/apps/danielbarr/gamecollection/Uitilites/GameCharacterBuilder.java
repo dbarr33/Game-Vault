@@ -48,7 +48,7 @@ public class GameCharacterBuilder {
             @Override
             public void success(CharacterResponse characterResponse, Response response) {
                 if (characterResponse.getResults().getImage() != null) {
-                    imageDownloadManager.queueThumbnail(0, characterResponse.getResults().getImage().getThumb_url());
+                    realmCharacter.setImageURL(characterResponse.getResults().getImage().getThumb_url());
                 }
                 else {
                     byte[] picture =  PictureUtils
@@ -62,6 +62,7 @@ public class GameCharacterBuilder {
                 } else {
                     realmCharacter.setDescription(HTMLUtil.stripHtml(characterResponse.getResults().getDescription()));
                 }
+                callback.success(realmCharacter, response);
             }
 
             @Override

@@ -37,7 +37,6 @@ import com.apps.danielbarr.gamecollection.Uitilites.ShowFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.SimpleItemTouchHelperCallback;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class Main extends ActionBarActivity implements DrawerListAdapter.OnStartDragListner, DrawerListAdapter.OnDrawerClickListener{
@@ -84,7 +83,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         mDrawerList = (RecyclerView)findViewById(R.id.drawerList);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
                 GravityCompat.START);
-        realm = Realm.getInstance(getApplicationContext());
+        realm = RealmManager.getInstance().getRealm();
         RealmResults<FirstInstall> realmResults = realm.where(FirstInstall.class).findAll();
 
         if(realmResults.isEmpty()) {

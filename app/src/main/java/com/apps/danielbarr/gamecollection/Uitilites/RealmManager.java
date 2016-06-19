@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
 import io.realm.RealmResults;
 
 /**
@@ -18,14 +20,22 @@ import io.realm.RealmResults;
 public class RealmManager {
 
     private static RealmManager realmManager;
+    private static int REALM_VERSION = 2;
     private Realm realm;
+    private RealmConfiguration myConfig;
 
     private RealmManager() {
-        RealmConfiguration myConfig = new RealmConfiguration.Builder(GameApplication.getActivity())
+        myConfig = new RealmConfiguration.Builder(GameApplication.getActivity())
                 .name("myrealm.realm")
-                .schemaVersion(1)
+                .schemaVersion(REALM_VERSION)
+                .migration(realmMigration)
                 .build();
+
         realm = Realm.getInstance(myConfig);
+    }
+
+    public Realm getRealm() {
+        return realm;
     }
 
     public static RealmManager getInstance() {
@@ -105,4 +115,15 @@ public class RealmManager {
     public void closeRealm(){
         realm.close();
     }
+
+
+    private RealmMigration realmMigration = new RealmMigration() {
+        @Override
+        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+            if(oldVersion == 1) {
+                realm.getSchema().get("RealmCharacter")
+                        .addField("imageURL", String.class);
+            }
+        }
+    };
 }

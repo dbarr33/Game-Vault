@@ -2,7 +2,6 @@ package com.apps.danielbarr.gamecollection.Fragments;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +19,9 @@ import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 
@@ -65,12 +67,21 @@ public class CharacterFragment extends Fragment {
         mScrollView.setToolbarTitle(realmCharacter.getName());
         mScrollView.init(getActivity(), v);
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(realmCharacter.getPhoto(), 0, realmCharacter.getPhoto().length);
-        if (bmp != null) {
-            characterImageView.setImageBitmap(bmp);
-            blurredCharacterImageView.setImageBitmap(PictureUtils.blurBitmap(bitmap, getActivity().getApplicationContext()));
-            blurredCharacterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        if (realmCharacter.getImageURL() != null) {
+            Glide.with(this)
+                    .load(realmCharacter.getImageURL())
+                    .into(characterImageView);
+            Glide.with(this)
+                    .load(realmCharacter.getImageURL())
+                    .asBitmap()
+                    .into(new SimpleTarget<Bitmap>(1200, 800) {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            blurredCharacterImageView.setImageBitmap(PictureUtils.blurBitmap(resource, getActivity().getApplicationContext()));
+                            blurredCharacterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                            blurredCharacterImageView.setVisibility(View.VISIBLE);
+                        }
+                    });
         }
         characterName.setText(realmCharacter.getName());
         ScreenSetupController.currentScreenCharacter(getActivity());

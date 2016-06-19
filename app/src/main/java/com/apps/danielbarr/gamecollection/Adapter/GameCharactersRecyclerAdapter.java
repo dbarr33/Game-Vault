@@ -1,8 +1,6 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +19,7 @@ import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.GameCharacterBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
     public GameCharactersRecyclerAdapter(final ArrayList<GameCharacter> gameCharacters)
     {
         setup();
-
         for(int i = 0; i < gameCharacters.size(); i++) {
             realmCharacters.add(new RealmCharacter());
             realmCharacters.get(i).setName(gameCharacters.get(i).getName());
@@ -93,14 +91,10 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             listViewHolder.mName.setText(temp);
         }
 
-        if(realmCharacters.get(i).getPhoto() != null) {
-            Bitmap bmp = BitmapFactory.decodeByteArray(realmCharacters.get(i).getPhoto(), 0, realmCharacters.get(i).getPhoto().length);
-            if (bmp != null) {
-                listViewHolder.mCharacterImageView.setImageBitmap(bmp);
-                listViewHolder.mProgressBar.setVisibility(View.GONE);
-            } else {
-                listViewHolder.mProgressBar.setVisibility(View.VISIBLE);
-            }
+        if(realmCharacters.get(i).getImageURL() != null) {
+            Glide.with(activity)
+                    .load(realmCharacters.get(i).getImageURL())
+                    .into(listViewHolder.mCharacterImageView);
         }
     }
 
