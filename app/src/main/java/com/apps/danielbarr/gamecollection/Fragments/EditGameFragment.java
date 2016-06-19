@@ -3,6 +3,7 @@ package com.apps.danielbarr.gamecollection.Fragments;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,14 +34,13 @@ import com.apps.danielbarr.gamecollection.presenter.EditGamePresenter;
 import com.apps.danielbarr.gamecollection.presenter.EditGameView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import io.realm.RealmList;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
  * Created by danielbarr on 1/19/15.
@@ -185,17 +185,16 @@ public class EditGameFragment extends Fragment implements EditGameView{
             editGamePresenter.createSimilarGameData(realmGame.getSimilarRealmGames());
         }
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
-        if(bmp != null) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
-            //setupGameImages(bmp, bitmap);
+        if(realmGame.getPhoto() != null) {
+            setupSavedImages(realmGame.getPhoto());
         }
         else if(!realmGame.isHasImage()){
+            //TODO fix default image displayed
             Bitmap bitmap = BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art);
-            //setupGameImages(bitmap, null);
+            //setupSavedImages(bitmap);
         }
         else {
-            editGamePresenter.downloadImage(realmGame.getPhotoURL());
+            setupGameImages(realmGame.getPhotoURL());
         }
 
         mScrollView.setToolbarTitle(realmGame.getName());
@@ -224,15 +223,19 @@ public class EditGameFragment extends Fragment implements EditGameView{
         Glide.with(this)
                 .load(imageURL)
                 .asBitmap()
-                .into(new SimpleTarget<Bitmap>(1200, 800) {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        Bitmap bitmap  = PictureUtils.blurBitmap(resource, getActivity());
-                        blurredGameImage.setImageBitmap(bitmap);
-                        blurredGameImage.setScaleType(ImageView.ScaleType.FIT_XY);
-                        blurredGameImage.setVisibility(View.VISIBLE);
-                    }
-                });
+                .transform(new BlurTransformation(getActivity().getApplicationContext()))
+                .into(blurredGameImage);
+    }
+
+    public void setupSavedImages(byte[] bitmap) {
+        Glide.with(this)
+                .load(bitmap)
+                .into(gameImageView);
+        Glide.with(this)
+                .load(bitmap)
+                .asBitmap()
+                .transform(new BlurTransformation(getActivity().getApplicationContext()))
+                .into(blurredGameImage);
     }
 
     @Override
@@ -325,7 +328,14 @@ public class EditGameFragment extends Fragment implements EditGameView{
         }
 
         if(blurredGameImage.getDrawable() != null) {
-            byte[] bytes = PictureUtils.convertBitmapToByteArray(((GlideBitmapDrawable) gameImageView.getDrawable()).getBitmap());
+            byte[] bytes;
+
+            if(gameImageView.getDrawable() instanceof GlideBitmapDrawable) {
+                bytes = PictureUtils.convertBitmapToByteArray(((GlideBitmapDrawable) gameImageView.getDrawable()).getBitmap());
+            }
+            else {
+                bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
+            }
             realmGame.setPhoto(bytes);
             realmGame.setHasImage(true);
         }

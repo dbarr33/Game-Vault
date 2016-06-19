@@ -1,7 +1,6 @@
 package com.apps.danielbarr.gamecollection.Fragments;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,14 +15,13 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
-import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -73,14 +71,8 @@ public class CharacterFragment extends Fragment {
             Glide.with(this)
                     .load(realmCharacter.getImageURL())
                     .asBitmap()
-                    .into(new SimpleTarget<Bitmap>(1200, 800) {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            blurredCharacterImageView.setImageBitmap(PictureUtils.blurBitmap(resource, getActivity().getApplicationContext()));
-                            blurredCharacterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                            blurredCharacterImageView.setVisibility(View.VISIBLE);
-                        }
-                    });
+                    .transform(new BlurTransformation(getActivity().getApplicationContext()))
+                    .into(blurredCharacterImageView);
         }
         characterName.setText(realmCharacter.getName());
         ScreenSetupController.currentScreenCharacter(getActivity());

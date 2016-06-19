@@ -46,9 +46,11 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
 
         viewHolder = (ViewHolder) convertView.getTag();
         viewHolder.gameName.setText(giantBombSearches.get(position).getName());
-        Glide.with(activity)
-                .load(giantBombSearches.get(position).getImage().getThumb_url())
-                .into(viewHolder.imageView);
+        if(giantBombSearches.get(position).getImage() != null) {
+            Glide.with(activity)
+                    .load(giantBombSearches.get(position).getImage().getThumb_url())
+                    .into(viewHolder.imageView);
+        }
         return convertView;
     }
 

@@ -18,7 +18,6 @@ import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.ListObjectBuilder;
-import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 
 import java.util.ArrayList;
@@ -126,17 +125,6 @@ public class EditGamePresenter implements EditGamePresenterInterface {
         RealmGame realmGame = RealmManager.getInstance().getRealmGameByPosition(platform, position);
         ((Main)GameApplication.getActivity()).removeGame(position, realmGame);
         transitionBack();
-    }
-
-
-    private void configureDownloadedImage(Bitmap thumbnail) {
-        int px = PictureUtils.dpTOPX(160, GameApplication.getActivity());
-        Bitmap bitmap = Bitmap.createBitmap(thumbnail);
-        Bitmap bmp = Bitmap.createBitmap(thumbnail);
-        bmp = PictureUtils.scaleDown(bmp, px, true);
-        bitmap = PictureUtils.scaleDown(bitmap, px, true);
-       // editGameView.setupGameImages(bmp, bitmap);
-        editGameView.hideProgressBar();
     }
 
     private void transitionBack() {
