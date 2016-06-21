@@ -226,6 +226,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
     public void setupGameImages(String imageURL) {
         Glide.with(this)
                 .load(imageURL)
+                .asBitmap()
                 .into(gameImageView);
         Glide.with(this)
                 .load(imageURL)
@@ -237,6 +238,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
     public void setupSavedImages(byte[] bitmap) {
         Glide.with(this)
                 .load(bitmap)
+                .asBitmap()
                 .into(gameImageView);
         Glide.with(this)
                 .load(bitmap)

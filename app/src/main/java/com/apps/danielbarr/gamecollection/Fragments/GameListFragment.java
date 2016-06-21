@@ -8,7 +8,10 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
@@ -33,8 +36,10 @@ public class GameListFragment extends Fragment {
     private LinearLayout emptyView;
 
     private GameListAdapter gameListAdapter;
+    private ImageView filterToggle;
     private String platform;
     private Button filter;
+    private Button publisher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,9 @@ public class GameListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_recycleview_game_list, container, false);
         gameListRecycler = (RecyclerView)v.findViewById(R.id.recycler_gameList);
         emptyView = (LinearLayout)v.findViewById(R.id.emptyView);
-        filter = (Button)getActivity().findViewById(R.id.filter);
+        filter = (Button)v.findViewById(R.id.filter);
+        publisher = (Button)v.findViewById(R.id.publisherButton);
+        filterToggle = (ImageView)getActivity().findViewById(R.id.filterButton);
         return v;
     }
 
@@ -57,6 +64,7 @@ public class GameListFragment extends Fragment {
         setupRecyclerView();
         setGameList(platform);
         setupFilter();
+        setupFilterToggle();
     }
 
     private void setupRecyclerView(){
@@ -149,6 +157,35 @@ public class GameListFragment extends Fragment {
                   gameListAdapter.filterList();
 
               }
+        });
+        publisher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gameListAdapter.filterByPublisher("Nintendo");
+            }
+        });
+    }
+
+    private void setupFilterToggle(){
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up);
+        animation.setDuration(1);
+        animation.setFillAfter(true);
+        getView().startAnimation(animation);
+        filterToggle.setOnClickListener(new View.OnClickListener() {
+            boolean toggled = false;
+            @Override
+            public void onClick(View v) {
+                Animation animation;
+                if(toggled) {
+                    animation =  AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up);
+                }
+                else {
+                    animation =  AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down);
+                }
+                toggled = !toggled;
+                animation.setFillAfter(true);
+                getView().startAnimation(animation);
+            }
         });
     }
 

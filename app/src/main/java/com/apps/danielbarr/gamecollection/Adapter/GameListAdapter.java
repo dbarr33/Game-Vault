@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
+import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
@@ -62,12 +63,26 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     }
 
     public void filterList() {
+        filteredList = realmGames;
         Collections.sort(filteredList, new Comparator<RealmGame>() {
             @Override
             public int compare(RealmGame lhs, RealmGame rhs) {
                 return lhs.getName().compareToIgnoreCase(rhs.getName());
             }
         });
+        notifyDataSetChanged();
+    }
+
+    public void filterByPublisher(String publisherName) {
+        filteredList = new ArrayList<>();
+        for(RealmGame realmGame: realmGames){
+            for(RealmPublisher realmPublisher: realmGame.getPublishers()) {
+                if (realmPublisher.getName().trim().matches(publisherName.trim())) {
+                    filteredList.add(realmGame);
+                    break;
+                }
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -137,7 +152,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(View view , int position);
+        void onItemClick(View view , int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
