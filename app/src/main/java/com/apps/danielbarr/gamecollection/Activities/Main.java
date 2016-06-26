@@ -22,10 +22,12 @@ import android.view.Window;
 import com.apps.danielbarr.gamecollection.Adapter.DrawerListAdapter;
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
+import com.apps.danielbarr.gamecollection.Fragments.FilterFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.Fragments.SearchFragment;
 import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.DrawerList;
+import com.apps.danielbarr.gamecollection.Model.FilterState;
 import com.apps.danielbarr.gamecollection.Model.FirstInstall;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
@@ -136,6 +138,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         }
 
         getSupportActionBar().setTitle(drawerItems.get(0).getName());
+        getFragmentManager().beginTransaction().add(R.id.filterFragment, new FilterFragment(), null).commit();
     }
 
     public void SelectItem(int position) {
@@ -239,9 +242,11 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         gameListFragment.removeGame(position, realmGame);
     }
 
-    public void createDrawerList()
-    {
+    public void applyFilter(FilterState filterState){
+        gameListFragment.applayFilter(filterState);
+    }
 
+    public void createDrawerList() {
         realm.beginTransaction();
         FirstInstall addPerson = realm.createObject(FirstInstall.class);
         addPerson.setFirstInstall(false);

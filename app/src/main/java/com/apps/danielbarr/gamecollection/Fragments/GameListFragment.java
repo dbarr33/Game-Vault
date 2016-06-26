@@ -8,14 +8,11 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameListAdapter;
+import com.apps.danielbarr.gamecollection.Model.FilterState;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
@@ -36,10 +33,7 @@ public class GameListFragment extends Fragment {
     private LinearLayout emptyView;
 
     private GameListAdapter gameListAdapter;
-    private ImageView filterToggle;
     private String platform;
-    private Button filter;
-    private Button publisher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,11 +44,8 @@ public class GameListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_recycleview_game_list, container, false);
-        gameListRecycler = (RecyclerView)v.findViewById(R.id.recycler_gameList);
-        emptyView = (LinearLayout)v.findViewById(R.id.emptyView);
-        filter = (Button)v.findViewById(R.id.filter);
-        publisher = (Button)v.findViewById(R.id.publisherButton);
-        filterToggle = (ImageView)getActivity().findViewById(R.id.filterButton);
+        gameListRecycler = (RecyclerView) v.findViewById(R.id.recycler_gameList);
+        emptyView = (LinearLayout) v.findViewById(R.id.emptyView);
         return v;
     }
 
@@ -63,11 +54,9 @@ public class GameListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
         setGameList(platform);
-        setupFilter();
-        setupFilterToggle();
     }
 
-    private void setupRecyclerView(){
+    private void setupRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         gameListRecycler.setLayoutManager(linearLayoutManager);
@@ -79,10 +68,9 @@ public class GameListFragment extends Fragment {
         ArrayList<RealmGame> storedRealmGames = RealmManager.getInstance().getGames(platform);
         gameListAdapter = new GameListAdapter(storedRealmGames, platform);
         gameListRecycler.setAdapter(gameListAdapter);
-        if(storedRealmGames.size() > 0) {
+        if (storedRealmGames.size() > 0) {
             emptyView.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             emptyView.setVisibility(View.VISIBLE);
         }
     }
@@ -93,8 +81,8 @@ public class GameListFragment extends Fragment {
 
     @Override
     public void onResume() {
-        if(! ((Main)getActivity()).getSupportActionBar().isShowing()) {
-            ((Main)getActivity()).getSupportActionBar().show();
+        if (!((Main) getActivity()).getSupportActionBar().isShowing()) {
+            ((Main) getActivity()).getSupportActionBar().show();
         }
         super.onResume();
     }
@@ -131,7 +119,7 @@ public class GameListFragment extends Fragment {
         RealmManager.getInstance().removeGame(realmGame);
         gameListAdapter.removeGame(position);
         gameListAdapter.notifyItemRemoved(position);
-        if(gameListAdapter.getItemCount() == 0){
+        if (gameListAdapter.getItemCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
         }
 
@@ -150,43 +138,7 @@ public class GameListFragment extends Fragment {
         snackbarBuilder.show();
     }
 
-    private void setupFilter() {
-        filter.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                  gameListAdapter.filterList();
-
-              }
-        });
-        publisher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameListAdapter.filterByPublisher("Nintendo");
-            }
-        });
+    public void applayFilter(FilterState filterState) {
+        gameListAdapter.applyFilter(filterState);
     }
-
-    private void setupFilterToggle(){
-        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up);
-        animation.setDuration(1);
-        animation.setFillAfter(true);
-        getView().startAnimation(animation);
-        filterToggle.setOnClickListener(new View.OnClickListener() {
-            boolean toggled = false;
-            @Override
-            public void onClick(View v) {
-                Animation animation;
-                if(toggled) {
-                    animation =  AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up);
-                }
-                else {
-                    animation =  AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down);
-                }
-                toggled = !toggled;
-                animation.setFillAfter(true);
-                getView().startAnimation(animation);
-            }
-        });
-    }
-
 }

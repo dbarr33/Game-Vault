@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
+import com.apps.danielbarr.gamecollection.Model.FilterState;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
+import com.apps.danielbarr.gamecollection.Model.SortType;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
@@ -62,7 +64,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         realmGames.add(position, game);
     }
 
-    public void filterList() {
+    private void filterListAlpha() {
         filteredList = realmGames;
         Collections.sort(filteredList, new Comparator<RealmGame>() {
             @Override
@@ -73,7 +75,17 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         notifyDataSetChanged();
     }
 
-    public void filterByPublisher(String publisherName) {
+    public void applyFilter(FilterState filterState) {
+        if(filterState.getSortType() == SortType.ALPHA) {
+            filterListAlpha();
+        }
+
+        if (!filterState.getSelectedPublisher().matches("")){
+            filterByPublisher(filterState.getSelectedPublisher());
+        }
+    }
+
+    private void filterByPublisher(String publisherName) {
         filteredList = new ArrayList<>();
         for(RealmGame realmGame: realmGames){
             for(RealmPublisher realmPublisher: realmGame.getPublishers()) {
