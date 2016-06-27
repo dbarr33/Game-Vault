@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -140,7 +139,6 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
 
         protected TextView mName;
         protected ImageView mCharacterImageView;
-        protected ProgressBar mProgressBar;
 
         public ListViewHolder(final View itemView) {
             super(itemView);
@@ -148,7 +146,6 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             itemView.setClickable(true);
             mName = (TextView) itemView.findViewById(R.id.list_character_name);
             mCharacterImageView = (ImageView) itemView.findViewById(R.id.list_character_image);
-            mProgressBar = (ProgressBar) itemView.findViewById(R.id.list_character_progresBar);
             itemView.setOnClickListener(this);
         }
         @Override
@@ -160,7 +157,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
     }
 
         public interface OnItemClickListener {
-            public void onItemClick(View view , int position);
+            void onItemClick(View view , int position);
         }
 
         public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {

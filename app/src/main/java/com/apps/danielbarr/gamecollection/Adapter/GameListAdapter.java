@@ -79,10 +79,24 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         if(filterState.getSortType() == SortType.ALPHA) {
             filterListAlpha();
         }
+        else {
+            filterBySaveDate();
+        }
 
-        if (!filterState.getSelectedPublisher().matches("")){
+        if (filterState.getSelectedPublisher() != null){
             filterByPublisher(filterState.getSelectedPublisher());
         }
+    }
+
+    private void filterBySaveDate() {
+        filteredList = realmGames;
+        Collections.sort(filteredList, new Comparator<RealmGame>() {
+            @Override
+            public int compare(RealmGame lhs, RealmGame rhs) {
+                return Long.compare(lhs.getDate(), rhs.getDate());
+            }
+        });
+        notifyDataSetChanged();
     }
 
     private void filterByPublisher(String publisherName) {
