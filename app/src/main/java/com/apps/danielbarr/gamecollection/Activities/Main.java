@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Adapter.DrawerListAdapter;
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
@@ -48,12 +49,12 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private ActionBar actionBar;
     private GameListFragment gameListFragment;
     private DrawerListAdapter drawerListAdapter;
     private Realm realm;
     private FloatingActionButton floatingActionButton;
     private ItemTouchHelper mItemTouchHelper;
+    private TextView toolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +107,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
@@ -114,12 +115,13 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
                 toolbar, R.string.drawer_open,
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
-                actionBar.setTitle(mTitle);
+                setTitle(mTitle);
+                Main.this.setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to
             }
 
             public void onDrawerOpened(View drawerView) {
-                actionBar.setTitle(mDrawerTitle);
+                setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to
             }
         };
@@ -139,6 +141,8 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
 
         getSupportActionBar().setTitle(drawerItems.get(0).getName());
         getFragmentManager().beginTransaction().add(R.id.filterFragment, new FilterFragment(), null).commit();
+        toolbarTitle = (TextView)findViewById(R.id.title);
+        setTitle(mTitle);
     }
 
     public void SelectItem(int position) {
@@ -151,7 +155,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        actionBar.setTitle(mTitle);
+        toolbarTitle.setText(mTitle);
     }
 
     @Override

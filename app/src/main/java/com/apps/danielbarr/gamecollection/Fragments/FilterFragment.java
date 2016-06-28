@@ -2,6 +2,8 @@ package com.apps.danielbarr.gamecollection.Fragments;
 
 import android.animation.Animator;
 import android.app.Fragment;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -32,8 +34,10 @@ public class FilterFragment extends Fragment {
     private Button cancelFilter;
     private Button applyFilter;
     private FloatingActionButton addButton;
+    private TransitionDrawable td;
 
     private boolean toggled;
+    private boolean isAnimating;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,7 @@ public class FilterFragment extends Fragment {
         filterState = new FilterState();
         filterState.setSortType(SortType.DATE);
         toggled = false;
+        isAnimating = false;
     }
 
     @Nullable
@@ -56,6 +61,7 @@ public class FilterFragment extends Fragment {
         overLay = view.findViewById(R.id.overlay);
         blockingView = view.findViewById(R.id.blockingView);
         addButton = (FloatingActionButton)getActivity().findViewById(R.id.floatingActionButton);
+
         return view;
     }
 
@@ -63,6 +69,7 @@ public class FilterFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         setupFilter();
         setupFilterToggle();
+        setupTransitionDrawerable();
     }
 
     private void setupFilter() {
@@ -113,44 +120,59 @@ public class FilterFragment extends Fragment {
         });
     }
 
+    private void setupTransitionDrawerable() {
+        td = new TransitionDrawable( new Drawable[] {
+                getResources().getDrawable(R.drawable.filled_filter),
+                getResources().getDrawable(R.drawable.arrow_down)
+        });
+        td.setCrossFadeEnabled(true);
+        filterToggle.setImageDrawable(td);
+    }
+
     private void animateView() {
         float amountToMove;
         final int visibility;
-        if(toggled) {
-            visibility = View.GONE;
-            amountToMove = getView().getBottom() * -1;
-            overLay.setVisibility(visibility);
-            addButton.animate().scaleX(1);
-            addButton.animate().scaleY(1);
-        }
-        else {
-            visibility = View.VISIBLE;
-            amountToMove = getActivity().findViewById(R.id.toolbar).getBottom();
-            addButton.animate().scaleX(0);
-            addButton.animate().scaleY(0);
-        }
-        getView().animate().setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
+        if(!isAnimating) {
+            if(toggled) {
+                td.reverseTransition(500);
+                visibility = View.GONE;
+                amountToMove = getView().getBottom() * -1;
                 overLay.setVisibility(visibility);
-                blockingView.setVisibility(visibility);
+                addButton.animate().scaleX(1);
+                addButton.animate().scaleY(1);
+            }
+            else {
+                td.startTransition(500);
+                visibility = View.VISIBLE;
+                amountToMove = getActivity().findViewById(R.id.toolbar).getBottom();
+                addButton.animate().scaleX(0);
+                addButton.animate().scaleY(0);
             }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
+            getView().animate().setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    isAnimating = true;
+                }
 
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    overLay.setVisibility(visibility);
+                    blockingView.setVisibility(visibility);
+                    isAnimating = false;
+                }
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
+                @Override
+                public void onAnimationCancel(Animator animation) {
 
-            }
-        }).setDuration(500).translationY(amountToMove);
-        toggled = !toggled;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).setDuration(500).translationY(amountToMove);
+            toggled = !toggled;
+        }
     }
 }
