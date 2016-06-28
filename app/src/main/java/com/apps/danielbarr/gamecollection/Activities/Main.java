@@ -247,7 +247,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     }
 
     public void applyFilter(FilterState filterState){
-        gameListFragment.applayFilter(filterState);
+        gameListFragment.applyFilter(filterState);
     }
 
     public void createDrawerList() {

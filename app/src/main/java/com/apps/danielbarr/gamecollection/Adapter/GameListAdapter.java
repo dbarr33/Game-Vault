@@ -11,6 +11,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
+import com.apps.danielbarr.gamecollection.Fragments.FilterFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.Model.FilterState;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
@@ -34,11 +35,15 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     private OnItemClickListener onClickListener;
     private ArrayList<RealmGame> filteredList;
     private String platform;
+    private FilterState currentFilterState;
 
     public GameListAdapter(ArrayList<RealmGame> realmGames, final String console) {
         this.realmGames = realmGames;
         this.filteredList = realmGames;
         this.platform = console;
+        currentFilterState = new FilterState();
+        currentFilterState.setSortType(SortType.DATE);
+        currentFilterState.setSelectedPublisher(FilterFragment.NO_SELECTION);
 
         SetOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -65,7 +70,6 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     }
 
     private void filterListAlpha() {
-        filteredList = realmGames;
         Collections.sort(filteredList, new Comparator<RealmGame>() {
             @Override
             public int compare(RealmGame lhs, RealmGame rhs) {
@@ -76,20 +80,24 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     }
 
     public void applyFilter(FilterState filterState) {
-        if(filterState.getSortType() == SortType.ALPHA) {
-            filterListAlpha();
-        }
-        else {
-            filterBySaveDate();
+        if (filterState.getSelectedPublisher() != null){
+            if(!filterState.getSelectedPublisher().matches(currentFilterState.getSelectedPublisher())) {
+                currentFilterState.setSelectedPublisher(filterState.getSelectedPublisher());
+                filterByPublisher(filterState.getSelectedPublisher());
+            }
         }
 
-        if (filterState.getSelectedPublisher() != null){
-            filterByPublisher(filterState.getSelectedPublisher());
+        if(filterState.getSortType() != currentFilterState.getSortType()) {
+            currentFilterState.setSortType(filterState.getSortType());
+            if (filterState.getSortType() == SortType.ALPHA) {
+                filterListAlpha();
+            } else {
+                filterBySaveDate();
+            }
         }
     }
 
     private void filterBySaveDate() {
-        filteredList = realmGames;
         Collections.sort(filteredList, new Comparator<RealmGame>() {
             @Override
             public int compare(RealmGame lhs, RealmGame rhs) {
@@ -100,14 +108,19 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     }
 
     private void filterByPublisher(String publisherName) {
-        filteredList = new ArrayList<>();
-        for(RealmGame realmGame: realmGames){
-            for(RealmPublisher realmPublisher: realmGame.getPublishers()) {
-                if (realmPublisher.getName().trim().matches(publisherName.trim())) {
-                    filteredList.add(realmGame);
-                    break;
+        if(!publisherName.matches(FilterFragment.NO_SELECTION)) {
+            filteredList = new ArrayList<>();
+            for (RealmGame realmGame : realmGames) {
+                for (RealmPublisher realmPublisher : realmGame.getPublishers()) {
+                    if (realmPublisher.getName().trim().matches(publisherName.trim())) {
+                        filteredList.add(realmGame);
+                        break;
+                    }
                 }
             }
+        }
+        else {
+            filteredList = realmGames;
         }
         notifyDataSetChanged();
     }
@@ -122,22 +135,22 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     @Override
     public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
-        gameViewHolder.name.setText(realmGames.get(i).getName());
-        gameViewHolder.userRating.setRating(realmGames.get(i).getUserRating());
-        if(realmGames.get(i).isHasImage()) {
-            gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(realmGames.get(i).getPhoto(), 0, realmGames.get(i).getPhoto().length));
+        gameViewHolder.name.setText(filteredList.get(i).getName());
+        gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
+        if(filteredList.get(i).isHasImage()) {
+            gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(filteredList.get(i).getPhoto(), 0, filteredList.get(i).getPhoto().length));
         }
         else {
             gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art));
         }
-        gameViewHolder.completionPercentage.setText(String.valueOf(realmGames.get(i).getCompletionPercentage()) + "%");
+        gameViewHolder.completionPercentage.setText(String.valueOf(filteredList.get(i).getCompletionPercentage()) + "%");
 
         String description;
-        if(realmGames.get(i).getDescription() != null) {
-            if (realmGames.get(i).getDescription().length() > 500) {
-                description = realmGames.get(i).getDescription().substring(0, 500);
+        if(filteredList.get(i).getDescription() != null) {
+            if (filteredList.get(i).getDescription().length() > 500) {
+                description = filteredList.get(i).getDescription().substring(0, 500);
             } else {
-                description = realmGames.get(i).getDescription();
+                description = filteredList.get(i).getDescription();
             }
             gameViewHolder.description.setText(description);
         }
@@ -170,7 +183,19 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
                 @Override
                 public void onClick(View v) {
                     if(onClickListener != null) {
-                        onClickListener.onItemClick(v, getAdapterPosition());
+                        String gameName = filteredList.get(getAdapterPosition()).getName();
+                        if(gameName.matches(realmGames.get(getAdapterPosition()).getName())) {
+                            onClickListener.onItemClick(v, getAdapterPosition());
+                        }
+                        else {
+                            for(int i = 0 ; i < realmGames.size(); i++) {
+                                RealmGame tempGame = realmGames.get(i);
+                                if(gameName.matches(tempGame.getName())){
+                                    onClickListener.onItemClick(v, i);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             });

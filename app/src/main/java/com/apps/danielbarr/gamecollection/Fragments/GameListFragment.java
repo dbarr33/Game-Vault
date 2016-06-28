@@ -138,7 +138,7 @@ public class GameListFragment extends Fragment {
         snackbarBuilder.show();
     }
 
-    public void applayFilter(FilterState filterState) {
+    public void applyFilter(FilterState filterState) {
         gameListAdapter.applyFilter(filterState);
     }
 }

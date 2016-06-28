@@ -90,12 +90,10 @@
                         android:layout_width="80dp"
                         android:background="@android:color/darker_gray"
                         android:layout_height="2dp"/>
-
-                    <Button
+                    <Spinner
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Publisher"
-                        android:id="@+id/publisherButton"/>
+                        android:id="@+id/publisherSpinner"></Spinner>
                 </LinearLayout>
             </LinearLayout>
 

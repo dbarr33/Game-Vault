@@ -10,30 +10,42 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Model.FilterState;
+import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.Model.SortType;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.ListObjectBuilder;
+import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
+
+import java.util.List;
+
+import io.realm.RealmList;
 
 /**
  * @author Daniel Barr (Fuzz)
  */
 public class FilterFragment extends Fragment {
 
+    public static final String NO_SELECTION = "No Selection";
+
     private ImageView filterToggle;
     private RadioButton alpha;
     private RadioButton date;
-    private Button publisher;
     private FilterState filterState;
     private View overLay;
     private View blockingView;
     private Button cancelFilter;
     private Button applyFilter;
     private FloatingActionButton addButton;
+    private Spinner publisherSpinner;
     private TransitionDrawable td;
 
     private boolean toggled;
@@ -54,13 +66,13 @@ public class FilterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
         alpha = (RadioButton) view.findViewById(R.id.alpha);
         date = (RadioButton) view.findViewById(R.id.date);
-        publisher = (Button) view.findViewById(R.id.publisherButton);
         filterToggle = (ImageView) getActivity().findViewById(R.id.filterButton);
         cancelFilter = (Button) view.findViewById(R.id.cancelFilter);
         applyFilter = (Button) view.findViewById(R.id.applyFilter);
         overLay = view.findViewById(R.id.overlay);
         blockingView = view.findViewById(R.id.blockingView);
         addButton = (FloatingActionButton)getActivity().findViewById(R.id.floatingActionButton);
+        publisherSpinner = (Spinner)view.findViewById(R.id.publisherSpinner);
 
         return view;
     }
@@ -69,7 +81,8 @@ public class FilterFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         setupFilter();
         setupFilterToggle();
-        setupTransitionDrawerable();
+        setupTransitionDrawable();
+        setupPublisherSpinner();
     }
 
     private void setupFilter() {
@@ -87,12 +100,6 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        publisher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filterState.setSelectedPublisher("Nintendo");
-            }
-        });
     }
 
     private void setupFilterToggle(){
@@ -120,13 +127,31 @@ public class FilterFragment extends Fragment {
         });
     }
 
-    private void setupTransitionDrawerable() {
+    private void setupTransitionDrawable() {
         td = new TransitionDrawable( new Drawable[] {
                 getResources().getDrawable(R.drawable.filled_filter),
                 getResources().getDrawable(R.drawable.arrow_down)
         });
         td.setCrossFadeEnabled(true);
         filterToggle.setImageDrawable(td);
+    }
+
+    private void setupPublisherSpinner() {
+        RealmList<RealmPublisher> publishers = RealmManager.getInstance().getAllPublishers();
+        final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, publishers);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
+        publisherSpinner.setAdapter(adapter);
+        publisherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filterState.setSelectedPublisher(names.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void animateView() {

@@ -2,6 +2,7 @@ package com.apps.danielbarr.gamecollection.Uitilites;
 
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
+import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.List;
 import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmResults;
 
@@ -110,6 +112,15 @@ public class RealmManager {
         realm.beginTransaction();
         realmGame.removeFromRealm();
         realm.commitTransaction();
+    }
+
+    public RealmList<RealmPublisher> getAllPublishers() {
+        RealmResults<RealmPublisher> publishers = realm.where(RealmPublisher.class).findAll();
+        RealmList<RealmPublisher> realmPublishers = new RealmList<>();
+        for(RealmPublisher temp : publishers){
+            realmPublishers.add(temp);
+        }
+       return realmPublishers;
     }
 
     public void closeRealm(){
