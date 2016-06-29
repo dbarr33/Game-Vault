@@ -22,7 +22,7 @@ import io.realm.RealmResults;
 public class RealmManager {
 
     private static RealmManager realmManager;
-    private static int REALM_VERSION = 2;
+    private static int REALM_VERSION = 3;
     private Realm realm;
     private RealmConfiguration myConfig;
 
@@ -136,8 +136,11 @@ public class RealmManager {
                         .addField("imageURL", String.class);
                 realm.getSchema().create("RealmPublisher")
                         .addField("name", String.class);
+                realm.getSchema().create("RealmDeveloper")
+                        .addField("name", String.class);
                 realm.getSchema().get("RealmGame")
-                        .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"));
+                        .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
+                        .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"));
             }
         }
     };

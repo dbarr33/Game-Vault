@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
+import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
@@ -193,6 +194,9 @@ public class EditGameFragment extends Fragment implements EditGameView{
         if(realmGame.getPublishers().size() > 0) {
             editGamePresenter.createPublisherGameData(realmGame.getPublishers());
         }
+        if(realmGame.getDevelopers().size() > 0) {
+            editGamePresenter.createDeveloperGameData(realmGame.getDevelopers());
+        }
 
         if(realmGame.getPhoto() != null) {
             setupSavedImages(realmGame.getPhoto());
@@ -296,9 +300,9 @@ public class EditGameFragment extends Fragment implements EditGameView{
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         developerRecyclerView.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter publisherAdapter = new ExpandableRecyclerAdapter(developers,
+        ExpandableRecyclerAdapter developerAdapter = new ExpandableRecyclerAdapter(developers,
                 developerRecyclerView, false);
-        developerRecyclerView.setAdapter(publisherAdapter);
+        developerRecyclerView.setAdapter(developerAdapter);
         developerRecyclerView.setVisibility(View.VISIBLE);
     }
 
@@ -369,6 +373,17 @@ public class EditGameFragment extends Fragment implements EditGameView{
                 realmPublishers.add(publisher);
             }
             realmGame.setPublishers(realmPublishers);
+        }
+
+        if(developerRecyclerView.getVisibility() == View.VISIBLE) {
+            RealmList<RealmDeveloper> realmDevelopers = new RealmList<>();
+            ArrayList<String> developerNames = ((ExpandableRecyclerAdapter) developerRecyclerView.getAdapter()).getList();
+            for (int i = 1; i < developerNames.size(); i++) {
+                RealmDeveloper developer = new RealmDeveloper();
+                developer.setName(developerNames.get(i));
+                realmDevelopers.add(developer);
+            }
+            realmGame.setDevelopers(realmDevelopers);
         }
 
         if(blurredGameImage.getDrawable() != null) {

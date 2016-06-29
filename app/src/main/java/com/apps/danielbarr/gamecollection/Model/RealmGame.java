@@ -24,6 +24,7 @@ public class RealmGame extends RealmObject implements NameInterface{
     private boolean hasImage;
     private long date;
     private RealmList<RealmPublisher> publishers;
+    private RealmList<RealmDeveloper> developers;
 
     public RealmGame(){
 
@@ -54,6 +55,15 @@ public class RealmGame extends RealmObject implements NameInterface{
             }
         }
 
+        if(realmGame.getDevelopers() != null) {
+            this.developers = new RealmList<>();
+            for (RealmDeveloper realmDeveloper: realmGame.getDevelopers()){
+                RealmDeveloper copy = new RealmDeveloper();
+                copy.setName(realmDeveloper.getName());
+                this.developers.add(copy);
+            }
+        }
+
         this.realmGenre = new RealmList<>();
         for(RealmGenre tempGenre: realmGame.getRealmGenre()){
             RealmGenre copy = new RealmGenre();
@@ -68,6 +78,14 @@ public class RealmGame extends RealmObject implements NameInterface{
         this.platform = realmGame.getPlatform();
         this.hasImage = realmGame.isHasImage();
         this.date = realmGame.getDate();
+    }
+
+    public RealmList<RealmDeveloper> getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(RealmList<RealmDeveloper> developers) {
+        this.developers = developers;
     }
 
     public RealmList<RealmGame> getSimilarRealmGames() {

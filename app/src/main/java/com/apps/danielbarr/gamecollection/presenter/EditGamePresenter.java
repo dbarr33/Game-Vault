@@ -14,6 +14,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameGenre;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameSimilarGames;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Publisher;
+import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
@@ -168,5 +169,10 @@ public class EditGamePresenter implements EditGamePresenterInterface {
 
     public void createDeveloperGameData(ArrayList<Developer> developers) {
         editGameView.configureDeveloperRecyclerView(ListObjectBuilder.createArrayList("Developers", (ArrayList)developers));
+    }
+
+
+    public void createDeveloperGameData(RealmList<RealmDeveloper> realmDevelopers) {
+        editGameView.configureDeveloperRecyclerView(ListObjectBuilder.createArrayList("Developers", (RealmList)realmDevelopers));
     }
 }
