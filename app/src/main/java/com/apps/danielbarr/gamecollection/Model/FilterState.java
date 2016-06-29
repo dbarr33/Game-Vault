@@ -5,6 +5,7 @@ package com.apps.danielbarr.gamecollection.Model;
  */
 public class FilterState {
     String selectedPublisher;
+    String selectedDeveloper;
     SortType sortType;
 
     public FilterState() {
@@ -17,6 +18,14 @@ public class FilterState {
 
     public void setSelectedPublisher(String selectedPublisher) {
         this.selectedPublisher = selectedPublisher;
+    }
+
+    public String getSelectedDeveloper() {
+        return selectedDeveloper;
+    }
+
+    public void setSelectedDeveloper(String selectedDeveloper) {
+        this.selectedDeveloper = selectedDeveloper;
     }
 
     public SortType getSortType() {

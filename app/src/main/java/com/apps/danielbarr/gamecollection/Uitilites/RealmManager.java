@@ -1,6 +1,7 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
+import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
@@ -123,6 +124,15 @@ public class RealmManager {
        return realmPublishers;
     }
 
+    public RealmList<RealmDeveloper> getAllDevelopers() {
+        RealmResults<RealmDeveloper> developers = realm.where(RealmDeveloper.class).distinct("name");
+        RealmList<RealmDeveloper> realmDevelopers = new RealmList<>();
+        for(RealmDeveloper temp : developers){
+            realmDevelopers.add(temp);
+        }
+        return realmDevelopers;
+    }
+
     public void closeRealm(){
         realm.close();
     }
@@ -138,7 +148,8 @@ public class RealmManager {
                         .addField("name", String.class)
                         .addIndex("name");
                 realm.getSchema().create("RealmDeveloper")
-                        .addField("name", String.class);
+                        .addField("name", String.class)
+                        .addIndex("name");
                 realm.getSchema().get("RealmGame")
                         .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
                         .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"));

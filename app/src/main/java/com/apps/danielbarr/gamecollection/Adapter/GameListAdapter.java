@@ -14,6 +14,7 @@ import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
 import com.apps.danielbarr.gamecollection.Fragments.FilterFragment;
 import com.apps.danielbarr.gamecollection.Fragments.GameListFragment;
 import com.apps.danielbarr.gamecollection.Model.FilterState;
+import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.Model.SortType;
@@ -44,6 +45,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         currentFilterState = new FilterState();
         currentFilterState.setSortType(SortType.DATE);
         currentFilterState.setSelectedPublisher(FilterFragment.NO_SELECTION);
+        currentFilterState.setSelectedDeveloper(FilterFragment.NO_SELECTION);
 
         SetOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -87,6 +89,13 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
             }
         }
 
+        if(filterState.getSelectedDeveloper() != null) {
+            if(!filterState.getSelectedDeveloper().matches(currentFilterState.getSelectedDeveloper())) {
+                currentFilterState.setSelectedDeveloper(filterState.getSelectedDeveloper());
+                filterByDeveloper(filterState.getSelectedDeveloper());
+            }
+        }
+
         if(filterState.getSortType() != currentFilterState.getSortType()) {
             currentFilterState.setSortType(filterState.getSortType());
             if (filterState.getSortType() == SortType.ALPHA) {
@@ -113,6 +122,24 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
             for (RealmGame realmGame : realmGames) {
                 for (RealmPublisher realmPublisher : realmGame.getPublishers()) {
                     if (realmPublisher.getName().trim().matches(publisherName.trim())) {
+                        filteredList.add(realmGame);
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            filteredList = realmGames;
+        }
+        notifyDataSetChanged();
+    }
+
+    private void filterByDeveloper(String developerName) {
+        if(!developerName.matches(FilterFragment.NO_SELECTION)) {
+            filteredList = new ArrayList<>();
+            for (RealmGame realmGame : realmGames) {
+                for (RealmDeveloper realmDeveloper : realmGame.getDevelopers()) {
+                    if (realmDeveloper.getName().trim().matches(developerName.trim())) {
                         filteredList.add(realmGame);
                         break;
                     }

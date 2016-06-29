@@ -19,6 +19,7 @@ import android.widget.Spinner;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Model.FilterState;
+import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.Model.SortType;
 import com.apps.danielbarr.gamecollection.R;
@@ -46,10 +47,13 @@ public class FilterFragment extends Fragment {
     private Button applyFilter;
     private FloatingActionButton addButton;
     private Spinner publisherSpinner;
+    private Spinner developerSpinner;
     private TransitionDrawable td;
 
     private boolean toggled;
     private boolean isAnimating;
+    private int publisherPosition;
+    private int developerPosition;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,8 @@ public class FilterFragment extends Fragment {
         filterState.setSortType(SortType.DATE);
         toggled = false;
         isAnimating = false;
+        publisherPosition = 0;
+        developerPosition = 0;
     }
 
     @Nullable
@@ -73,6 +79,7 @@ public class FilterFragment extends Fragment {
         blockingView = view.findViewById(R.id.blockingView);
         addButton = (FloatingActionButton)getActivity().findViewById(R.id.floatingActionButton);
         publisherSpinner = (Spinner)view.findViewById(R.id.publisherSpinner);
+        developerSpinner = (Spinner)view.findViewById(R.id.developerSpinner);
 
         return view;
     }
@@ -83,6 +90,7 @@ public class FilterFragment extends Fragment {
         setupFilterToggle();
         setupTransitionDrawable();
         setupPublisherSpinner();
+        setupDeveloperSpinner();
     }
 
     private void setupFilter() {
@@ -141,10 +149,32 @@ public class FilterFragment extends Fragment {
         final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, publishers);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
         publisherSpinner.setAdapter(adapter);
+        publisherSpinner.setSelection(publisherPosition);
         publisherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                filterState.setSelectedPublisher(names.get(position));
+                publisherPosition = position;
+                filterState.setSelectedPublisher(names.get(publisherPosition));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void setupDeveloperSpinner() {
+        RealmList<RealmDeveloper> developers = RealmManager.getInstance().getAllDevelopers();
+        final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, developers);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
+        developerSpinner.setAdapter(adapter);
+        developerSpinner.setSelection(developerPosition);
+        developerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                developerPosition = position;
+                filterState.setSelectedDeveloper(names.get(developerPosition));
             }
 
             @Override
@@ -168,6 +198,7 @@ public class FilterFragment extends Fragment {
             }
             else {
                 setupPublisherSpinner();
+                setupDeveloperSpinner();
                 td.startTransition(500);
                 visibility = View.VISIBLE;
                 amountToMove = getActivity().findViewById(R.id.toolbar).getBottom();
