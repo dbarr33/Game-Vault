@@ -1,5 +1,6 @@
 package com.apps.danielbarr.gamecollection.Model.GiantBomb.Game;
 
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Developer;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Publisher;
 
 import java.util.ArrayList;
@@ -12,6 +13,15 @@ public class GiantBombGame {
     public ArrayList<GameCharacter> characters;
     public ArrayList<GameSimilarGames> similar_games;
     public ArrayList<Publisher> publishers;
+    public ArrayList<Developer> developers;
+
+    public ArrayList<Developer> getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(ArrayList<Developer> developers) {
+        this.developers = developers;
+    }
 
     public ArrayList<Publisher> getPublishers() {
         return publishers;

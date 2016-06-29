@@ -64,7 +64,8 @@ public class EditGameFragment extends Fragment implements EditGameView{
     private RecyclerView gameDescriptionRecyclerView;
     private RecyclerView gameGenresRecyclerView;
     private RecyclerView charactersRecyclerView;
-    private RecyclerView publisherRecyclerview;
+    private RecyclerView publisherRecyclerView;
+    private RecyclerView developerRecyclerView;
     private ProgressBar gameImageProgressBar;
     private LinearLayout characterLayout;
     private String currentPlatform;
@@ -118,8 +119,9 @@ public class EditGameFragment extends Fragment implements EditGameView{
         gameImageProgressBar = (ProgressBar)v.findViewById(R.id.gameImageProgressBar);
         relevantGamesRecyclerView = (RecyclerView)v.findViewById(R.id.relevantGamesRecyclerView);
         gameDescriptionRecyclerView = (RecyclerView)v.findViewById(R.id.gameDescriptionRecyclerView);
-        publisherRecyclerview = (RecyclerView)v.findViewById(R.id.publisher);
+        publisherRecyclerView = (RecyclerView)v.findViewById(R.id.publisher);
         gameGenresRecyclerView = (RecyclerView)v.findViewById(R.id.gameGenresRecyclerView);
+        developerRecyclerView = (RecyclerView)v.findViewById(R.id.developers);
         mScrollView = (SynchronizedScrollView)v.findViewById(R.id.scroll);
 
         return v;
@@ -273,11 +275,11 @@ public class EditGameFragment extends Fragment implements EditGameView{
     public void configurePublisherRecyclerView(ArrayList<String> strings) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        publisherRecyclerview.setLayoutManager(linearLayoutManager);
+        publisherRecyclerView.setLayoutManager(linearLayoutManager);
         ExpandableRecyclerAdapter publisherAdapter = new ExpandableRecyclerAdapter(strings,
-                publisherRecyclerview, false);
-        publisherRecyclerview.setAdapter(publisherAdapter);
-        publisherRecyclerview.setVisibility(View.VISIBLE);
+                publisherRecyclerView, false);
+        publisherRecyclerView.setAdapter(publisherAdapter);
+        publisherRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -287,6 +289,17 @@ public class EditGameFragment extends Fragment implements EditGameView{
         charactersRecyclerView.setLayoutManager(linearLayoutManager);
         charactersRecyclerView.setAdapter(adapter);
         characterLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void configureDeveloperRecyclerView(ArrayList<String> developers) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        developerRecyclerView.setLayoutManager(linearLayoutManager);
+        ExpandableRecyclerAdapter publisherAdapter = new ExpandableRecyclerAdapter(developers,
+                developerRecyclerView, false);
+        developerRecyclerView.setAdapter(publisherAdapter);
+        developerRecyclerView.setVisibility(View.VISIBLE);
     }
 
     public void configureDescriptionRecyclerView(String description) {
@@ -347,9 +360,9 @@ public class EditGameFragment extends Fragment implements EditGameView{
             realmGame.setSimilarRealmGames(realmGames);
         }
 
-        if(publisherRecyclerview.getVisibility() == View.VISIBLE) {
+        if(publisherRecyclerView.getVisibility() == View.VISIBLE) {
             RealmList<RealmPublisher> realmPublishers = new RealmList<>();
-            ArrayList<String> publisherNames = ((ExpandableRecyclerAdapter)publisherRecyclerview.getAdapter()).getList();
+            ArrayList<String> publisherNames = ((ExpandableRecyclerAdapter) publisherRecyclerView.getAdapter()).getList();
             for (int i = 1; i < publisherNames.size(); i++) {
                 RealmPublisher publisher = new RealmPublisher();
                 publisher.setName(publisherNames.get(i));

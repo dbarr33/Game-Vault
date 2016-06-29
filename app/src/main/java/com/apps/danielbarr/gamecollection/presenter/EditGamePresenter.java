@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Model.GiantBomb.Developer;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameGenre;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameResponse;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Game.GameSimilarGames;
@@ -73,6 +74,10 @@ public class EditGamePresenter implements EditGamePresenterInterface {
 
                 if(gameResponse.getResults().getPublishers() != null) {
                     createPublisherGameData(gameResponse.getResults().getPublishers());
+                }
+
+                if(gameResponse.getResults().getDevelopers() != null) {
+                    createDeveloperGameData(gameResponse.getResults().getDevelopers());
                 }
 
                 if (gameResponse.getResults().getGameCharacters() != null) {
@@ -154,10 +159,14 @@ public class EditGamePresenter implements EditGamePresenterInterface {
     }
 
     public void createPublisherGameData(ArrayList<Publisher> realmPublisher) {
-        editGameView.configurePublisherRecyclerView(ListObjectBuilder.createArrayList("Publisher", (ArrayList)realmPublisher));
+        editGameView.configurePublisherRecyclerView(ListObjectBuilder.createArrayList("Publishers", (ArrayList)realmPublisher));
     }
 
     public void createPublisherGameData(RealmList<RealmPublisher> realmPublisher) {
-        editGameView.configurePublisherRecyclerView(ListObjectBuilder.createArrayList("Publisher", (RealmList)realmPublisher));
+        editGameView.configurePublisherRecyclerView(ListObjectBuilder.createArrayList("Publishers", (RealmList)realmPublisher));
+    }
+
+    public void createDeveloperGameData(ArrayList<Developer> developers) {
+        editGameView.configureDeveloperRecyclerView(ListObjectBuilder.createArrayList("Developers", (ArrayList)developers));
     }
 }

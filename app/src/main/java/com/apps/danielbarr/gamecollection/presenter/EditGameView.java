@@ -18,4 +18,5 @@ public interface EditGameView {
     void populateFields(RealmGame realmGame);
     void showConfirmationMessage(String message);
     void configurePublisherRecyclerView(ArrayList<String> strings);
+    void configureDeveloperRecyclerView(ArrayList<String> strings);
 }
