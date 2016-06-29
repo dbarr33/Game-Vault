@@ -48,13 +48,13 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     private RecyclerView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
     private GameListFragment gameListFragment;
     private DrawerListAdapter drawerListAdapter;
     private Realm realm;
     private FloatingActionButton floatingActionButton;
     private ItemTouchHelper mItemTouchHelper;
     private TextView toolbarTitle;
+    private String selectedPlatform;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
                 SearchFragment dialog = new SearchFragment();
                 Bundle args = new Bundle();
 
-                args.putString(dialog.EXTRA_PASS_PLATFORM, mTitle.toString());
+                args.putString(dialog.EXTRA_PASS_PLATFORM, selectedPlatform.toString());
                 dialog.setArguments(args);
                 dialog.show(fm, "TAG");
             }
@@ -115,8 +115,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
                 toolbar, R.string.drawer_open,
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
-                setTitle(mTitle);
-                Main.this.setTitle(mTitle);
+                setTitle(selectedPlatform);
                 invalidateOptionsMenu(); // creates call to
             }
 
@@ -129,8 +128,8 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         gameListFragment = new GameListFragment();
-        mTitle = drawerItems.get(0).getName();
-        args.putString(GameListFragment.GAME_PLATFORM, mTitle.toString());
+        selectedPlatform = drawerItems.get(0).getName();
+        args.putString(GameListFragment.GAME_PLATFORM, selectedPlatform.toString());
 
         gameListFragment.setArguments(args);
         FragmentManager frgManager = getFragmentManager();
@@ -142,20 +141,20 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         getSupportActionBar().setTitle(drawerItems.get(0).getName());
         getFragmentManager().beginTransaction().add(R.id.filterFragment, new FilterFragment(), null).commit();
         toolbarTitle = (TextView)findViewById(R.id.title);
-        setTitle(mTitle);
+        setTitle(selectedPlatform);
     }
 
     public void SelectItem(int position) {
         gameListFragment = (GameListFragment)getFragmentManager().findFragmentByTag(GameListFragment.class.getName());
         gameListFragment.setGameList(drawerListAdapter.getDrawerList().get(position).getName());
         setTitle(drawerListAdapter.getDrawerList().get(position).getName());
+        selectedPlatform = drawerListAdapter.getDrawerList().get(position).getName();
         mDrawerLayout.closeDrawers();
     }
 
     @Override
     public void setTitle(CharSequence title) {
-        mTitle = title;
-        toolbarTitle.setText(mTitle);
+        toolbarTitle.setText(title);
     }
 
     @Override
