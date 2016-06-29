@@ -167,6 +167,7 @@ public class FilterFragment extends Fragment {
                 addButton.animate().scaleY(1);
             }
             else {
+                setupPublisherSpinner();
                 td.startTransition(500);
                 visibility = View.VISIBLE;
                 amountToMove = getActivity().findViewById(R.id.toolbar).getBottom();

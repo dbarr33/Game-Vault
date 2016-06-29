@@ -102,20 +102,20 @@ public class RealmManager {
         return null;
     }
 
-    public void removeGame(String platform, int position) {
-        realm.beginTransaction();
-        getAllGames(platform).get(position).removeFromRealm();
-        realm.commitTransaction();
-    }
-
     public void removeGame(RealmGame realmGame) {
         realm.beginTransaction();
-        realmGame.removeFromRealm();
+        realmGame.getDevelopers().deleteAllFromRealm();
+        realmGame.getPublishers().deleteAllFromRealm();
+        realmGame.getCharacters().deleteAllFromRealm();
+        realmGame.getRealmGenre().deleteAllFromRealm();
+        realmGame.getSimilarRealmGames().deleteAllFromRealm();
+        realmGame.deleteFromRealm();
+
         realm.commitTransaction();
     }
 
     public RealmList<RealmPublisher> getAllPublishers() {
-        RealmResults<RealmPublisher> publishers = realm.where(RealmPublisher.class).findAll();
+        RealmResults<RealmPublisher> publishers = realm.where(RealmPublisher.class).distinct("name");
         RealmList<RealmPublisher> realmPublishers = new RealmList<>();
         for(RealmPublisher temp : publishers){
             realmPublishers.add(temp);
@@ -135,7 +135,8 @@ public class RealmManager {
                 realm.getSchema().get("RealmCharacter")
                         .addField("imageURL", String.class);
                 realm.getSchema().create("RealmPublisher")
-                        .addField("name", String.class);
+                        .addField("name", String.class)
+                        .addIndex("name");
                 realm.getSchema().create("RealmDeveloper")
                         .addField("name", String.class);
                 realm.getSchema().get("RealmGame")
