@@ -12,7 +12,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter adapter;
 
-    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter){
+    public  SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter){
         this.adapter = adapter;
     }
 
@@ -61,6 +61,10 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        if(viewHolder.getAdapterPosition() + 1 == ((DrawerListAdapter)adapter).getItemCount()) {
+            return makeMovementFlags(0, 0);
+
+        }
         return makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.UP | ItemTouchHelper.DOWN);
     }
 
