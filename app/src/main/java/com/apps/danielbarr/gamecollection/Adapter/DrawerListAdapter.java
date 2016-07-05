@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ItemTouchHelperAdapter;
+import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -103,7 +104,7 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListAdapter.Dr
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
 
-        Realm realm = Realm.getInstance(activity);
+        Realm realm = RealmManager.getInstance().getRealm();
         realm.beginTransaction();
 
         RealmResults<DrawerItem> results = realm.allObjects(DrawerItem.class);
