@@ -64,11 +64,11 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     }
 
     public void removeGame(int position) {
-        realmGames.remove(position);
+        filteredList.remove(position);
     }
 
     public void addGame(int position, RealmGame game) {
-        realmGames.add(position, game);
+        filteredList.add(position, game);
     }
 
     private void filterListAlpha() {

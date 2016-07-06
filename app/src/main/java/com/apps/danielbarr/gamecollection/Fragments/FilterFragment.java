@@ -148,6 +148,9 @@ public class FilterFragment extends Fragment {
         RealmList<RealmPublisher> publishers = RealmManager.getInstance().getAllPublishers();
         final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, publishers);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
+        if(publisherPosition >= names.size()) {
+            publisherPosition = 0;
+        }
         publisherSpinner.setAdapter(adapter);
         publisherSpinner.setSelection(publisherPosition);
         publisherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -168,6 +171,9 @@ public class FilterFragment extends Fragment {
         RealmList<RealmDeveloper> developers = RealmManager.getInstance().getAllDevelopers();
         final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, developers);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
+        if(developerPosition >= names.size()) {
+            developerPosition = 0;
+        }
         developerSpinner.setAdapter(adapter);
         developerSpinner.setSelection(developerPosition);
         developerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

@@ -42,6 +42,7 @@ public class RealmGame extends RealmObject implements NameInterface{
             for (RealmGame tempGame: realmGame.getSimilarRealmGames()){
                 RealmGame copy = new RealmGame();
                 copy.setName(tempGame.getName());
+                copy.setPlatform(tempGame.getPlatform());
                 this.similarRealmGames.add(copy);
             }
         }
