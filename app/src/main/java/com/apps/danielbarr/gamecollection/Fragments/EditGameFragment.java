@@ -358,6 +358,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             ArrayList<String> similarGameNames = ((ExpandableRecyclerAdapter)relevantGamesRecyclerView.getAdapter()).getList();
             for (int i = 1; i < similarGameNames.size(); i++) {
                 RealmGame similarRealmGame = new RealmGame();
+                similarRealmGame.setPlatform("Similar Game");
                 similarRealmGame.setName(similarGameNames.get(i));
                 realmGames.add(similarRealmGame);
             }

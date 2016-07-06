@@ -3,8 +3,6 @@ package com.apps.danielbarr.gamecollection.Uitilites;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.apps.danielbarr.gamecollection.Adapter.DrawerListAdapter;
-
 /**
  * Created by danielbarr on 7/4/15.
  */
@@ -64,7 +62,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        if(viewHolder.getAdapterPosition() + 1 == ((DrawerListAdapter)adapter).getItemCount()) {
+        if(viewHolder.getAdapterPosition() == 0 || viewHolder.getAdapterPosition() + 1 == recyclerView.getAdapter().getItemCount()) {
             return makeMovementFlags(0, 0);
 
         }

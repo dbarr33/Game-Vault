@@ -1,6 +1,7 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -184,7 +185,7 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListAdapter.Dr
 
         public void update() {
             final int position = getAdapterPosition() - 1;
-            if(editingMode) {
+            if(editingMode && !textView.getText().toString().equalsIgnoreCase("All")) {
                 editImage.setVisibility(View.VISIBLE);
                 dragImage.setVisibility(View.GONE);
             }
@@ -249,6 +250,12 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListAdapter.Dr
                 @Override
                 public void onClick(View v) {
                     editingMode = !editingMode;
+                    if(editingMode) {
+                        editButton.setTextColor(Color.parseColor("#FF5722"));
+                    }
+                    else {
+                        editButton.setTextColor(activity.getResources().getColor(android.R.color.black));
+                    }
                     notifyDataSetChanged();
                 }
             });

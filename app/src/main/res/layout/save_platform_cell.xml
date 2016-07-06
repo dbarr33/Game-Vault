@@ -39,7 +39,7 @@
                 android:layout_height="35dp"
                 android:gravity="right"
                 android:id="@+id/save"
-                android:src="@drawable/favorite"
+                android:src="@drawable/checked_checkbox"
                 android:layout_marginRight="20dp"/>
             <ImageView
                 android:layout_width="35dp"

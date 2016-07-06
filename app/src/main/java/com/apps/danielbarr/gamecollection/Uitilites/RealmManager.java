@@ -50,8 +50,12 @@ public class RealmManager {
         return realmManager;
     }
 
-    private RealmResults<RealmGame> getAllGames(String platform){
+    private RealmResults<RealmGame> getGamesByPlatform(String platform){
         return realm.where(RealmGame.class).equalTo(GameApplication.getResourceString(R.string.realm_game_platform), platform).findAllSorted(GameApplication.getResourceString(R.string.realm_game_date));
+    }
+
+    private RealmResults<RealmGame> getAllGames(){
+        return realm.where(RealmGame.class).notEqualTo("platform", "Similar Game").findAllSorted(GameApplication.getResourceString(R.string.realm_game_date));
     }
 
     public void savePlatform(DrawerItem drawerItem) {
@@ -102,7 +106,14 @@ public class RealmManager {
     }
 
     public ArrayList<RealmGame> getGames(String platform) {
-        RealmResults<RealmGame> tempRealmGames = getAllGames(platform);
+        RealmResults<RealmGame> tempRealmGames;
+
+        if (platform.equalsIgnoreCase("All")) {
+            tempRealmGames = getAllGames();
+        }
+        else {
+            tempRealmGames = getGamesByPlatform(platform);
+        }
         ArrayList<RealmGame> realmGames = new ArrayList<>();
         for (RealmGame realmGame : tempRealmGames) {
             realmGames.add(realmGame);
@@ -111,10 +122,10 @@ public class RealmManager {
     }
 
     public RealmGame getRealmGameByPosition(String platform, int position) {
-        List<RealmGame> games = getAllGames(platform);
+        List<RealmGame> games = getGames(platform);
         try {
             if(games.size() > 0) {
-                return getAllGames(platform).get(position);
+                return games.get(position);
             }
             else {
                 throw new IOException();
