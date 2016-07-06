@@ -42,9 +42,18 @@
             android:padding="5dp"
             android:gravity="center">
             <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:gravity="right"
+                android:src="@drawable/edit"
+                android:visibility="gone"
+                android:id="@+id/editButton"
+                android:layout_marginRight="20dp"/>
+            <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:gravity="right"
+                android:id="@+id/dragImage"
                 android:src="@drawable/icmpmove"
                 android:layout_marginRight="10dp"/>
         </LinearLayout>

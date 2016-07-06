@@ -1,5 +1,6 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
+import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
@@ -51,6 +52,28 @@ public class RealmManager {
 
     private RealmResults<RealmGame> getAllGames(String platform){
         return realm.where(RealmGame.class).equalTo(GameApplication.getResourceString(R.string.realm_game_platform), platform).findAllSorted(GameApplication.getResourceString(R.string.realm_game_date));
+    }
+
+    public void savePlatform(DrawerItem drawerItem) {
+        realm.beginTransaction();
+        realm.copyToRealm(drawerItem);
+        realm.commitTransaction();
+    }
+
+    public void deletePlatform(DrawerItem drawerItem) {
+        realm.beginTransaction();
+        drawerItem.deleteFromRealm();
+        realm.commitTransaction();
+    }
+
+    public void updatePlatform(DrawerItem drawerItem, String name) {
+        realm.beginTransaction();
+        drawerItem.setName(name);
+        realm.commitTransaction();
+    }
+
+    public List<DrawerItem> getAllPlatforms() {
+        return realm.allObjects(DrawerItem.class);
     }
 
     public void saveGame(RealmGame realmGame) {

@@ -93,11 +93,10 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
             createDrawerList();
         }
 
-        RealmResults<DrawerItem> drawerItems = realm.allObjects(DrawerItem.class);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        drawerListAdapter = new DrawerListAdapter(drawerItems, this, this, this);
+        drawerListAdapter = new DrawerListAdapter(this, this, this);
         mDrawerList.setLayoutManager(linearLayoutManager);
         mDrawerList.setAdapter(drawerListAdapter);
 
@@ -128,7 +127,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         gameListFragment = new GameListFragment();
-        selectedPlatform = drawerItems.get(0).getName();
+        selectedPlatform = drawerListAdapter.getDrawerList().get(0).getName();
         args.putString(GameListFragment.GAME_PLATFORM, selectedPlatform.toString());
 
         gameListFragment.setArguments(args);
@@ -138,7 +137,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
             addFragmentCommand.execute();
         }
 
-        getSupportActionBar().setTitle(drawerItems.get(0).getName());
+        getSupportActionBar().setTitle(selectedPlatform);
         getFragmentManager().beginTransaction().add(R.id.filterFragment, new FilterFragment(), null).commit();
         toolbarTitle = (TextView)findViewById(R.id.title);
         setTitle(selectedPlatform);

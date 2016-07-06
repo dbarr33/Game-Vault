@@ -56,6 +56,9 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean canDropOver(RecyclerView recyclerView, RecyclerView.ViewHolder current, RecyclerView.ViewHolder target) {
+        if(target.getAdapterPosition() == 0 || target.getAdapterPosition() + 1 == recyclerView.getAdapter().getItemCount()) {
+            return false;
+        }
         return true;
     }
 
