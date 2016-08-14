@@ -7,6 +7,8 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
+import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.FilterState;
 import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
@@ -26,6 +29,7 @@ import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.ListObjectBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -46,14 +50,12 @@ public class FilterFragment extends Fragment {
     private Button cancelFilter;
     private Button applyFilter;
     private FloatingActionButton addButton;
-    private Spinner publisherSpinner;
-    private Spinner developerSpinner;
+    private RecyclerView publisherRecyclerview;
+    private RecyclerView developerRecyclerview;
     private TransitionDrawable td;
 
     private boolean toggled;
     private boolean isAnimating;
-    private int publisherPosition;
-    private int developerPosition;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,8 +64,6 @@ public class FilterFragment extends Fragment {
         filterState.setSortType(SortType.DATE);
         toggled = false;
         isAnimating = false;
-        publisherPosition = 0;
-        developerPosition = 0;
     }
 
     @Nullable
@@ -78,8 +78,8 @@ public class FilterFragment extends Fragment {
         overLay = view.findViewById(R.id.overlay);
         blockingView = view.findViewById(R.id.blockingView);
         addButton = (FloatingActionButton)getActivity().findViewById(R.id.floatingActionButton);
-        publisherSpinner = (Spinner)view.findViewById(R.id.publisherSpinner);
-        developerSpinner = (Spinner)view.findViewById(R.id.developerSpinner);
+        publisherRecyclerview = (RecyclerView)view.findViewById(R.id.publisherRecyclerView);
+        developerRecyclerview = (RecyclerView)view.findViewById(R.id.developersRecyclerView);
 
         return view;
     }
@@ -89,7 +89,7 @@ public class FilterFragment extends Fragment {
         setupFilter();
         setupFilterToggle();
         setupTransitionDrawable();
-        setupPublisherSpinner();
+        setupPublisherAdapter();
         setupDeveloperSpinner();
     }
 
@@ -144,50 +144,26 @@ public class FilterFragment extends Fragment {
         filterToggle.setImageDrawable(td);
     }
 
-    private void setupPublisherSpinner() {
+    private void setupPublisherAdapter() {
         RealmList<RealmPublisher> publishers = RealmManager.getInstance().getAllPublishers();
-        final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, publishers);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
-        if(publisherPosition >= names.size()) {
-            publisherPosition = 0;
-        }
-        publisherSpinner.setAdapter(adapter);
-        publisherSpinner.setSelection(publisherPosition);
-        publisherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                publisherPosition = position;
-                filterState.setSelectedPublisher(names.get(publisherPosition));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        final ArrayList<String> publisherNames = ListObjectBuilder.createArrayList("Publisher", publishers);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        publisherRecyclerview.setLayoutManager(linearLayoutManager);
+        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(publisherNames, publisherRecyclerview, false);
+        publisherRecyclerview.setAdapter(adapter);
+        publisherRecyclerview.setVisibility(View.VISIBLE);
     }
 
     private void setupDeveloperSpinner() {
         RealmList<RealmDeveloper> developers = RealmManager.getInstance().getAllDevelopers();
-        final List<String> names = ListObjectBuilder.createArrayList(NO_SELECTION, developers);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, names);
-        if(developerPosition >= names.size()) {
-            developerPosition = 0;
-        }
-        developerSpinner.setAdapter(adapter);
-        developerSpinner.setSelection(developerPosition);
-        developerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                developerPosition = position;
-                filterState.setSelectedDeveloper(names.get(developerPosition));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        final ArrayList<String> names = ListObjectBuilder.createArrayList("Developers", developers);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        developerRecyclerview.setLayoutManager(linearLayoutManager);
+        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(names, developerRecyclerview, false);
+        developerRecyclerview.setAdapter(adapter);
+        developerRecyclerview.setVisibility(View.VISIBLE);
     }
 
     private void animateView() {
@@ -203,7 +179,7 @@ public class FilterFragment extends Fragment {
                 addButton.animate().scaleY(1);
             }
             else {
-                setupPublisherSpinner();
+                setupPublisherAdapter();
                 setupDeveloperSpinner();
                 td.startTransition(500);
                 visibility = View.VISIBLE;

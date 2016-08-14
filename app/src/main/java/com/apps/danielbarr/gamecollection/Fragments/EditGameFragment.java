@@ -255,35 +255,17 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
     @Override
     public void configureGeneRecyclerView(ArrayList<String> strings) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        gameGenresRecyclerView.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter genreRecyclerAdapter = new ExpandableRecyclerAdapter(strings,
-                gameGenresRecyclerView, false);
-        gameGenresRecyclerView.setAdapter(genreRecyclerAdapter);
-        gameGenresRecyclerView.setVisibility(View.VISIBLE);
+        configureRecyclerView(gameGenresRecyclerView, strings, false);
     }
 
     @Override
     public void configureSimilarGamesRecyclerView(ArrayList<String> strings) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        relevantGamesRecyclerView.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter similarGamesAdapter = new ExpandableRecyclerAdapter(strings,
-                relevantGamesRecyclerView, false);
-        relevantGamesRecyclerView.setAdapter(similarGamesAdapter);
-        relevantGamesRecyclerView.setVisibility(View.VISIBLE);
+        configureRecyclerView(relevantGamesRecyclerView, strings, false);
     }
 
     @Override
     public void configurePublisherRecyclerView(ArrayList<String> strings) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        publisherRecyclerView.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter publisherAdapter = new ExpandableRecyclerAdapter(strings,
-                publisherRecyclerView, false);
-        publisherRecyclerView.setAdapter(publisherAdapter);
-        publisherRecyclerView.setVisibility(View.VISIBLE);
+        configureRecyclerView(publisherRecyclerView, strings, false);
     }
 
     @Override
@@ -297,27 +279,29 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
     @Override
     public void configureDeveloperRecyclerView(ArrayList<String> developers) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        developerRecyclerView.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter developerAdapter = new ExpandableRecyclerAdapter(developers,
-                developerRecyclerView, false);
-        developerRecyclerView.setAdapter(developerAdapter);
-        developerRecyclerView.setVisibility(View.VISIBLE);
+        configureRecyclerView(gameDescriptionRecyclerView, developers, false);
     }
 
     public void configureDescriptionRecyclerView(String description) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        gameDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
         ArrayList<String> descriptionList = new ArrayList<>();
         descriptionList.add("Description");
         descriptionList.add(HTMLUtil.stripHtml(description));
+        configureRecyclerView(gameDescriptionRecyclerView, descriptionList, true);
+    }
 
-        ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList,
-                gameDescriptionRecyclerView, true);
-        gameDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
-        gameDescriptionRecyclerView.setVisibility(View.VISIBLE);
+    private void configureRecyclerView( RecyclerView recyclerView, ArrayList<String> values, boolean isDescription) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        ExpandableRecyclerAdapter adapter;
+        if(isDescription) {
+            adapter = new ExpandableRecyclerAdapter(values, recyclerView, true);
+        }
+        else {
+            adapter = new ExpandableRecyclerAdapter(values, recyclerView, false);
+        }
+        recyclerView.setAdapter(adapter);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     private RealmGame createGame() {
