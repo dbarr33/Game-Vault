@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/similar_game_header_textview"
-                android:textSize="14dp"
+                android:textSize="18dp"
                 android:gravity="center_vertical"
                 />
 

@@ -152,6 +152,7 @@ public class FilterFragment extends Fragment {
         publisherRecyclerview.setLayoutManager(linearLayoutManager);
         ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(publisherNames);
         adapter.setHeaderResource(R.layout.cell_filter_header);
+        adapter.setCellResource(R.layout.cell_filter_item);
         publisherRecyclerview.setAdapter(adapter);
         publisherRecyclerview.setVisibility(View.VISIBLE);
     }
@@ -164,6 +165,7 @@ public class FilterFragment extends Fragment {
         developerRecyclerview.setLayoutManager(linearLayoutManager);
         ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(names);
         adapter.setHeaderResource(R.layout.cell_filter_header);
+        adapter.setCellResource(R.layout.cell_filter_item);
         developerRecyclerview.setAdapter(adapter);
         developerRecyclerview.setVisibility(View.VISIBLE);
     }

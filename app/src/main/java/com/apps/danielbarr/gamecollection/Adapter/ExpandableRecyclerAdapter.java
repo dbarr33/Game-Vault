@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.R;
@@ -24,6 +25,8 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
     private boolean headerMode;
     private int length;
     private int headerResource;
+    private int cellResource;
+    private int activeCell;
 
     public ExpandableRecyclerAdapter(ArrayList<String> list) {
         this.activity = GameApplication.getActivity();
@@ -31,10 +34,18 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
         this.list = list;
         this.length = 1;
         this.headerResource  = -1;
+        this.cellResource = -1;
+        activeCell = -1;
     }
 
     public void setHeaderResource(int resource) {
         headerResource = resource;
+        notifyDataSetChanged();
+    }
+
+    public void setCellResource(int resource) {
+        cellResource = resource;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -46,11 +57,15 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
             }
             else {
                 itemView = LayoutInflater.from(viewGroup.getContext()).inflate(headerResource, viewGroup, false);
-
             }
             return new HeaderListViewHolder(itemView);
         }else {
-            itemView  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_item, viewGroup, false);
+            if(headerResource == -1) {
+                itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_item, viewGroup, false);
+            }
+            else {
+                itemView = LayoutInflater.from(viewGroup.getContext()).inflate(cellResource, viewGroup, false);
+            }
             return  new ListViewHolder(itemView);
         }
     }
@@ -129,15 +144,36 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
     public class ListViewHolder extends ExpandableViewHolder{
 
         protected TextView mName;
+        private RadioButton radioButton;
 
         public ListViewHolder(final View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.similar_game_name_textview);
+            radioButton = (RadioButton)itemView.findViewById(R.id.similar_game_name_textview);
         }
 
         @Override
-        public void update(int position) {
-            mName.setText(list.get(position));
+        public void update(final int position) {
+            if(cellResource == -1) {
+                mName.setText(list.get(position));
+            }
+            else {
+                radioButton.setText(list.get(position));
+                if(activeCell == position) {
+                    radioButton.setChecked(true);
+                }
+                else {
+                    radioButton.setChecked(false);
+                }
+                radioButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int oldPosition = activeCell;
+                        activeCell = position;
+                        notifyItemChanged(oldPosition);
+                    }
+                });
+            }
         }
     }
 }
