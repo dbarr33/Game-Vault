@@ -26,6 +26,7 @@ import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -78,32 +79,26 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
                 return lhs.getName().compareToIgnoreCase(rhs.getName());
             }
         });
-        notifyDataSetChanged();
     }
 
     public void applyFilter(FilterState filterState) {
-        if (filterState.getSelectedPublisher() != null){
-            if(!filterState.getSelectedPublisher().matches(currentFilterState.getSelectedPublisher())) {
-                currentFilterState.setSelectedPublisher(filterState.getSelectedPublisher());
-                filterByPublisher(filterState.getSelectedPublisher());
-            }
+        filteredList = realmGames;
+        currentFilterState = filterState;
+        if (currentFilterState.getSelectedPublisher() != null){
+            filterByPublisher(currentFilterState.getSelectedPublisher());
         }
 
-        if(filterState.getSelectedDeveloper() != null) {
-            if(!filterState.getSelectedDeveloper().matches(currentFilterState.getSelectedDeveloper())) {
-                currentFilterState.setSelectedDeveloper(filterState.getSelectedDeveloper());
-                filterByDeveloper(filterState.getSelectedDeveloper());
-            }
+        if(currentFilterState.getSelectedDeveloper() != null) {
+            filterByDeveloper(currentFilterState.getSelectedDeveloper());
         }
 
-        if(filterState.getSortType() != currentFilterState.getSortType()) {
-            currentFilterState.setSortType(filterState.getSortType());
-            if (filterState.getSortType() == SortType.ALPHA) {
-                filterListAlpha();
-            } else {
-                filterBySaveDate();
-            }
+        if (currentFilterState.getSortType() == SortType.ALPHA) {
+            filterListAlpha();
+        } else {
+            filterBySaveDate();
         }
+        notifyDataSetChanged();
+
     }
 
     private void filterBySaveDate() {
@@ -113,43 +108,32 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
                 return Long.compare(lhs.getDate(), rhs.getDate());
             }
         });
-        notifyDataSetChanged();
     }
 
     private void filterByPublisher(String publisherName) {
-        if(!publisherName.matches(FilterFragment.NO_SELECTION)) {
-            filteredList = new ArrayList<>();
-            for (RealmGame realmGame : realmGames) {
-                for (RealmPublisher realmPublisher : realmGame.getPublishers()) {
-                    if (realmPublisher.getName().trim().matches(publisherName.trim())) {
-                        filteredList.add(realmGame);
-                        break;
-                    }
+        ArrayList<RealmGame> temp = new ArrayList<>();
+        for (RealmGame realmGame : filteredList) {
+            for (RealmPublisher realmPublisher : realmGame.getPublishers()) {
+                if (realmPublisher.getName().trim().matches(publisherName.trim())) {
+                    temp.add(realmGame);
+                    break;
                 }
             }
         }
-        else {
-            filteredList = realmGames;
-        }
-        notifyDataSetChanged();
+        filteredList = temp;
     }
 
     private void filterByDeveloper(String developerName) {
-        if(!developerName.matches(FilterFragment.NO_SELECTION)) {
-            filteredList = new ArrayList<>();
-            for (RealmGame realmGame : realmGames) {
-                for (RealmDeveloper realmDeveloper : realmGame.getDevelopers()) {
-                    if (realmDeveloper.getName().trim().matches(developerName.trim())) {
-                        filteredList.add(realmGame);
-                        break;
-                    }
+        ArrayList<RealmGame> temp = new ArrayList<>();
+        for (RealmGame realmGame : filteredList) {
+            for (RealmDeveloper realmDeveloper : realmGame.getDevelopers()) {
+                if (realmDeveloper.getName().trim().matches(developerName.trim())) {
+                    temp.add(realmGame);
+                    break;
                 }
             }
         }
-        else {
-            filteredList = realmGames;
-        }
-        notifyDataSetChanged();
+        filteredList = temp;
     }
 
     @Override

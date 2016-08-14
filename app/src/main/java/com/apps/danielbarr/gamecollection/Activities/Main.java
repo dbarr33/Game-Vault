@@ -1,8 +1,10 @@
 package com.apps.danielbarr.gamecollection.Activities;
 
+import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
@@ -56,6 +58,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     private TextView toolbarTitle;
     private String selectedPlatform;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);

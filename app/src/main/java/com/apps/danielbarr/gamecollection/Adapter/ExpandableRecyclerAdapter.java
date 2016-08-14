@@ -43,9 +43,29 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
         notifyDataSetChanged();
     }
 
+    public void setList(ArrayList<String> list) {
+        this.list = list;
+        headerMode = true;
+        length = 1;
+    }
+
     public void setCellResource(int resource) {
         cellResource = resource;
         notifyDataSetChanged();
+    }
+
+    public void setActiveCell(int activeCell) {
+        this.activeCell = activeCell;
+        notifyDataSetChanged();
+    }
+
+    public String getSelectedItem() {
+        if(activeCell != -1) {
+            return list.get(activeCell);
+        }
+        else {
+            return "";
+        }
     }
 
     @Override
@@ -149,7 +169,9 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
         public ListViewHolder(final View itemView) {
             super(itemView);
             mName = (TextView)itemView.findViewById(R.id.similar_game_name_textview);
-            radioButton = (RadioButton)itemView.findViewById(R.id.similar_game_name_textview);
+            if(cellResource != -1) {
+                radioButton = (RadioButton) itemView.findViewById(R.id.similar_game_name_textview);
+            }
         }
 
         @Override
@@ -168,9 +190,15 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
                 radioButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int oldPosition = activeCell;
-                        activeCell = position;
-                        notifyItemChanged(oldPosition);
+                        if(activeCell != position) {
+                            int oldPosition = activeCell;
+                            activeCell = position;
+                            notifyItemChanged(oldPosition);
+                        }
+                        else {
+                            activeCell = -1;
+                            radioButton.setChecked(false);
+                        }
                     }
                 });
             }

@@ -279,7 +279,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
     @Override
     public void configureDeveloperRecyclerView(ArrayList<String> developers) {
-        configureRecyclerView(gameDescriptionRecyclerView, developers);
+        configureRecyclerView(developerRecyclerView, developers);
     }
 
     public void configureDescriptionRecyclerView(String description) {

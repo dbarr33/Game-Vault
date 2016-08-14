@@ -12,12 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
@@ -30,7 +27,6 @@ import com.apps.danielbarr.gamecollection.Uitilites.ListObjectBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.RealmList;
 
@@ -90,7 +86,7 @@ public class FilterFragment extends Fragment {
         setupFilterToggle();
         setupTransitionDrawable();
         setupPublisherAdapter();
-        setupDeveloperSpinner();
+        setupDeveloperAdapter();
     }
 
     private void setupFilter() {
@@ -122,13 +118,29 @@ public class FilterFragment extends Fragment {
         cancelFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animateView();
+                resetFilter();
             }
         });
 
         applyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String developer = ((ExpandableRecyclerAdapter)developerRecyclerview.getAdapter()).getSelectedItem();
+                if(!developer.matches("")) {
+                    filterState.setSelectedDeveloper(developer);
+                }
+                else {
+                    filterState.setSelectedDeveloper(null);
+                }
+
+                String publisher = ((ExpandableRecyclerAdapter)publisherRecyclerview.getAdapter()).getSelectedItem();
+                if(!publisher.matches("")) {
+                    filterState.setSelectedPublisher(publisher);
+                }
+                else {
+                    filterState.setSelectedPublisher(null);
+                }
+
                 ((Main)getActivity()).applyFilter(filterState);
                 animateView();
             }
@@ -147,27 +159,37 @@ public class FilterFragment extends Fragment {
     private void setupPublisherAdapter() {
         RealmList<RealmPublisher> publishers = RealmManager.getInstance().getAllPublishers();
         final ArrayList<String> publisherNames = ListObjectBuilder.createArrayList("Publisher", publishers);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        publisherRecyclerview.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(publisherNames);
-        adapter.setHeaderResource(R.layout.cell_filter_header);
-        adapter.setCellResource(R.layout.cell_filter_item);
-        publisherRecyclerview.setAdapter(adapter);
-        publisherRecyclerview.setVisibility(View.VISIBLE);
+        setupAdapter(publisherRecyclerview, publisherNames);
     }
 
-    private void setupDeveloperSpinner() {
+    private void setupDeveloperAdapter() {
         RealmList<RealmDeveloper> developers = RealmManager.getInstance().getAllDevelopers();
         final ArrayList<String> names = ListObjectBuilder.createArrayList("Developers", developers);
+        setupAdapter(developerRecyclerview, names);
+
+    }
+
+    private void setupAdapter(RecyclerView recyclerView, ArrayList<String> values) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        developerRecyclerview.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(names);
-        adapter.setHeaderResource(R.layout.cell_filter_header);
-        adapter.setCellResource(R.layout.cell_filter_item);
-        developerRecyclerview.setAdapter(adapter);
-        developerRecyclerview.setVisibility(View.VISIBLE);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        if(recyclerView.getAdapter() == null) {
+            ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(values);
+            adapter.setHeaderResource(R.layout.cell_filter_header);
+            adapter.setCellResource(R.layout.cell_filter_item);
+            recyclerView.setAdapter(adapter);
+        }
+        else {
+            int selectedCell = -1;
+            if(values.contains(filterState.getSelectedDeveloper())){
+                selectedCell = values.indexOf(filterState.getSelectedDeveloper());
+            }
+            else if(values.contains(filterState.getSelectedPublisher())) {
+                selectedCell = values.indexOf(filterState.getSelectedPublisher());
+            }
+            ((ExpandableRecyclerAdapter)recyclerView.getAdapter()).setList(values);
+            ((ExpandableRecyclerAdapter)recyclerView.getAdapter()).setActiveCell(selectedCell);
+        }
     }
 
     private void animateView() {
@@ -184,7 +206,7 @@ public class FilterFragment extends Fragment {
             }
             else {
                 setupPublisherAdapter();
-                setupDeveloperSpinner();
+                setupDeveloperAdapter();
                 td.startTransition(500);
                 visibility = View.VISIBLE;
                 amountToMove = getActivity().findViewById(R.id.toolbar).getBottom();
@@ -217,5 +239,14 @@ public class FilterFragment extends Fragment {
             }).setDuration(500).translationY(amountToMove);
             toggled = !toggled;
         }
+    }
+
+    private void resetFilter() {
+        filterState = new FilterState();
+        filterState.setSortType(SortType.DATE);
+        alpha.setChecked(false);
+        date.setChecked(true);
+        ((ExpandableRecyclerAdapter)developerRecyclerview.getAdapter()).setActiveCell(-1);
+        ((ExpandableRecyclerAdapter)publisherRecyclerview.getAdapter()).setActiveCell(-1);
     }
 }
