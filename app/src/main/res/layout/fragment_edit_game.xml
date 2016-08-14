@@ -3,7 +3,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginBottom="10dp">
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -225,7 +226,7 @@
             <android.support.v7.widget.RecyclerView
                 android:isScrollContainer="false"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/publisher"
                 android:visibility="gone"
                 android:overScrollMode="never"
@@ -235,7 +236,7 @@
             <android.support.v7.widget.RecyclerView
                 android:isScrollContainer="false"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/developers"
                 android:visibility="gone"
                 android:overScrollMode="never"
@@ -245,7 +246,7 @@
             <android.support.v7.widget.RecyclerView
                 android:isScrollContainer="false"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/relevantGamesRecyclerView"
                 android:visibility="gone"
                 android:overScrollMode="never"
@@ -255,7 +256,7 @@
             <android.support.v7.widget.RecyclerView
                 android:isScrollContainer="false"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/gameGenresRecyclerView"
                 android:visibility="gone"
                 android:overScrollMode="never"
@@ -267,7 +268,7 @@
                 android:isScrollContainer="false"
                 android:layout_width="match_parent"
                 android:visibility="gone"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/gameDescriptionRecyclerView"
                 android:overScrollMode="never"
                 >

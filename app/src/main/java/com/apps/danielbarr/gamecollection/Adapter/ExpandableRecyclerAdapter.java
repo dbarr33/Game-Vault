@@ -1,8 +1,6 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
 import android.app.Activity;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
-import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 
 import java.util.ArrayList;
 
@@ -25,25 +22,32 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
     private ArrayList<String> list;
     private Activity activity;
     private boolean headerMode;
-    private RecyclerView recyclerView;
     private int length;
-    private boolean longTextMode;
+    private int headerResource;
 
-    public ExpandableRecyclerAdapter(ArrayList<String> list, RecyclerView recyclerView, Boolean longTextMode) {
+    public ExpandableRecyclerAdapter(ArrayList<String> list) {
         this.activity = GameApplication.getActivity();
         headerMode = true;
-        this.list = new ArrayList<>();
         this.list = list;
-        this.recyclerView = recyclerView;
         this.length = 1;
-        this.longTextMode = longTextMode;
+        this.headerResource  = -1;
+    }
+
+    public void setHeaderResource(int resource) {
+        headerResource = resource;
     }
 
     @Override
     public ExpandableViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView;
         if(i == 0) {
-            itemView  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_header, viewGroup, false);
+            if(headerResource == -1) {
+                itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_header, viewGroup, false);
+            }
+            else {
+                itemView = LayoutInflater.from(viewGroup.getContext()).inflate(headerResource, viewGroup, false);
+
+            }
             return new HeaderListViewHolder(itemView);
         }else {
             itemView  = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.similar_game_item, viewGroup, false);
@@ -101,15 +105,6 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
                 @Override
                 public void onClick(View v) {
                     if (headerMode) {
-                        if (longTextMode) {
-                            int width = widthOfText(activity, list.get(1), v);
-                            length = width / v.getMeasuredHeight();
-                            recyclerView.getLayoutParams().height = v.getMeasuredHeight() * (width / v.getMeasuredWidth());
-
-                        } else {
-                            length = list.size();
-                            recyclerView.getLayoutParams().height = v.getMeasuredHeight() * list.size();
-                        }
                         length = list.size();
                         headerMode = false;
                         notifyItemRangeInserted(1, list.size() - 1);
@@ -119,8 +114,7 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
                         length = 1;
                         headerMode = true;
                         notifyItemRangeRemoved(1, list.size() - 1);
-                        recyclerView.getLayoutParams().height = v.getMeasuredHeight();
-                        mHeaderImage.setImageDrawable(activity.getResources().getDrawable(R.drawable.plus_icon));
+                        mHeaderImage .setImageDrawable(activity.getResources().getDrawable(R.drawable.plus_icon));
                     }
 
                 }
@@ -145,16 +139,6 @@ public class ExpandableRecyclerAdapter extends RecyclerView.Adapter<ExpandableRe
         public void update(int position) {
             mName.setText(list.get(position));
         }
-    }
-
-    public int widthOfText(Activity activity, String text, View v){
-        Rect bounds = new Rect();
-        bounds.set(v.getHeight(), v.getWidth(), v.getHeight(), v.getWidth());
-        Paint paint = new Paint();
-        paint.setTextSize(PictureUtils.dpTOPX(14, activity));
-        paint.getTextBounds(text, 0, text.length(), bounds);
-
-        return (int) Math.ceil( bounds.width());
     }
 }
 

@@ -150,7 +150,8 @@ public class FilterFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         publisherRecyclerview.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(publisherNames, publisherRecyclerview, false);
+        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(publisherNames);
+        adapter.setHeaderResource(R.layout.cell_filter_header);
         publisherRecyclerview.setAdapter(adapter);
         publisherRecyclerview.setVisibility(View.VISIBLE);
     }
@@ -161,7 +162,8 @@ public class FilterFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         developerRecyclerview.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(names, developerRecyclerview, false);
+        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(names);
+        adapter.setHeaderResource(R.layout.cell_filter_header);
         developerRecyclerview.setAdapter(adapter);
         developerRecyclerview.setVisibility(View.VISIBLE);
     }

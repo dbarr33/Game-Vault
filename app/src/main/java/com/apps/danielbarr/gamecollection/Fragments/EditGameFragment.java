@@ -255,17 +255,17 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
     @Override
     public void configureGeneRecyclerView(ArrayList<String> strings) {
-        configureRecyclerView(gameGenresRecyclerView, strings, false);
+        configureRecyclerView(gameGenresRecyclerView, strings);
     }
 
     @Override
     public void configureSimilarGamesRecyclerView(ArrayList<String> strings) {
-        configureRecyclerView(relevantGamesRecyclerView, strings, false);
+        configureRecyclerView(relevantGamesRecyclerView, strings);
     }
 
     @Override
     public void configurePublisherRecyclerView(ArrayList<String> strings) {
-        configureRecyclerView(publisherRecyclerView, strings, false);
+        configureRecyclerView(publisherRecyclerView, strings);
     }
 
     @Override
@@ -279,27 +279,21 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
     @Override
     public void configureDeveloperRecyclerView(ArrayList<String> developers) {
-        configureRecyclerView(gameDescriptionRecyclerView, developers, false);
+        configureRecyclerView(gameDescriptionRecyclerView, developers);
     }
 
     public void configureDescriptionRecyclerView(String description) {
         ArrayList<String> descriptionList = new ArrayList<>();
         descriptionList.add("Description");
         descriptionList.add(HTMLUtil.stripHtml(description));
-        configureRecyclerView(gameDescriptionRecyclerView, descriptionList, true);
+        configureRecyclerView(gameDescriptionRecyclerView, descriptionList);
     }
 
-    private void configureRecyclerView( RecyclerView recyclerView, ArrayList<String> values, boolean isDescription) {
+    private void configureRecyclerView( RecyclerView recyclerView, ArrayList<String> values) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        ExpandableRecyclerAdapter adapter;
-        if(isDescription) {
-            adapter = new ExpandableRecyclerAdapter(values, recyclerView, true);
-        }
-        else {
-            adapter = new ExpandableRecyclerAdapter(values, recyclerView, false);
-        }
+        ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(values);
         recyclerView.setAdapter(adapter);
         recyclerView.setVisibility(View.VISIBLE);
     }
