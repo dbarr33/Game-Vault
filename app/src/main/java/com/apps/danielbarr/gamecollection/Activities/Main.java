@@ -261,9 +261,14 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         realm.beginTransaction();
         DrawerList list = realm.createObject(DrawerList.class);
         DrawerItem item = realm.createObject(DrawerItem.class);
+        item.setName("All");
+        item.setPosition(count);
+        item.setIconID(R.drawable.joystick);
+        list.getItems().add(item);
+        item = realm.createObject(DrawerItem.class);
         item.setName(getString(R.string.ps4_drawer_title));
         item.setIconID(R.drawable.playstation_4_icon);
-        item.setPosition(count);
+        item.setPosition(++count);
         list.getItems().add(item);
         item = realm.createObject(DrawerItem.class);
         item.setName(getString(R.string.ps3_drawer_title));

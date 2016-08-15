@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
+import com.apps.danielbarr.gamecollection.Model.DrawerItem;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.Model.RealmDeveloper;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
@@ -30,6 +31,7 @@ import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
 import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
+import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 import com.apps.danielbarr.gamecollection.presenter.EditGamePresenter;
@@ -402,22 +404,12 @@ public class EditGameFragment extends Fragment implements EditGameView{
     private void configurePlatformSpinner() {
 
         List<String> list = new ArrayList<>();
-        list.add(getString(R.string.ps4_drawer_title));
-        list.add(getString(R.string.ps3_drawer_title));
-        list.add(getString(R.string.ps2_drawer_title));
-        list.add(getString(R.string.ps1_drawer_title));
-        list.add(getString(R.string.pc_drawer_title));
-        list.add(getString(R.string.xboxone_drawer_title));
-        list.add(getString(R.string.xbox360_drawer_title));
-        list.add(getString(R.string.xbox_drawer_title));
-        list.add(getString(R.string.wiiu_drawer_title));
-        list.add(getString(R.string.wii_drawer_title));
-        list.add(getString(R.string.gamecube_drawer_title));
-        list.add(getString(R.string.nintendo64_drawer_title));
-        list.add(getString(R.string.supernintendo_drawer_title));
-        list.add(getString(R.string.nintendo_drawer_title));
-        list.add(getString(R.string.other_title));
-
+        List<DrawerItem> platforms = RealmManager.getInstance().getAllPlatforms();
+        for(DrawerItem temp: platforms) {
+            if(!temp.getName().equalsIgnoreCase("all")) {
+                list.add(temp.getName());
+            }
+        }
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this.getActivity(),
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
