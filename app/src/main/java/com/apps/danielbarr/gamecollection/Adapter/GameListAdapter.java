@@ -38,11 +38,14 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     private ArrayList<RealmGame> filteredList;
     private String platform;
     private FilterState currentFilterState;
+    private FilterableAdapter filterableAdapter;
 
-    public GameListAdapter(ArrayList<RealmGame> realmGames, final String console) {
+
+    public GameListAdapter(ArrayList<RealmGame> realmGames, final String console, FilterableAdapter filterableAdapter) {
         this.realmGames = realmGames;
         this.filteredList = realmGames;
         this.platform = console;
+        this.filterableAdapter = filterableAdapter;
         currentFilterState = new FilterState();
         currentFilterState.setSortType(SortType.DATE);
         currentFilterState.setSelectedPublisher(FilterFragment.NO_SELECTION);
@@ -97,8 +100,19 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         } else {
             filterBySaveDate();
         }
+        if(filteredList.isEmpty()) {
+            filterableAdapter.noFilterResults();
+        }
+        else {
+            filterableAdapter.hasResults();
+        }
         notifyDataSetChanged();
 
+    }
+
+    public interface FilterableAdapter {
+        void noFilterResults();
+        void hasResults();
     }
 
     private void filterBySaveDate() {

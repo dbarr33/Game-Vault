@@ -150,7 +150,7 @@ public class FilterFragment extends Fragment {
     private void setupTransitionDrawable() {
         td = new TransitionDrawable( new Drawable[] {
                 getResources().getDrawable(R.drawable.filled_filter),
-                getResources().getDrawable(R.drawable.arrow_down)
+                getResources().getDrawable(R.drawable.x_mark2)
         });
         td.setCrossFadeEnabled(true);
         filterToggle.setImageDrawable(td);
@@ -218,6 +218,7 @@ public class FilterFragment extends Fragment {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     isAnimating = true;
+                    getView().setVisibility(View.VISIBLE);
                 }
 
                 @Override

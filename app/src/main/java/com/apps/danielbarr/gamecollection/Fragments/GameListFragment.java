@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
 import com.apps.danielbarr.gamecollection.Adapter.GameListAdapter;
@@ -31,6 +32,7 @@ public class GameListFragment extends Fragment {
 
     private RecyclerView gameListRecycler;
     private LinearLayout emptyView;
+    private TextView emptyTextview;
 
     private GameListAdapter gameListAdapter;
     private String platform;
@@ -46,6 +48,7 @@ public class GameListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_recycleview_game_list, container, false);
         gameListRecycler = (RecyclerView) v.findViewById(R.id.recycler_gameList);
         emptyView = (LinearLayout) v.findViewById(R.id.emptyView);
+        emptyTextview = (TextView)v.findViewById(R.id.emptyTextView);
         return v;
     }
 
@@ -66,13 +69,32 @@ public class GameListFragment extends Fragment {
     public void setGameList(String newPlatform) {
         platform = newPlatform;
         ArrayList<RealmGame> storedRealmGames = RealmManager.getInstance().getGames(platform);
-        gameListAdapter = new GameListAdapter(storedRealmGames, platform);
+        gameListAdapter = new GameListAdapter(storedRealmGames, platform, new GameListAdapter.FilterableAdapter() {
+            @Override
+            public void noFilterResults() {
+                displayEmptyView("No filtered results");
+            }
+
+            @Override
+            public void hasResults() {
+                hideEmptyView();
+            }
+        });
         gameListRecycler.setAdapter(gameListAdapter);
         if (storedRealmGames.size() > 0) {
-            emptyView.setVisibility(View.GONE);
+            hideEmptyView();
         } else {
-            emptyView.setVisibility(View.VISIBLE);
+            displayEmptyView(getString(R.string.empty_text));
         }
+    }
+
+    public void displayEmptyView(String text) {
+        emptyView.setVisibility(View.VISIBLE);
+        emptyTextview.setText(text);
+    }
+
+    public void hideEmptyView() {
+        emptyView.setVisibility(View.GONE);
     }
 
     public void notifyDataSetChanged() {
