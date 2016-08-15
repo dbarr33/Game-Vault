@@ -4,6 +4,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.NameInterface;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Required;
 
 /**
  * Created by danielbarr on 1/17/15.
@@ -11,13 +12,18 @@ import io.realm.RealmObject;
 
 public class RealmGame extends RealmObject implements NameInterface{
 
+    @Required
     private String name;
+    @Required
     private String platform;
+    @Required
     private String description;
     private RealmList<RealmGenre> realmGenre;
+    @Required
     private String photoURL;
     private float completionPercentage;
     private float userRating;
+    @Required
     private byte[] photo;
     private RealmList<RealmCharacter> characters;
     private RealmList<RealmGame> similarRealmGames;

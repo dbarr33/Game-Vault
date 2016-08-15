@@ -176,6 +176,7 @@ public class RealmManager {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
             if(oldVersion == 1) {
+
                 realm.getSchema().get("RealmCharacter")
                         .addField("imageURL", String.class);
                 realm.getSchema().create("RealmPublisher")

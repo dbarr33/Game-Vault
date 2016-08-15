@@ -5,6 +5,7 @@ import com.apps.danielbarr.gamecollection.Model.GiantBomb.NameInterface;
 import java.io.Serializable;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Required;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -12,8 +13,11 @@ import io.realm.RealmObject;
 public class RealmCharacter extends RealmObject implements Serializable, NameInterface {
 
     private int ID;
+    @Required
     private String name;
+    @Required
     private byte[] photo;
+    @Required
     private String description;
     private boolean photosLoaded;
     private String imageURL;
