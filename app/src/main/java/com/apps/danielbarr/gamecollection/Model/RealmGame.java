@@ -16,24 +16,18 @@ public class RealmGame extends RealmObject implements NameInterface{
     private String name;
     @Required
     private String platform;
-    @Required
     private String description;
     private RealmList<RealmGenre> realmGenre;
-    @Required
     private String photoURL;
     private float completionPercentage;
     private float userRating;
-    @Required
-    private byte[] photo;
     private RealmList<RealmCharacter> characters;
     private RealmList<RealmGame> similarRealmGames;
-    private boolean hasImage;
     private long date;
     private RealmList<RealmPublisher> publishers;
     private RealmList<RealmDeveloper> developers;
 
     public RealmGame(){
-
     }
 
     public RealmGame(RealmGame realmGame){
@@ -81,9 +75,7 @@ public class RealmGame extends RealmObject implements NameInterface{
         this.description = realmGame.getDescription();
         this.completionPercentage = realmGame.getCompletionPercentage();
         this.userRating = realmGame.getUserRating();
-        this.photo = realmGame.getPhoto();
         this.platform = realmGame.getPlatform();
-        this.hasImage = realmGame.isHasImage();
         this.date = realmGame.getDate();
     }
 
@@ -159,14 +151,6 @@ public class RealmGame extends RealmObject implements NameInterface{
         this.realmGenre = realmGenre;
     }
 
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
-    }
-
     public RealmList<RealmCharacter> getCharacters() {
         return characters;
     }
@@ -181,14 +165,6 @@ public class RealmGame extends RealmObject implements NameInterface{
 
     public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
-    }
-
-    public boolean isHasImage() {
-        return hasImage;
-    }
-
-    public void setHasImage(boolean hasImage) {
-        this.hasImage = hasImage;
     }
 
     public long getDate() {

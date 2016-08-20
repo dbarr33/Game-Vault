@@ -1,9 +1,6 @@
 package com.apps.danielbarr.gamecollection.Fragments;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,16 +25,13 @@ import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
-import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
-import com.apps.danielbarr.gamecollection.Uitilites.PictureUtils;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 import com.apps.danielbarr.gamecollection.presenter.EditGamePresenter;
 import com.apps.danielbarr.gamecollection.presenter.EditGameView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,6 +72,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
     public SynchronizedScrollView mScrollView;
     public int gamePosition;
     public EditGamePresenter editGamePresenter;
+    private String url;
 
     public static EditGameFragment newInstance(String platform, GiantBombSearch giantBombSearch) {
         Bundle args = new Bundle();
@@ -141,11 +136,13 @@ public class EditGameFragment extends Fragment implements EditGameView{
             editGamePresenter.configureScreen(true);
             if(searchResults.getImage() != null) {
                 if(searchResults.getImage().getSuper_url() != null) {
-                    editGamePresenter.fetchDataFromAPI(searchResults.getId(), searchResults.getImage().getSuper_url());
+                    url = searchResults.getImage().getSuper_url();
                 }
                 else {
-                    editGamePresenter.fetchDataFromAPI(searchResults.getId(), searchResults.getImage().getIcon_url());
+                    url = searchResults.getImage().getIcon_url();
                 }
+                editGamePresenter.fetchDataFromAPI(searchResults.getId(), url);
+
             }
             else {
                 editGamePresenter.fetchDataFromAPI(searchResults.getId(), null);
@@ -200,18 +197,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             editGamePresenter.createDeveloperGameData(realmGame.getDevelopers());
         }
 
-        if(realmGame.getPhoto() != null) {
-            setupSavedImages(realmGame.getPhoto());
-        }
-        else if(!realmGame.isHasImage()){
-            //TODO fix default image displayed
-            Bitmap bitmap = BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art);
-            //setupSavedImages(bitmap);
-        }
-        else {
-            setupGameImages(realmGame.getPhotoURL());
-        }
-
+        setupGameImages(realmGame.getPhotoURL());
         mScrollView.setToolbarTitle(realmGame.getName());
     }
 
@@ -232,24 +218,13 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
     @Override
     public void setupGameImages(String imageURL) {
+        url = imageURL;
         Glide.with(this)
                 .load(imageURL)
                 .asBitmap()
                 .into(gameImageView);
         Glide.with(this)
                 .load(imageURL)
-                .asBitmap()
-                .transform(new BlurTransformation(getActivity().getApplicationContext()))
-                .into(blurredGameImage);
-    }
-
-    public void setupSavedImages(byte[] bitmap) {
-        Glide.with(this)
-                .load(bitmap)
-                .asBitmap()
-                .into(gameImageView);
-        Glide.with(this)
-                .load(bitmap)
                 .asBitmap()
                 .transform(new BlurTransformation(getActivity().getApplicationContext()))
                 .into(blurredGameImage);
@@ -367,25 +342,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             realmGame.setDevelopers(realmDevelopers);
         }
 
-        if(blurredGameImage.getDrawable() != null) {
-            byte[] bytes;
-
-            if(gameImageView.getDrawable() instanceof GlideBitmapDrawable) {
-                bytes = PictureUtils.convertBitmapToByteArray(((GlideBitmapDrawable) gameImageView.getDrawable()).getBitmap());
-            }
-            else {
-                bytes = PictureUtils.convertBitmapToByteArray(((BitmapDrawable) gameImageView.getDrawable()).getBitmap());
-            }
-            realmGame.setPhoto(bytes);
-            realmGame.setHasImage(true);
-        }
-        else if(gameImageView.getDrawable() != null){
-            realmGame.setHasImage(false);
-        }
-        else {
-            realmGame.setPhotoURL(searchResults.image.getSuper_url());
-            realmGame.setHasImage(true);
-        }
+        realmGame.setPhotoURL(url);
 
         return realmGame;
     }

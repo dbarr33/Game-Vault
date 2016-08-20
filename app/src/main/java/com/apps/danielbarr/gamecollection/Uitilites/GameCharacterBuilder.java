@@ -1,11 +1,9 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
 import android.app.Activity;
-import android.graphics.drawable.BitmapDrawable;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character.CharacterResponse;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
-import com.apps.danielbarr.gamecollection.R;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -26,13 +24,7 @@ public class GameCharacterBuilder {
             @Override
             public void success(CharacterResponse characterResponse, Response response) {
                 if (characterResponse.getResults().getImage() != null) {
-                    realmCharacter.setImageURL(characterResponse.getResults().getImage().getThumb_url());
-                }
-                else {
-                    byte[] picture =  PictureUtils
-                            .convertBitmapToByteArray(((BitmapDrawable) activity.getResources().getDrawable(R.drawable.default_character)).getBitmap());
-                    realmCharacter.setPhoto(picture);
-                    callback.success(realmCharacter, response);
+                    realmCharacter.setImageURL(characterResponse.getResults().getImage().getSuper_url());
                 }
 
                 if (characterResponse.getResults().getDescription() == null) {

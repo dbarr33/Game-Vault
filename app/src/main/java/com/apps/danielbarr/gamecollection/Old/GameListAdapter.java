@@ -2,8 +2,6 @@ package com.apps.danielbarr.gamecollection.Old;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,10 +55,6 @@ public class GameListAdapter extends ArrayAdapter<RealmGame> {
         gameUserRatingBar.setRating(realmGame.getUserRating());
         gameCompletionTextView.setText("Completion: " + Float.toString(realmGame.getCompletionPercentage()) + "%");
         gameIgnDescription.setText(realmGame.getDescription());
-
-        Bitmap bmp = BitmapFactory.decodeByteArray(realmGame.getPhoto(), 0, realmGame.getPhoto().length);
-        gamePhotoImageView.setImageBitmap(bmp);
-
 
         if(gameIgnRating.getText().toString().trim().matches("") || gameIgnRating.getText().toString().trim().matches("0.0"))
         {

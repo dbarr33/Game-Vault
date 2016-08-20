@@ -162,12 +162,8 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
         gameViewHolder.name.setText(filteredList.get(i).getName());
         gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
-        if(filteredList.get(i).isHasImage()) {
-            gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeByteArray(filteredList.get(i).getPhoto(), 0, filteredList.get(i).getPhoto().length));
-        }
-        else {
-            gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art));
-        }
+        gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art));
+
         gameViewHolder.completionPercentage.setText(String.valueOf(filteredList.get(i).getCompletionPercentage()) + "%");
 
         String description;

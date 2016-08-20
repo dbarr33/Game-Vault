@@ -4,13 +4,12 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
@@ -84,11 +83,6 @@ public class CharacterFragment extends Fragment {
         descriptionList.add("Description");
         if(!realmCharacter.getDescription().matches("")) {
             descriptionList.add(realmCharacter.getDescription());
-            TextView textView = new TextView(getActivity());
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-            textView.setText(realmCharacter.getDescription());
-            textView.measure(0, 0);
-
             characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
             ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList);
             characterDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);

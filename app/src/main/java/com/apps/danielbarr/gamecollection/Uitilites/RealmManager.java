@@ -24,7 +24,7 @@ import io.realm.RealmResults;
 public class RealmManager {
 
     private static RealmManager realmManager;
-    private static int REALM_VERSION = 3;
+    private static int REALM_VERSION = 2;
     private Realm realm;
     private RealmConfiguration myConfig;
 
@@ -90,9 +90,6 @@ public class RealmManager {
         realm.beginTransaction();
         RealmGame oldGame = getRealmGameByPosition(platform, position);
         oldGame.setPlatform(realmGame.getPlatform());
-        if(realmGame.getPhoto() != null) {
-           oldGame.setPhoto(realmGame.getPhoto());
-        }
         if(realmGame.getCharacters() != null) {
             oldGame.getCharacters().removeAll(oldGame.getCharacters());
             oldGame.getCharacters().clear();
@@ -176,9 +173,10 @@ public class RealmManager {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
             if(oldVersion == 1) {
-
                 realm.getSchema().get("RealmCharacter")
-                        .addField("imageURL", String.class);
+                        .addField("imageURL", String.class)
+                        .removeField("photo")
+                        .removeField("hasImage");
                 realm.getSchema().create("RealmPublisher")
                         .addField("name", String.class)
                         .addIndex("name");
@@ -187,7 +185,9 @@ public class RealmManager {
                         .addIndex("name");
                 realm.getSchema().get("RealmGame")
                         .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
-                        .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"));
+                        .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
+                        .removeField("photo")
+                        .removeField("hasImage");
             }
         }
     };

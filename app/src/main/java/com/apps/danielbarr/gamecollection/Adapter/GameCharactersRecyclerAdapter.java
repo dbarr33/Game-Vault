@@ -47,7 +47,6 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             realmCharacters.add(new RealmCharacter());
             realmCharacters.get(i).setName(gameCharacters.get(i).getName());
             realmCharacters.get(i).setID(gameCharacters.get(i).getId());
-            realmCharacters.get(i).setPhotosLoaded(false);
             positions.put(gameCharacters.get(i).getId(), i);
             GameCharacterBuilder.getCharacterInfo(gameCharacters.get(i).getId(), gameCharacters.get(i).getName(), retroCallback, activity);
         }
@@ -57,7 +56,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         setup();
         for (int i = 0; i < characters.size(); i++) {
             realmCharacters.add(characters.get(i));
-            if (!realmCharacters.get(i).isPhotosLoaded()) {
+            if (realmCharacters.get(i).getImageURL().isEmpty()) {
                 positions.put(realmCharacters.get(i).getID(), i);
                 GameCharacterBuilder.getCharacterInfo(realmCharacters.get(i).getID(), realmCharacters.get(i).getName(), retroCallback, activity);
             }
@@ -106,7 +105,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         @Override
         public void onItemClick(View v, int position) {
 
-            if(realmCharacters.get(position).isPhotosLoaded()) {
+            if(realmCharacters.get(position).getImageURL().isEmpty()) {
                 HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(activity, EditGameFragment.class.getName());
                 hideFragmentCommand.execute();
                 AddFragmentCommand addFragmentCommand = new AddFragmentCommand(CharacterFragment.newInstance(realmCharacters.get(position)), activity);
@@ -123,7 +122,6 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             @Override
             public void success(RealmCharacter realmCharacter, Response response) {
             if(positions.containsKey(realmCharacter.getID())) {
-                realmCharacter.setPhotosLoaded(true);
                 realmCharacters.set(positions.get(realmCharacter.getID()),realmCharacter);
                 notifyDataSetChanged();
             }
