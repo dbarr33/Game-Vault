@@ -56,7 +56,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         setup();
         for (int i = 0; i < characters.size(); i++) {
             realmCharacters.add(characters.get(i));
-            if (realmCharacters.get(i).getImageURL().isEmpty()) {
+            if (realmCharacters.get(i).getImageURL() != null) {
                 positions.put(realmCharacters.get(i).getID(), i);
                 GameCharacterBuilder.getCharacterInfo(realmCharacters.get(i).getID(), realmCharacters.get(i).getName(), retroCallback, activity);
             }
@@ -105,7 +105,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         @Override
         public void onItemClick(View v, int position) {
 
-            if(realmCharacters.get(position).getImageURL().isEmpty()) {
+            if(realmCharacters.get(position).getImageURL() != null) {
                 HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(activity, EditGameFragment.class.getName());
                 hideFragmentCommand.execute();
                 AddFragmentCommand addFragmentCommand = new AddFragmentCommand(CharacterFragment.newInstance(realmCharacters.get(position)), activity);

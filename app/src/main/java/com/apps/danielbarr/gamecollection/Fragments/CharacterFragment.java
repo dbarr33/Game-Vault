@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 import com.bumptech.glide.Glide;
@@ -76,18 +77,20 @@ public class CharacterFragment extends Fragment {
         characterName.setText(realmCharacter.getName());
         ScreenSetupController.currentScreenCharacter(getActivity());
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        ArrayList<String> descriptionList = new ArrayList<>();
-        descriptionList.add("Description");
         if(!realmCharacter.getDescription().matches("")) {
-            descriptionList.add(realmCharacter.getDescription());
+            ArrayList<String> descriptionList = new ArrayList<>();
+            descriptionList.add("Description");
+            descriptionList.add(HTMLUtil.stripHtml(realmCharacter.getDescription()));
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             characterDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
-            ExpandableRecyclerAdapter gameDescriptionRecyclerAdapter = new ExpandableRecyclerAdapter(descriptionList);
-            characterDescriptionRecyclerView.setAdapter(gameDescriptionRecyclerAdapter);
+            ExpandableRecyclerAdapter adapter = new ExpandableRecyclerAdapter(descriptionList);
+            characterDescriptionRecyclerView.setAdapter(adapter);
             characterDescriptionRecyclerView.setVisibility(View.VISIBLE);
-        }else {
+
+        }
+        else {
             characterDescriptionRecyclerView.setVisibility(View.GONE);
         }
         return v;
