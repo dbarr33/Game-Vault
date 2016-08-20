@@ -1,12 +1,13 @@
 package com.apps.danielbarr.gamecollection.Adapter;
 
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -23,11 +24,12 @@ import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -166,6 +168,19 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         Glide.with(gameViewHolder.gameImage.getContext())
                 .load(filteredList.get(i).getPhotoURL())
                 .asBitmap()
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        gameViewHolder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        gameViewHolder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
                 .into(gameViewHolder.gameImage);
 
         gameViewHolder.completionPercentage.setText(String.valueOf(filteredList.get(i).getCompletionPercentage()) + "%");
@@ -194,6 +209,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         protected TextView description;
         protected RatingBar userRating;
         protected TextView completionPercentage;
+        protected ProgressBar progressBar;
 
         public GameViewHolder(View itemView) {
             super(itemView);
@@ -204,6 +220,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
             description = (TextView)itemView.findViewById(R.id.recycler_gameList_description);
             userRating = (RatingBar)itemView.findViewById(R.id.recycler_gameList_userRating);
             completionPercentage = (TextView)itemView.findViewById(R.id.completionPercentage);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

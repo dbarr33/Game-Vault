@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,9 @@ import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.GameCharacterBuilder;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +86,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
     }
 
     @Override
-    public void onBindViewHolder(ListViewHolder listViewHolder, int i) {
+    public void onBindViewHolder(final ListViewHolder listViewHolder, int i) {
         listViewHolder.mCharacterImageView.setImageBitmap(null);
         String temp = realmCharacters.get(i).getName();
         if (temp != null) {
@@ -92,6 +96,19 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         if(realmCharacters.get(i).getImageURL() != null) {
             Glide.with(activity)
                     .load(realmCharacters.get(i).getImageURL())
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            listViewHolder.progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            listViewHolder.progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(listViewHolder.mCharacterImageView);
         }
     }
@@ -137,6 +154,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
 
         protected TextView mName;
         protected ImageView mCharacterImageView;
+        protected ProgressBar progressBar;
 
         public ListViewHolder(final View itemView) {
             super(itemView);
@@ -144,6 +162,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             itemView.setClickable(true);
             mName = (TextView) itemView.findViewById(R.id.list_character_name);
             mCharacterImageView = (ImageView) itemView.findViewById(R.id.list_character_image);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
             itemView.setOnClickListener(this);
         }
         @Override

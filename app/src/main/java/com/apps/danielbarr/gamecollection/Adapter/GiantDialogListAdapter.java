@@ -13,6 +13,9 @@ import android.widget.TextView;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.GiantBombSearch;
 import com.apps.danielbarr.gamecollection.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 
@@ -33,22 +36,36 @@ public class GiantDialogListAdapter extends ArrayAdapter<GiantBombSearch> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder viewHolder = new ViewHolder();
+        final ViewHolder temp = new ViewHolder();
 
         if (convertView == null) {
             LayoutInflater inflater = (activity).getLayoutInflater();
             convertView = inflater.inflate(R.layout.giant_dialog_list_item, null);
-            viewHolder.gameName = (TextView) convertView.findViewById(R.id.giant_list_item_gameName);
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.giant_list_item_gameImage);
-            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.giant_list_item_progressBar);
-            convertView.setTag(viewHolder);
+            temp.gameName = (TextView) convertView.findViewById(R.id.giant_list_item_gameName);
+            temp.imageView = (ImageView) convertView.findViewById(R.id.giant_list_item_gameImage);
+            temp.progressBar = (ProgressBar) convertView.findViewById(R.id.giant_list_item_progressBar);
+            convertView.setTag(temp);
         }
 
-        viewHolder = (ViewHolder) convertView.getTag();
+        final ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         viewHolder.gameName.setText(giantBombSearches.get(position).getName());
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
         if(giantBombSearches.get(position).getImage() != null) {
             Glide.with(activity)
                     .load(giantBombSearches.get(position).getImage().getThumb_url())
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            viewHolder.progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            viewHolder.progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(viewHolder.imageView);
         }
         return convertView;

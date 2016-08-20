@@ -6,6 +6,12 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_centerInParent="true"
+            android:id="@+id/giant_list_item_progressBar"/>
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
@@ -14,13 +20,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:layout_centerInParent="true"
-            android:id="@+id/giant_list_item_progressBar"
-            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <TextView
