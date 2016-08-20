@@ -22,6 +22,7 @@ import com.apps.danielbarr.gamecollection.R;
 import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -162,7 +163,10 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
         gameViewHolder.name.setText(filteredList.get(i).getName());
         gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
-        gameViewHolder.gameImage.setImageBitmap(BitmapFactory.decodeResource(GameApplication.getActivity().getResources(), R.drawable.box_art));
+        Glide.with(gameViewHolder.gameImage.getContext())
+                .load(filteredList.get(i).getPhotoURL())
+                .asBitmap()
+                .into(gameViewHolder.gameImage);
 
         gameViewHolder.completionPercentage.setText(String.valueOf(filteredList.get(i).getCompletionPercentage()) + "%");
 
