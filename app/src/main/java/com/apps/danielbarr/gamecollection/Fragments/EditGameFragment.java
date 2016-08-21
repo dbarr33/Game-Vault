@@ -197,7 +197,12 @@ public class EditGameFragment extends Fragment implements EditGameView{
             editGamePresenter.createDeveloperGameData(realmGame.getDevelopers());
         }
 
-        setupGameImages(realmGame.getPhotoURL());
+        if (realmGame.getPhotoURL() != null) {
+            setupGameImages(realmGame.getPhotoURL());
+        }
+        else {
+            setupGameImagesFromByte(realmGame.getPhoto());
+        }
         mScrollView.setToolbarTitle(realmGame.getName());
     }
 
@@ -225,6 +230,18 @@ public class EditGameFragment extends Fragment implements EditGameView{
                 .into(gameImageView);
         Glide.with(this)
                 .load(imageURL)
+                .asBitmap()
+                .transform(new BlurTransformation(getActivity().getApplicationContext()))
+                .into(blurredGameImage);
+    }
+
+    public void setupGameImagesFromByte(byte[] photo) {
+        Glide.with(this)
+                .load(photo)
+                .asBitmap()
+                .into(gameImageView);
+        Glide.with(this)
+                .load(photo)
                 .asBitmap()
                 .transform(new BlurTransformation(getActivity().getApplicationContext()))
                 .into(blurredGameImage);

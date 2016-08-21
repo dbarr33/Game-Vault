@@ -12,6 +12,7 @@ import io.realm.annotations.Required;
 
 public class RealmGame extends RealmObject implements NameInterface{
 
+    private String gameID;
     @Required
     private String name;
     @Required
@@ -21,6 +22,7 @@ public class RealmGame extends RealmObject implements NameInterface{
     private String photoURL;
     private float completionPercentage;
     private float userRating;
+    private byte[] photo;
     private RealmList<RealmCharacter> characters;
     private RealmList<RealmGame> similarRealmGames;
     private long date;
@@ -77,6 +79,7 @@ public class RealmGame extends RealmObject implements NameInterface{
         this.userRating = realmGame.getUserRating();
         this.platform = realmGame.getPlatform();
         this.date = realmGame.getDate();
+        this.gameID = realmGame.getGameID();
     }
 
     public RealmList<RealmDeveloper> getDevelopers() {
@@ -173,6 +176,22 @@ public class RealmGame extends RealmObject implements NameInterface{
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
     }
 }
 

@@ -165,23 +165,12 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
         gameViewHolder.name.setText(filteredList.get(i).getName());
         gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
-        Glide.with(gameViewHolder.gameImage.getContext())
-                .load(filteredList.get(i).getPhotoURL())
-                .asBitmap()
-                .listener(new RequestListener<String, Bitmap>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                        gameViewHolder.progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        gameViewHolder.progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(gameViewHolder.gameImage);
+        if(filteredList.get(i).getPhoto() != null) {
+            setupImageFromByte(gameViewHolder.gameImage, filteredList.get(i).getPhoto());
+        }
+        else {
+            setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar, filteredList.get(i).getPhotoURL());
+        }
 
         gameViewHolder.completionPercentage.setText(String.valueOf(filteredList.get(i).getCompletionPercentage()) + "%");
 
@@ -194,7 +183,6 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
             }
             gameViewHolder.description.setText(description);
         }
-
     }
 
     @Override
@@ -250,5 +238,32 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.onClickListener = mItemClickListener;
+    }
+
+    public void setupImageFromNetwork(final ImageView imageView, final ProgressBar progressBar, String url) {
+        Glide.with(imageView.getContext())
+                .load(url)
+                .asBitmap()
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imageView);
+    }
+
+    public void setupImageFromByte(final ImageView imageView, byte[] photo) {
+        Glide.with(imageView.getContext())
+                .load(photo)
+                .asBitmap()
+                .into(imageView);
     }
 }

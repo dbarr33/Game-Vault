@@ -194,7 +194,6 @@ public class RealmManager {
                 realm.getSchema().get("RealmGame")
                         .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
                         .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
-                        .removeField("photo")
                         .removeField("hasImage")
                         .setNullable("description", true)
                         .setNullable("photoURL", true);
