@@ -36,6 +36,14 @@ public class RealmManager {
                 .build();
 
         realm = Realm.getInstance(myConfig);
+
+        RealmResults<RealmGame> games = getGamesByPlatform("");
+
+        realm.beginTransaction();
+        for(RealmGame temp: games) {
+            temp.setPlatform("Similar Game");
+        }
+        realm.commitTransaction();
     }
 
     public Realm getRealm() {
@@ -176,7 +184,7 @@ public class RealmManager {
                 realm.getSchema().get("RealmCharacter")
                         .addField("imageURL", String.class)
                         .removeField("photo")
-                        .removeField("hasImage");
+                        .removeField("photosLoaded");
                 realm.getSchema().create("RealmPublisher")
                         .addField("name", String.class)
                         .addIndex("name");
@@ -187,15 +195,8 @@ public class RealmManager {
                         .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
                         .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
                         .removeField("photo")
-                        .removeField("hasImage");
-
-                RealmResults<RealmGame> games = getGamesByPlatform("");
-
-                realm.beginTransaction();
-                for(RealmGame temp: games) {
-                    temp.setPlatform("Similar Game");
-                }
-                realm.commitTransaction();
+                        .removeField("hasImage")
+                        .setNullable("description", true);
             }
         }
     };
