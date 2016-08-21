@@ -196,7 +196,8 @@ public class RealmManager {
                         .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
                         .removeField("photo")
                         .removeField("hasImage")
-                        .setNullable("description", true);
+                        .setNullable("description", true)
+                        .setNullable("photoURL", true);
             }
         }
     };
