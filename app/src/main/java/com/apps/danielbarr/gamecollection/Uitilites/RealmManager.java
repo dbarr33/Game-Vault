@@ -188,6 +188,14 @@ public class RealmManager {
                         .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
                         .removeField("photo")
                         .removeField("hasImage");
+
+                RealmResults<RealmGame> games = getGamesByPlatform("");
+
+                realm.beginTransaction();
+                for(RealmGame temp: games) {
+                    temp.setPlatform("Similar Game");
+                }
+                realm.commitTransaction();
             }
         }
     };
