@@ -197,7 +197,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             editGamePresenter.createDeveloperGameData(realmGame.getDevelopers());
         }
 
-        if (realmGame.getPhotoURL() != null) {
+        if (!realmGame.getPhotoURL().matches("")) {
             setupGameImages(realmGame.getPhotoURL());
         }
         else {

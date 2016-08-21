@@ -165,7 +165,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
         gameViewHolder.name.setText(filteredList.get(i).getName());
         gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
-        if(filteredList.get(i).getPhoto() != null) {
+        if (filteredList.get(i).getPhotoURL().matches("")) {
             setupImageFromByte(gameViewHolder.gameImage, filteredList.get(i).getPhoto());
         }
         else {
