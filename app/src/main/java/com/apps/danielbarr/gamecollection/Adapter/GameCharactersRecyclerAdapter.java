@@ -93,7 +93,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             listViewHolder.mName.setText(temp);
         }
 
-        if(realmCharacters.get(i).getImageURL() != null) {
+        if(!realmCharacters.get(i).getImageURL().matches("")) {
             Glide.with(activity)
                     .load(realmCharacters.get(i).getImageURL())
                     .listener(new RequestListener<String, GlideDrawable>() {
@@ -109,6 +109,11 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
                             return false;
                         }
                     })
+                    .into(listViewHolder.mCharacterImageView);
+        }
+        else {
+            Glide.with(activity)
+                    .load(realmCharacters.get(i).getPhoto())
                     .into(listViewHolder.mCharacterImageView);
         }
     }

@@ -183,8 +183,8 @@ public class RealmManager {
             if(oldVersion == 1) {
                 realm.getSchema().get("RealmCharacter")
                         .addField("imageURL", String.class)
-                        .removeField("photo")
-                        .removeField("photosLoaded");
+                        .removeField("photosLoaded")
+                        .setNullable("photo", true);
                 realm.getSchema().create("RealmPublisher")
                         .addField("name", String.class)
                         .addIndex("name");

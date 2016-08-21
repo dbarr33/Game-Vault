@@ -18,6 +18,7 @@ public class RealmCharacter extends RealmObject implements Serializable, NameInt
     @Required
     private String description;
     private String imageURL;
+    private byte[] photo;
 
     public RealmCharacter(){
 
@@ -28,6 +29,7 @@ public class RealmCharacter extends RealmObject implements Serializable, NameInt
         this.setID(realmCharacter.getID());
         this.setName(realmCharacter.getName());
         this.setImageURL(realmCharacter.getImageURL());
+        this.photo = (realmCharacter.getPhoto());
     }
 
     public String getImageURL() {
@@ -59,5 +61,13 @@ public class RealmCharacter extends RealmObject implements Serializable, NameInt
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 }

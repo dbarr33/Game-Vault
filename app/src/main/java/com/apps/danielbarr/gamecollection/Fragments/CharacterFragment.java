@@ -64,12 +64,22 @@ public class CharacterFragment extends Fragment {
         mScrollView.setToolbarTitle(realmCharacter.getName());
         mScrollView.init(getActivity(), v);
 
-        if (realmCharacter.getImageURL() != null) {
+        if (!realmCharacter.getImageURL().matches("")) {
             Glide.with(this)
                     .load(realmCharacter.getImageURL())
                     .into(characterImageView);
             Glide.with(this)
                     .load(realmCharacter.getImageURL())
+                    .asBitmap()
+                    .transform(new BlurTransformation(getActivity().getApplicationContext()))
+                    .into(blurredCharacterImageView);
+        }
+        else {
+            Glide.with(this)
+                    .load(realmCharacter.getPhoto())
+                    .into(characterImageView);
+            Glide.with(this)
+                    .load(realmCharacter.getPhoto())
                     .asBitmap()
                     .transform(new BlurTransformation(getActivity().getApplicationContext()))
                     .into(blurredCharacterImageView);
