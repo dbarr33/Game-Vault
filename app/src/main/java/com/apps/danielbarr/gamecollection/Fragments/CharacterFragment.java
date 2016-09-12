@@ -64,7 +64,7 @@ public class CharacterFragment extends Fragment {
         mScrollView.setToolbarTitle(realmCharacter.getName());
         mScrollView.init(getActivity(), v);
 
-        if (!realmCharacter.getImageURL().matches("")) {
+        if (realmCharacter.getImageURL() != null) {
             Glide.with(this)
                     .load(realmCharacter.getImageURL())
                     .into(characterImageView);

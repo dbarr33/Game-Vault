@@ -112,6 +112,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             Glide.with(activity)
                     .load(realmCharacters.get(i).getPhoto())
                     .into(listViewHolder.mCharacterImageView);
+            listViewHolder.progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -124,7 +125,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         @Override
         public void onItemClick(View v, int position) {
 
-            if(realmCharacters.get(position).getImageURL() != null) {
+            if(realmCharacters.get(position).getImageURL() != null || realmCharacters.get(position).getPhoto() != null) {
                 HideFragmentCommand hideFragmentCommand = new HideFragmentCommand(activity, EditGameFragment.class.getName());
                 hideFragmentCommand.execute();
                 AddFragmentCommand addFragmentCommand = new AddFragmentCommand(CharacterFragment.newInstance(realmCharacters.get(position)), activity);
