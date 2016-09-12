@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
 import com.apps.danielbarr.gamecollection.Activities.Main;
@@ -48,6 +49,7 @@ public class FilterFragment extends Fragment {
     private FloatingActionButton addButton;
     private RecyclerView publisherRecyclerview;
     private RecyclerView developerRecyclerview;
+    private LinearLayout filterLayout;
     private TransitionDrawable td;
 
     private boolean toggled;
@@ -76,6 +78,7 @@ public class FilterFragment extends Fragment {
         addButton = (FloatingActionButton)getActivity().findViewById(R.id.floatingActionButton);
         publisherRecyclerview = (RecyclerView)view.findViewById(R.id.publisherRecyclerView);
         developerRecyclerview = (RecyclerView)view.findViewById(R.id.developersRecyclerView);
+        filterLayout = (LinearLayout)view.findViewById(R.id.filterLayout);
 
         return view;
     }
@@ -87,6 +90,16 @@ public class FilterFragment extends Fragment {
         setupTransitionDrawable();
         setupPublisherAdapter();
         setupDeveloperAdapter();
+        setupFilterLayout();
+    }
+
+    private void setupFilterLayout() {
+        if(publisherRecyclerview.getVisibility() == View.GONE && developerRecyclerview.getVisibility() == View.GONE) {
+            filterLayout.setVisibility(View.GONE);
+        }
+        else {
+            filterLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupFilter() {
@@ -160,13 +173,24 @@ public class FilterFragment extends Fragment {
         RealmList<RealmPublisher> publishers = RealmManager.getInstance().getAllPublishers();
         final ArrayList<String> publisherNames = ListObjectBuilder.createArrayList("Publisher", publishers);
         setupAdapter(publisherRecyclerview, publisherNames);
+        if(publishers.size() < 1) {
+            publisherRecyclerview.setVisibility(View.GONE);
+        }
+        else {
+            publisherRecyclerview.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupDeveloperAdapter() {
         RealmList<RealmDeveloper> developers = RealmManager.getInstance().getAllDevelopers();
         final ArrayList<String> names = ListObjectBuilder.createArrayList("Developers", developers);
         setupAdapter(developerRecyclerview, names);
-
+        if(developers.size() < 1) {
+            developerRecyclerview.setVisibility(View.GONE);
+        }
+        else {
+            developerRecyclerview.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupAdapter(RecyclerView recyclerView, ArrayList<String> values) {
@@ -207,6 +231,7 @@ public class FilterFragment extends Fragment {
             else {
                 setupPublisherAdapter();
                 setupDeveloperAdapter();
+                setupFilterLayout();
                 td.startTransition(500);
                 visibility = View.VISIBLE;
                 amountToMove = getActivity().findViewById(R.id.toolbar).getBottom();
