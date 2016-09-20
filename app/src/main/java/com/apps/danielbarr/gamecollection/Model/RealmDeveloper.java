@@ -12,6 +12,7 @@ public class RealmDeveloper extends RealmObject implements NameInterface {
 
     @Index
     private String name;
+    private String consoleName;
 
     public String getName() {
         return name;
@@ -19,5 +20,13 @@ public class RealmDeveloper extends RealmObject implements NameInterface {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getConsoleName() {
+        return consoleName;
+    }
+
+    public void setConsoleName(String consoleName) {
+        this.consoleName = consoleName;
     }
 }

@@ -181,24 +181,30 @@ public class RealmManager {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
             if(oldVersion == 1) {
-                realm.getSchema().get("RealmCharacter")
-                        .addField("imageURL", String.class)
-                        .removeField("photosLoaded")
-                        .setNullable("photo", true);
-                realm.getSchema().create("RealmPublisher")
-                        .addField("name", String.class)
-                        .addIndex("name");
-                realm.getSchema().create("RealmDeveloper")
-                        .addField("name", String.class)
-                        .addIndex("name");
-                realm.getSchema().get("RealmGame")
-                        .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
-                        .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
-                        .addField("gameID", String.class)
-                        .removeField("hasImage")
-                        .setNullable("photo", true)
-                        .setNullable("description", true)
-                        .setNullable("photoURL", true);
+                realm.getSchema()
+                    .get("RealmCharacter")
+                    .addField("imageURL", String.class)
+                    .removeField("photosLoaded")
+                    .setNullable("photo", true);
+                realm.getSchema()
+                    .create("RealmPublisher")
+                    .addField("name", String.class)
+                    .addIndex("name")
+                    .addField("consoleName", String.class);
+                realm.getSchema()
+                    .create("RealmDeveloper")
+                    .addField("name", String.class)
+                    .addField("consoleName", String.class)
+                    .addIndex("name");
+                realm.getSchema()
+                    .get("RealmGame")
+                    .addRealmListField("publishers", realm.getSchema().get("RealmPublisher"))
+                    .addRealmListField("developers", realm.getSchema().get("RealmDeveloper"))
+                    .addField("gameID", String.class)
+                    .removeField("hasImage")
+                    .setNullable("photo", true)
+                    .setNullable("description", true)
+                    .setNullable("photoURL", true);
             }
         }
     };

@@ -343,6 +343,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             for (int i = 1; i < publisherNames.size(); i++) {
                 RealmPublisher publisher = new RealmPublisher();
                 publisher.setName(publisherNames.get(i));
+                publisher.setConsoleName(platformSpinner.getSelectedItem().toString());
                 realmPublishers.add(publisher);
             }
             realmGame.setPublishers(realmPublishers);
@@ -353,6 +354,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             ArrayList<String> developerNames = ((ExpandableRecyclerAdapter) developerRecyclerView.getAdapter()).getList();
             for (int i = 1; i < developerNames.size(); i++) {
                 RealmDeveloper developer = new RealmDeveloper();
+                developer.setConsoleName(platformSpinner.getSelectedItem().toString());
                 developer.setName(developerNames.get(i));
                 realmDevelopers.add(developer);
             }

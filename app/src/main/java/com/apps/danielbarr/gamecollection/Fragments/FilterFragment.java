@@ -242,12 +242,19 @@ public class FilterFragment extends Fragment {
         public void onAnimationStart(Animator animation) {
           isAnimating = true;
           getView().setVisibility(View.VISIBLE);
+          addButton.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onAnimationEnd(Animator animation) {
           overLay.setVisibility(visibility);
           blockingView.setVisibility(visibility);
+          if(visibility == View.VISIBLE) {
+            addButton.setVisibility(View.GONE);
+          }
+          else {
+            addButton.setVisibility(View.VISIBLE);
+          }
           isAnimating = false;
         }
 
