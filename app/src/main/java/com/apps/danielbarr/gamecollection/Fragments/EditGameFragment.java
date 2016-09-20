@@ -311,9 +311,11 @@ public class EditGameFragment extends Fragment implements EditGameView{
         if(gameDescriptionRecyclerView.getVisibility() == View.VISIBLE) {
             realmGame.setDescription(((ExpandableRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getList().get(1));
         }
-        else {
+
+        if(realmGame.getDescription() == null){
             realmGame.setDescription("");
         }
+
         if(characterLayout.getVisibility() == View.VISIBLE) {
             realmGame.setCharacters(((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects());
         }

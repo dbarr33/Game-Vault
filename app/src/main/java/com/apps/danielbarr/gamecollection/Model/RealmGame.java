@@ -39,6 +39,16 @@ public class RealmGame extends RealmObject implements NameInterface{
             this.characters.add(copy);
         }
 
+        //for(RealmDeveloper developer: realmGame.getDevelopers()){
+        //    RealmDeveloper copy = new RealmDeveloper(tempCharacter);
+        //    this.developers.add(copy);
+        //}
+        //
+        //for(RealmPublisher publisher: realmGame.getPublishers()){
+        //    RealmPublisher copy = new RealmPublisher(tempCharacter);
+        //    this.publishers.add(copy);
+        //}
+
         if(realmGame.getSimilarRealmGames() != null) {
             this.similarRealmGames = new RealmList<>();
             for (RealmGame tempGame: realmGame.getSimilarRealmGames()){
@@ -73,6 +83,7 @@ public class RealmGame extends RealmObject implements NameInterface{
             copy.setName(tempGenre.getName());
             realmGenre.add(copy);
         }
+        this.photoURL = realmGame.getPhotoURL();
         this.name = realmGame.getName();
         this.description = realmGame.getDescription();
         this.completionPercentage = realmGame.getCompletionPercentage();
