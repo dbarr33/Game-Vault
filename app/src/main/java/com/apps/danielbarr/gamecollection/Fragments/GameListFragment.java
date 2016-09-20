@@ -138,12 +138,12 @@ public class GameListFragment extends Fragment {
     public void removeGame(final int position, RealmGame realmGame) {
         final RealmGame temp = new RealmGame(realmGame);
 
-        RealmManager.getInstance().removeGame(realmGame);
         gameListAdapter.removeGame(position);
         gameListAdapter.notifyItemRemoved(position);
         if (gameListAdapter.getItemCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
         }
+        RealmManager.getInstance().removeGame(realmGame);
 
         SnackbarBuilder snackbarBuilder = new SnackbarBuilder(getView(), GameApplication.getResourceString(R.string.snackbar_text_deleted));
         snackbarBuilder.setOnClickListener(new View.OnClickListener() {

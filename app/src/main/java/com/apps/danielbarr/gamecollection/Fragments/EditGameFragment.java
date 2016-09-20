@@ -197,7 +197,7 @@ public class EditGameFragment extends Fragment implements EditGameView{
             editGamePresenter.createDeveloperGameData(realmGame.getDevelopers());
         }
 
-        if (!realmGame.getPhotoURL().matches("")) {
+        if (realmGame.getPhotoURL() != null) {
             setupGameImages(realmGame.getPhotoURL());
         }
         else {
@@ -310,6 +310,9 @@ public class EditGameFragment extends Fragment implements EditGameView{
 
         if(gameDescriptionRecyclerView.getVisibility() == View.VISIBLE) {
             realmGame.setDescription(((ExpandableRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getList().get(1));
+        }
+        else {
+            realmGame.setDescription("");
         }
         if(characterLayout.getVisibility() == View.VISIBLE) {
             realmGame.setCharacters(((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects());

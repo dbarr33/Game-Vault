@@ -25,9 +25,12 @@ import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import io.realm.Realm;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import static android.R.id.list;
 
 /**
  * @author Daniel Barr (Fuzz)
@@ -73,7 +76,11 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
   }
 
   public void removeGame(int position) {
-    filteredList.remove(position);
+    for(RealmGame game: realmGames) {
+      if(game.getName().matches(filteredList.get(position).getName())){
+        realmGames.remove(game);
+      }
+    }
   }
 
   public void addGame(int position, RealmGame game) {
@@ -168,7 +175,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
     gameViewHolder.name.setText(filteredList.get(i).getName());
     gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
-    if (filteredList.get(i).getPhotoURL().matches("")) {
+    if (filteredList.get(i).getPhotoURL() == null) {
       setupImageFromByte(gameViewHolder.gameImage, filteredList.get(i).getPhoto());
     } else {
       setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
