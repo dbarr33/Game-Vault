@@ -56,6 +56,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
     private FloatingActionButton floatingActionButton;
     private ItemTouchHelper mItemTouchHelper;
     private TextView toolbarTitle;
+    private FilterFragment filterFragment;
     private String selectedPlatform;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -118,6 +119,7 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 setTitle(selectedPlatform);
+                onConsoleSwitched();
                 invalidateOptionsMenu(); // creates call to
             }
 
@@ -141,7 +143,8 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
         }
 
         getSupportActionBar().setTitle(selectedPlatform);
-        getFragmentManager().beginTransaction().add(R.id.filterFragment, new FilterFragment(), null).commit();
+        filterFragment = FilterFragment.getInstance(selectedPlatform);
+        getFragmentManager().beginTransaction().add(R.id.filterFragment, filterFragment, null).commit();
         toolbarTitle = (TextView)findViewById(R.id.title);
         setTitle(selectedPlatform);
     }
@@ -249,6 +252,10 @@ public class Main extends ActionBarActivity implements DrawerListAdapter.OnStart
 
     public void applyFilter(FilterState filterState){
         gameListFragment.applyFilter(filterState);
+    }
+
+    public void onConsoleSwitched() {
+        filterFragment.consoleSwitched(selectedPlatform);
     }
 
     public void createDrawerList() {

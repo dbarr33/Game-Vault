@@ -154,8 +154,14 @@ public class RealmManager {
         realm.commitTransaction();
     }
 
-    public RealmList<RealmPublisher> getAllPublishers() {
-        RealmResults<RealmPublisher> publishers = realm.where(RealmPublisher.class).distinct("name");
+    public RealmList<RealmPublisher> getPublishersByConsole(String consoleName) {
+        RealmResults<RealmPublisher> publishers;
+        if(consoleName.equalsIgnoreCase("all")) {
+            publishers = realm.where(RealmPublisher.class).distinct("name");
+        }
+        else {
+            publishers = realm.where(RealmPublisher.class).distinct("name").where().equalTo("consoleName", consoleName).findAll();
+        }
         RealmList<RealmPublisher> realmPublishers = new RealmList<>();
         for(RealmPublisher temp : publishers){
             realmPublishers.add(temp);
@@ -163,8 +169,14 @@ public class RealmManager {
        return realmPublishers;
     }
 
-    public RealmList<RealmDeveloper> getAllDevelopers() {
-        RealmResults<RealmDeveloper> developers = realm.where(RealmDeveloper.class).distinct("name");
+    public RealmList<RealmDeveloper> getDevelopersByConsole(String consoleName) {
+        RealmResults<RealmDeveloper> developers;
+        if(consoleName.equalsIgnoreCase("all")) {
+            developers = realm.where(RealmDeveloper.class).distinct("name");
+        }
+        else {
+            developers = realm.where(RealmDeveloper.class).distinct("name").where().equalTo("consoleName", consoleName).findAll();
+        }
         RealmList<RealmDeveloper> realmDevelopers = new RealmList<>();
         for(RealmDeveloper temp : developers){
             realmDevelopers.add(temp);

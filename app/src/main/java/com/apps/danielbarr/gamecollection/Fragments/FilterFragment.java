@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class FilterFragment extends Fragment {
 
   public static final String NO_SELECTION = "No Selection";
+  public static final String CONSOLE_NAME_KEY = "console name";
 
   private ImageView filterToggle;
   private RadioButton alpha;
@@ -51,6 +52,15 @@ public class FilterFragment extends Fragment {
 
   private boolean toggled;
   private boolean isAnimating;
+  private String consoleName;
+
+  public static FilterFragment getInstance(String consoleName){
+    FilterFragment filterFragment = new FilterFragment();
+    Bundle args = new Bundle();
+    args.putString(CONSOLE_NAME_KEY, consoleName);
+    filterFragment.setArguments(args);
+    return filterFragment;
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,9 @@ public class FilterFragment extends Fragment {
     filterState.setSortType(SortType.DATE);
     toggled = false;
     isAnimating = false;
+    if(getArguments() != null) {
+      consoleName = getArguments().getString(CONSOLE_NAME_KEY);
+    }
   }
 
   @Nullable
@@ -171,7 +184,7 @@ public class FilterFragment extends Fragment {
   }
 
   private void setupPublisherAdapter() {
-    RealmList<RealmPublisher> publishers = RealmManager.getInstance().getAllPublishers();
+    RealmList<RealmPublisher> publishers = RealmManager.getInstance().getPublishersByConsole(consoleName);
     final ArrayList<String> publisherNames =
         ListObjectBuilder.createArrayList("Publisher", publishers);
     setupAdapter(publisherRecyclerview, publisherNames);
@@ -183,7 +196,7 @@ public class FilterFragment extends Fragment {
   }
 
   private void setupDeveloperAdapter() {
-    RealmList<RealmDeveloper> developers = RealmManager.getInstance().getAllDevelopers();
+    RealmList<RealmDeveloper> developers = RealmManager.getInstance().getDevelopersByConsole(consoleName);
     final ArrayList<String> names = ListObjectBuilder.createArrayList("Developers", developers);
     setupAdapter(developerRecyclerview, names);
     if (developers.size() < 1) {
@@ -270,6 +283,13 @@ public class FilterFragment extends Fragment {
       }).setDuration(500).translationY(amountToMove);
       toggled = !toggled;
     }
+  }
+
+  public void consoleSwitched(String consoleName) {
+    this.consoleName = consoleName;
+    resetFilter();
+    setupDeveloperAdapter();
+    setupPublisherAdapter();
   }
 
   private void resetFilter() {
