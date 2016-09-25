@@ -185,7 +185,7 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListAdapter.Dr
 
         public void update() {
             final int position = getAdapterPosition() - 1;
-            if(editingMode && !textView.getText().toString().equalsIgnoreCase("All")) {
+            if(editingMode && !list.get(position).getName().equalsIgnoreCase("All")) {
                 editImage.setVisibility(View.VISIBLE);
                 dragImage.setVisibility(View.GONE);
             }
