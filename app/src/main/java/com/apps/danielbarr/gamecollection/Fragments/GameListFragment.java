@@ -16,6 +16,7 @@ import com.apps.danielbarr.gamecollection.Adapter.GameListAdapter;
 import com.apps.danielbarr.gamecollection.Model.FilterState;
 import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.AnalyticsTracker;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
@@ -136,6 +137,8 @@ public class GameListFragment extends Fragment {
     }
 
     public void removeGame(final int position, RealmGame realmGame) {
+        new AnalyticsTracker(getActivity()).sendEvent("Game List", "Game Deleted",
+            realmGame.getName());
         final RealmGame temp = new RealmGame(realmGame);
 
         gameListAdapter.removeGame(position);
@@ -150,6 +153,8 @@ public class GameListFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                new AnalyticsTracker(getActivity()).sendEvent("Game List", "Undo Game Deleted",
+                    temp.getName());
                 RealmManager.getInstance().saveGame(temp);
                 gameListAdapter.addGame(position, temp);
                 gameListAdapter.notifyItemInserted(position);

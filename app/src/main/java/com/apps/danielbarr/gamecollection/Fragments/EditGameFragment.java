@@ -25,6 +25,7 @@ import com.apps.danielbarr.gamecollection.Model.RealmGame;
 import com.apps.danielbarr.gamecollection.Model.RealmGenre;
 import com.apps.danielbarr.gamecollection.Model.RealmPublisher;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.AnalyticsTracker;
 import com.apps.danielbarr.gamecollection.Uitilites.HTMLUtil;
 import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 import com.apps.danielbarr.gamecollection.Uitilites.SnackbarBuilder;
@@ -156,6 +157,8 @@ public class EditGameFragment extends Fragment implements EditGameView{
             deleteGameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    new AnalyticsTracker(getActivity()).sendEvent("Edit Game", "Game Deleted",
+                        gameName.getText().toString());
                     editGamePresenter.removeGame(currentPlatform, gamePosition);
                 }
             });
@@ -293,7 +296,8 @@ public class EditGameFragment extends Fragment implements EditGameView{
     }
 
     private RealmGame createGame() {
-
+        new AnalyticsTracker(getActivity()).sendEvent("Edit Game", "Game Saved",
+            gameName.getText().toString());
         RealmGame realmGame = new RealmGame();
         Calendar c = Calendar.getInstance();
         long date = c.get(Calendar.YEAR) * 10000000000L + c.get(Calendar.MONTH) * 100000000 + c.get(Calendar.DAY_OF_MONTH) * 1000000 + c.get(Calendar.HOUR_OF_DAY) * 10000 + c.get(Calendar.MINUTE) * 100 + c.get(Calendar.SECOND);

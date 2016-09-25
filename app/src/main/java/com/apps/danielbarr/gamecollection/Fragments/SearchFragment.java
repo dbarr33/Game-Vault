@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 import com.apps.danielbarr.gamecollection.R;
+import com.apps.danielbarr.gamecollection.Uitilites.AnalyticsTracker;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.google.android.gms.analytics.HitBuilders;
