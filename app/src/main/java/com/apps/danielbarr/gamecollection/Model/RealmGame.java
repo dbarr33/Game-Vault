@@ -39,15 +39,21 @@ public class RealmGame extends RealmObject implements NameInterface{
             this.characters.add(copy);
         }
 
-        //for(RealmDeveloper developer: realmGame.getDevelopers()){
-        //    RealmDeveloper copy = new RealmDeveloper(tempCharacter);
-        //    this.developers.add(copy);
-        //}
-        //
-        //for(RealmPublisher publisher: realmGame.getPublishers()){
-        //    RealmPublisher copy = new RealmPublisher(tempCharacter);
-        //    this.publishers.add(copy);
-        //}
+        if(realmGame.getDevelopers() != null) {
+            this.developers = new RealmList<>();
+            for (RealmDeveloper developer : realmGame.getDevelopers()) {
+                RealmDeveloper copy = new RealmDeveloper(developer);
+                this.developers.add(copy);
+            }
+        }
+
+        if(realmGame.getPublishers() != null) {
+            this.publishers = new RealmList<>();
+            for (RealmPublisher publisher : realmGame.getPublishers()) {
+                RealmPublisher copy = new RealmPublisher(publisher);
+                this.publishers.add(copy);
+            }
+        }
 
         if(realmGame.getSimilarRealmGames() != null) {
             this.similarRealmGames = new RealmList<>();
@@ -83,6 +89,7 @@ public class RealmGame extends RealmObject implements NameInterface{
             copy.setName(tempGenre.getName());
             realmGenre.add(copy);
         }
+        this.photo = realmGame.getPhoto();
         this.photoURL = realmGame.getPhotoURL();
         this.name = realmGame.getName();
         this.description = realmGame.getDescription();

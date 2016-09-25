@@ -29,4 +29,12 @@ public class RealmPublisher extends RealmObject implements NameInterface {
     public void setConsoleName(String consoleName) {
         this.consoleName = consoleName;
     }
+
+    public RealmPublisher() {
+    }
+
+    public RealmPublisher(RealmPublisher realmPublisher) {
+        this.name = realmPublisher.getName();
+        this.consoleName = realmPublisher.getConsoleName();
+    }
 }
