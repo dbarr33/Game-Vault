@@ -1,12 +1,14 @@
 package com.apps.danielbarr.gamecollection.Model;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Required;
 
 /**
  * Created by danielbarr on 1/17/15.
  */
 public class DrawerItem extends RealmObject{
 
+    @Required
     private String name = new String();
 
     private int iconID;

@@ -20,7 +20,7 @@ public abstract class SingleFragmentActivity extends ActionBarActivity {
 
         setContentView(R.layout.fragment_game_list);
 
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm =  getFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.gameListContainer);
 
         if (fragment == null) {

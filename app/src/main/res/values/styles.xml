@@ -10,11 +10,19 @@
         <item name="android:textColor">#000</item>
         <item name="windowActionBar">false</item>
         <item name="android:colorPrimaryDark">#0D47A1</item>
+
+        <item name="android:windowContentTransitions">true</item>
+
+        <!-- enable overlapping of exiting and entering activities-->
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
     </style>
 
     <style name="MyActionBar" parent="@android:style/Widget.ActionBar">
         <item name="android:background">#1976D2</item>
     </style>
+
+
 
 
 </resources>
