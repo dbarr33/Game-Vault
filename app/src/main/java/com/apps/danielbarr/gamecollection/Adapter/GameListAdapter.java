@@ -76,10 +76,15 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
   }
 
   public void removeGame(int position) {
+    RealmGame removeGame = null;
     for(RealmGame game: realmGames) {
       if(game.getName().matches(filteredList.get(position).getName())){
-        realmGames.remove(game);
+        removeGame  = game;
       }
+    }
+
+    if(removeGame != null) {
+      realmGames.remove(removeGame);
     }
   }
 
