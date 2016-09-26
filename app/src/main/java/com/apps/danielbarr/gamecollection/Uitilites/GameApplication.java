@@ -12,6 +12,7 @@ import com.google.android.gms.analytics.Tracker;
 public class GameApplication extends Application {
 
     private static String GOOGLE_ANALYTICS_ID = "UA-76408911-1";
+    public static boolean TURN_ON_ANALYTICS  = false;
 
     public Tracker mTracker;
 

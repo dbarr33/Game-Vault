@@ -26,6 +26,7 @@ public class AnalyticsTracker {
   }
 
   public void sendEvent(String screenName, String action, String category, String label) {
+    if(GameApplication.TURN_ON_ANALYTICS)
     mTracker.setScreenName(screenName);
     mTracker.send(new HitBuilders.EventBuilder().setAction(action)
         .setCategory(category)
