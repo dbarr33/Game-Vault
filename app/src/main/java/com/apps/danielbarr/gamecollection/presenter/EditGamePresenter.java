@@ -113,8 +113,6 @@ public class EditGamePresenter implements EditGamePresenterInterface {
     @Override
     public void setupToolbar() {
         Toolbar toolbar = (Toolbar)GameApplication.getActivity().findViewById(R.id.editToolbar);
-        toolbar.setAlpha(0);
-        toolbar.setVisibility(View.VISIBLE);
         ((Main)GameApplication.getActivity()).setSupportActionBar(toolbar);
     }
 

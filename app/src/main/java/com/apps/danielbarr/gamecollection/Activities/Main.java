@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-
 import com.apps.danielbarr.gamecollection.Adapter.DrawerListAdapter;
 import com.apps.danielbarr.gamecollection.Fragments.CharacterFragment;
 import com.apps.danielbarr.gamecollection.Fragments.EditGameFragment;
@@ -40,7 +39,6 @@ import com.apps.danielbarr.gamecollection.Uitilites.RealmManager;
 import com.apps.danielbarr.gamecollection.Uitilites.ScreenSetupController;
 import com.apps.danielbarr.gamecollection.Uitilites.ShowFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.SimpleItemTouchHelperCallback;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 

@@ -12,15 +12,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Search.SearchResponse;
 import com.apps.danielbarr.gamecollection.R;
-import com.apps.danielbarr.gamecollection.Uitilites.AnalyticsTracker;
 import com.apps.danielbarr.gamecollection.Uitilites.ApiHandler;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
@@ -43,7 +40,6 @@ public class SearchFragment extends DialogFragment {
         apiHandler = ApiHandler.getInstance();
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-        getDialog().setTitle("Search Online Database");
         searchTextView = (TextView)view.findViewById(R.id.searchTextField);
         searchButton = (Button)view.findViewById(R.id.searchButton);
         searchButton.setOnEditorActionListener(new TextView.OnEditorActionListener() {

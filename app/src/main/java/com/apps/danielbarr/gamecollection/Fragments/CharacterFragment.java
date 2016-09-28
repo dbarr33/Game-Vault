@@ -59,7 +59,6 @@ public class CharacterFragment extends Fragment {
         realmCharacter = (RealmCharacter) getArguments().getSerializable((EXTRA_GIANTCHARACTER));
 
         Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.editToolbar);
-        toolbar.setAlpha(0);
 
         mScrollView.setToolbarTitle(realmCharacter.getName());
         mScrollView.init(getActivity(), v);

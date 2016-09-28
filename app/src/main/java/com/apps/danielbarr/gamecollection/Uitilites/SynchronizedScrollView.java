@@ -125,13 +125,15 @@ public class SynchronizedScrollView extends ScrollView {
 
         float temp = position - t;
         alphaValue = temp/ position;
-        mSyncView.setAlpha(alphaValue);
-        toolbar.setAlpha(1 - alphaValue);
+        //mSyncView.setAlpha(alphaValue);
+        //toolbar.setAlpha(1 - alphaValue);
         int matchDistance = mSyncView.getTop() - getScrollY();
 
         if(matchDistance < 0) {
+            toolbar.setVisibility(VISIBLE);
             toolbarTextView.setText(toolbarTitle);
         } else {
+            toolbar.setVisibility(GONE);
             toolbarTextView.setText("");
         }
     }
@@ -139,10 +141,6 @@ public class SynchronizedScrollView extends ScrollView {
     public void setViewAlpha() {
         if(mSyncView != null) {
             mSyncView.setAlpha(alphaValue);
-        }
-
-        if(toolbar != null) {
-            toolbar.setAlpha(1 - alphaValue);
         }
     }
 }
