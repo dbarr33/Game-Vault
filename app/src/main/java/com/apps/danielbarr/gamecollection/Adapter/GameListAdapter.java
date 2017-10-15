@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.apps.danielbarr.gamecollection.Uitilites.AddFragmentCommand;
 import com.apps.danielbarr.gamecollection.Uitilites.GameApplication;
 import com.apps.danielbarr.gamecollection.Uitilites.HideFragmentCommand;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import io.realm.Realm;
@@ -179,16 +181,8 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
   public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
     gameViewHolder.name.setText(filteredList.get(i).getName());
-    gameViewHolder.userRating.setRating(filteredList.get(i).getUserRating());
-    if (filteredList.get(i).getPhotoURL() == null || filteredList.get(i).getPhotoURL().matches("")) {
-      setupImageFromByte(gameViewHolder.gameImage, filteredList.get(i).getPhoto());
-    } else {
-      setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
-          filteredList.get(i).getPhotoURL());
-    }
-
-    gameViewHolder.completionPercentage.setText(
-        String.valueOf(filteredList.get(i).getCompletionPercentage()) + "%");
+    setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
+        filteredList.get(i).getPhotoURL());
 
     String description;
     if (filteredList.get(i).getDescription() != null) {
@@ -197,7 +191,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
       } else {
         description = filteredList.get(i).getDescription();
       }
-      gameViewHolder.description.setText(description);
+      gameViewHolder.description.setText(description.substring(10));
     }
   }
 
@@ -208,22 +202,18 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
   public class GameViewHolder extends RecyclerView.ViewHolder {
     protected TextView name;
-    protected CardView cardView;
+    protected LinearLayout cardView;
     protected ImageView gameImage;
     protected TextView description;
-    protected RatingBar userRating;
-    protected TextView completionPercentage;
     protected ProgressBar progressBar;
 
     public GameViewHolder(View itemView) {
       super(itemView);
 
       name = (TextView) itemView.findViewById(R.id.recycler_gameList_gameName);
-      cardView = (CardView) itemView.findViewById(R.id.recycler_gameList_cardView);
+      cardView = (LinearLayout) itemView.findViewById(R.id.recycler_gameList_cardView);
       gameImage = (ImageView) itemView.findViewById(R.id.recycler_gameList_gameImage);
       description = (TextView) itemView.findViewById(R.id.recycler_gameList_description);
-      userRating = (RatingBar) itemView.findViewById(R.id.recycler_gameList_userRating);
-      completionPercentage = (TextView) itemView.findViewById(R.id.completionPercentage);
       progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
       itemView.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -259,18 +249,17 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
       String url) {
     Glide.with(imageView.getContext())
         .load(url)
-        .asBitmap()
-        .listener(new RequestListener<String, Bitmap>() {
+        .listener(new RequestListener<String, GlideDrawable>() {
           @Override
-          public boolean onException(Exception e, String model, Target<Bitmap> target,
+          public boolean onException(Exception e, String model, Target<GlideDrawable> target,
               boolean isFirstResource) {
             progressBar.setVisibility(View.GONE);
             return false;
           }
 
           @Override
-          public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target,
-              boolean isFromMemoryCache, boolean isFirstResource) {
+          public boolean onResourceReady(GlideDrawable resource, String model,
+              Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
             progressBar.setVisibility(View.GONE);
             return false;
           }
@@ -279,6 +268,6 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
   }
 
   public void setupImageFromByte(final ImageView imageView, byte[] photo) {
-    Glide.with(imageView.getContext()).load(photo).asBitmap().into(imageView);
+    Glide.with(imageView.getContext()).load(photo).into(imageView);
   }
 }

@@ -1,118 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    >
 
-<android.support.v7.widget.CardView
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_marginTop="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp"
-    card_view:cardCornerRadius="5dp"
     android:id="@+id/recycler_gameList_cardView"
-    style="@style/CardView"
+    android:orientation="horizontal"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardPreventCornerOverlap="true"
     android:layout_centerInParent="true"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
+            android:textSize="28sp"
             android:textColor="#fff"
             android:maxLines="1"
             android:ellipsize="end"
             android:background="@color/primary"
             android:transitionName="gameName"
             android:id="@+id/recycler_gameList_gameName"/>
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="10dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            android:padding="10dp"
+            android:layout_height="150dp">
 
-                <RelativeLayout
-                    android:layout_width="140dp"
-                    android:layout_height="140dp">
-
-                    <ProgressBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:id="@+id/progressBar"/>
-
-                <ImageView
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:id="@+id/recycler_gameList_gameImage"
-                    android:transitionName="gameImage"/>
-                </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <RatingBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="?android:attr/ratingBarStyleIndicator"
-                        android:numStars="5"
-                        android:stepSize="1"
-                        android:isIndicator="true"
-                        android:id="@+id/recycler_gameList_userRating"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="18sp"
-                            android:text="@string/edit_game_completion_percentage"
-                            android:id="@+id/list_item_CompletionPercentage"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/completionPercentage"
-                            android:textSize="18sp"/>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-            <TextView
+            <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="7"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="50dp"
+                android:id="@+id/progressBar"/>
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="fitCenter"
+                android:id="@+id/recycler_gameList_gameImage"
+                android:transitionName="gameImage"/>
+            <TextView
+                android:layout_toRightOf="@id/recycler_gameList_gameImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="14dp"
+                android:ellipsize="end"
+                android:layout_centerVertical="true"
+                android:height="100dp"
                 android:id="@+id/recycler_gameList_description"/>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
-</android.support.v7.widget.CardView>
+</LinearLayout>
 
-
-
-</RelativeLayout>
