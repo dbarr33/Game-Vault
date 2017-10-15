@@ -4,14 +4,14 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.apps.danielbarr.gamecollection"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.5.0"
+        versionCode 4
+        versionName "1.5.1"
         renderscriptTargetApi 16
         renderscriptSupportModeEnabled true
         vectorDrawables.useSupportLibrary = true

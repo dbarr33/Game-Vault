@@ -49,7 +49,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
             realmCharacters.get(i).setName(gameCharacters.get(i).getName());
             realmCharacters.get(i).setID(gameCharacters.get(i).getId());
             positions.put(gameCharacters.get(i).getId(), i);
-            GameCharacterBuilder.getCharacterInfo(gameCharacters.get(i).getId(), gameCharacters.get(i).getName(), retroCallback, activity);
+            GameCharacterBuilder.getCharacterInfo(gameCharacters.get(i).getId(), gameCharacters.get(i).getName(), retroCallback);
         }
     }
 
@@ -57,9 +57,9 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         setup();
         for (int i = 0; i < characters.size(); i++) {
             realmCharacters.add(characters.get(i));
-            if (realmCharacters.get(i).getImageURL() != null) {
+            if (realmCharacters.get(i).getImageURL() == null) {
                 positions.put(realmCharacters.get(i).getID(), i);
-                GameCharacterBuilder.getCharacterInfo(realmCharacters.get(i).getID(), realmCharacters.get(i).getName(), retroCallback, activity);
+                GameCharacterBuilder.getCharacterInfo(realmCharacters.get(i).getID(), realmCharacters.get(i).getName(), retroCallback);
             }
         }
     }
@@ -91,7 +91,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
         }
 
         if(realmCharacters.get(i).getImageURL() != null) {
-            Glide.with(activity)
+            Glide.with(listViewHolder.mCharacterImageView.getContext())
                     .load(realmCharacters.get(i).getImageURL())
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
@@ -109,7 +109,7 @@ public class GameCharactersRecyclerAdapter extends RecyclerView.Adapter<GameChar
                     .into(listViewHolder.mCharacterImageView);
         }
         else {
-            Glide.with(activity)
+            Glide.with(listViewHolder.mCharacterImageView.getContext())
                     .load(realmCharacters.get(i).getPhoto())
                     .into(listViewHolder.mCharacterImageView);
             listViewHolder.progressBar.setVisibility(View.GONE);

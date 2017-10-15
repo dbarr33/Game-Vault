@@ -1,10 +1,7 @@
 package com.apps.danielbarr.gamecollection.Uitilites;
 
-import android.app.Activity;
-
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.Character.CharacterResponse;
 import com.apps.danielbarr.gamecollection.Model.RealmCharacter;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -14,7 +11,7 @@ import retrofit.client.Response;
  */
 public class GameCharacterBuilder {
 
-    public static void getCharacterInfo(int id, String name, final Callback<RealmCharacter> callback, final Activity activity ) {
+    public static void getCharacterInfo(int id, String name, final Callback<RealmCharacter> callback) {
         final RealmCharacter realmCharacter = new RealmCharacter();
         realmCharacter.setID(id);
         realmCharacter.setName(name);

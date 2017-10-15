@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.apps.danielbarr.gamecollection.Adapter.ExpandableRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Adapter.GameCharactersRecyclerAdapter;
 import com.apps.danielbarr.gamecollection.Model.DrawerItem;
@@ -33,12 +33,10 @@ import com.apps.danielbarr.gamecollection.Uitilites.SynchronizedScrollView;
 import com.apps.danielbarr.gamecollection.presenter.EditGamePresenter;
 import com.apps.danielbarr.gamecollection.presenter.EditGameView;
 import com.bumptech.glide.Glide;
-
+import io.realm.RealmList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import io.realm.RealmList;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
@@ -311,14 +309,15 @@ public class EditGameFragment extends Fragment implements EditGameView{
         } else {
             realmGame.setCompletionPercentage(0);
         }
+        String description = "";
 
         if(gameDescriptionRecyclerView.getVisibility() == View.VISIBLE) {
-            realmGame.setDescription(((ExpandableRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getList().get(1));
+            String temp = ((ExpandableRecyclerAdapter) gameDescriptionRecyclerView.getAdapter()).getList().get(1);
+            if(!TextUtils.isEmpty(temp)) {
+                description = temp;
+            }
         }
-
-        if(realmGame.getDescription() == null){
-            realmGame.setDescription("");
-        }
+        realmGame.setDescription(description);
 
         if(characterLayout.getVisibility() == View.VISIBLE) {
             realmGame.setCharacters(((GameCharactersRecyclerAdapter) charactersRecyclerView.getAdapter()).getRecyclerObjects());

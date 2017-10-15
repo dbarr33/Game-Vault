@@ -1,5 +1,6 @@
 package com.apps.danielbarr.gamecollection.Model;
 
+import android.text.TextUtils;
 import com.apps.danielbarr.gamecollection.Model.GiantBomb.NameInterface;
 
 import java.io.Serializable;
@@ -21,11 +22,15 @@ public class RealmCharacter extends RealmObject implements Serializable, NameInt
     private byte[] photo;
 
     public RealmCharacter(){
-
+        this.description = "";
     }
 
     public RealmCharacter(RealmCharacter realmCharacter){
-        this.setDescription(realmCharacter.getDescription());
+        if(!TextUtils.isEmpty(realmCharacter.getDescription())) {
+            this.setDescription(realmCharacter.getDescription());
+        } else {
+            this.description = "";
+        }
         this.setID(realmCharacter.getID());
         this.setName(realmCharacter.getName());
         this.setImageURL(realmCharacter.getImageURL());
@@ -60,7 +65,9 @@ public class RealmCharacter extends RealmObject implements Serializable, NameInt
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        if(!TextUtils.isEmpty(description)) {
+            this.description = description;
+        }
     }
 
     public byte[] getPhoto() {
