@@ -176,8 +176,8 @@ public class FilterFragment extends Fragment {
 
   private void setupTransitionDrawable() {
     td = new TransitionDrawable(new Drawable[] {
-        getResources().getDrawable(R.drawable.filled_filter),
-        getResources().getDrawable(R.drawable.x_mark2)
+        getResources().getDrawable(R.drawable.ic_filter_list_white_24dp),
+        getResources().getDrawable(R.drawable.xmark2)
     });
     td.setCrossFadeEnabled(true);
     filterToggle.setImageDrawable(td);
