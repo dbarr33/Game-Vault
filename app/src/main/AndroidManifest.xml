@@ -33,5 +33,9 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Old.GameListActivity"/>
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="ea657ed0796ad2f01315b587b754b2bfb23266c3"
+            />
     </application>
 </manifest>

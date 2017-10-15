@@ -111,12 +111,30 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/danielbarr/.android/build-cache/dfcf7e4628e0b00e0d06e3f69e68926c7aea9cd2/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3fdf6a0d0b94755533ce1ce2e3da381018c20c6d">
+        <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/classes_08859f5d96f60eeacea9708da2a2ff647660a6b6.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/danielbarr/.android/build-cache/0a546f0581a706ef7f66105e30b75e7623e3b5ce/output/jars/libs/internal_impl-25.0.0.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
         <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_2e8e2a3e4ddb2280c10c6d30404321d2049fd7cb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/danielbarr/.android/build-cache/103c89e7f6da8412e351568f38bdaa4cffe804bc/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="59e5c69daffa845144dcae8633e18d386b34535d">
+        <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/classes_db2a1bf89585222738eaf3b91fc968bc917211fc.jar" />
     </item>
     <item
         is-multidex="false"
@@ -237,6 +255,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/danielbarr/.android/build-cache/1a8ff931a569e2ddbc4d4f7c30f0c6cdc40ec404/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="dc978ffd03039bc5c5976147e5d24143e6f7b97b">
+        <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/classes_616da97d2abe106bf35df8807d4bd9c0eb7ac5aa.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/danielbarr/.android/build-cache/e88b09879560389db51a1be3cc68172e7bb47de8/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -315,6 +342,24 @@
         revision="25.0.0"
         sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
         <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/classes_135f48fdc217785049ea4f92aed262cd6abefd66.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/danielbarr/.android/build-cache/1077ee6412e5362c8ca91133e5f7dd5ca09a8a6a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="fc2deee927c28f30f79e931a265d8458c4710ae0">
+        <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/classes_b6862c58b5ccad79c900af04289f8eafcddc2659.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/danielbarr/.android/build-cache/ccf61a1636221e00a0e9a0ab0bf5fc8c879fc28a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c40ef9ee7f6e7ea4d7f3d573e7d9524a4bffe3fb">
+        <dex dex="/Users/danielbarr/Desktop/Gitlab/Android/Game-Vault/app/build/intermediates/pre-dexed/debug/classes_080d5153224c7fac038d20d4a8e3786577486b82.jar" />
     </item>
     <item
         is-multidex="false"
