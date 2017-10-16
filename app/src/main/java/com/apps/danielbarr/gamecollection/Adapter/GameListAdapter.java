@@ -181,8 +181,8 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
   public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
     gameViewHolder.name.setText(filteredList.get(i).getName());
-    setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
-        filteredList.get(i).getPhotoURL());
+    //setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
+    //    filteredList.get(i).getPhotoURL());
 
     String description;
     if (filteredList.get(i).getDescription() != null) {
@@ -267,7 +267,4 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         .into(imageView);
   }
 
-  public void setupImageFromByte(final ImageView imageView, byte[] photo) {
-    Glide.with(imageView.getContext()).load(photo).into(imageView);
-  }
 }

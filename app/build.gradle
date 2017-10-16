@@ -15,8 +15,8 @@ android {
     applicationId "com.apps.danielbarr.gamecollection"
     minSdkVersion 16
     targetSdkVersion 25
-    versionCode 5
-    versionName "1.5.2"
+    versionCode 6
+    versionName "1.6"
     renderscriptTargetApi 16
     renderscriptSupportModeEnabled true
     vectorDrawables.useSupportLibrary = true
