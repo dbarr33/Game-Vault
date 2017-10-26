@@ -317,9 +317,9 @@ public class DrawerListAdapter extends RecyclerView.Adapter<DrawerListAdapter.Dr
       cancelButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          new AnalyticsTracker(activity).sendEvent("Drawer", "Platform Deleted",
-              list.get(getAdapterPosition() - 1).getName());
           if (getAdapterPosition() + 1 != getItemCount()) {
+            new AnalyticsTracker(activity).sendEvent("Drawer", "Platform Deleted",
+                list.get(getAdapterPosition() - 1).getName());
             realmManager.deletePlatform(list.get(getAdapterPosition() - 1));
             editingMap.put(getAdapterPosition(), false);
             itemRemoved();

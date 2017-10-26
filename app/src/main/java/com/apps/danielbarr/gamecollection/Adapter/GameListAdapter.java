@@ -181,8 +181,8 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
   public void onBindViewHolder(final GameViewHolder gameViewHolder, final int i) {
 
     gameViewHolder.name.setText(filteredList.get(i).getName());
-    //setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
-    //    filteredList.get(i).getPhotoURL());
+    setupImageFromNetwork(gameViewHolder.gameImage, gameViewHolder.progressBar,
+        filteredList.get(i).getPhotoURL());
 
     String description;
     if (filteredList.get(i).getDescription() != null) {
@@ -191,7 +191,9 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
       } else {
         description = filteredList.get(i).getDescription();
       }
-      gameViewHolder.description.setText(description.substring(10));
+      if(description.length() > 10 && description.contains("Overview")) {
+        gameViewHolder.description.setText(description.substring(10));
+      }
     }
   }
 
