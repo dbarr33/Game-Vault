@@ -47,6 +47,9 @@ public class RealmManager {
     }
 
     public Realm getRealm() {
+        if(realm.isClosed()) {
+            realmManager = new RealmManager();
+        }
         return realm;
     }
 
