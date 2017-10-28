@@ -82,17 +82,19 @@ public class SearchFragment extends DialogFragment {
             apiHandler.getSearchGiantBomb(searchTextView.getText().toString(), new Callback<SearchResponse>() {
                 @Override
                 public void success(SearchResponse SearchResponse, retrofit.client.Response response) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                    if(getActivity() != null) {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
                             Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
+                        imm.hideSoftInputFromWindow(searchTextView.getWindowToken(), 0);
 
-                    android.app.FragmentManager fm = getActivity().getFragmentManager();
-                    GiantGamesFragment dialog = GiantGamesFragment.newInstance(SearchResponse.getResults(), getArguments().getString(EXTRA_PASS_PLATFORM));
-                    dialog.setTargetFragment(SearchFragment.this, REQUEST_CHOICE);
-                    if (!isBackgrounded) {
-                        dialog.show(fm, "TAG");
-                        getDialog().dismiss();
+                        android.app.FragmentManager fm = getActivity().getFragmentManager();
+                        GiantGamesFragment dialog = GiantGamesFragment.newInstance(SearchResponse.getResults(), getArguments().getString(EXTRA_PASS_PLATFORM));
+                        dialog.setTargetFragment(SearchFragment.this, REQUEST_CHOICE);
+                        if (!isBackgrounded) {
+                            dialog.show(fm, "TAG");
+                            getDialog().dismiss();
 
+                        }
                     }
                 }
 

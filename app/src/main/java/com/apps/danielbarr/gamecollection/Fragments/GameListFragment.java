@@ -166,6 +166,8 @@ public class GameListFragment extends Fragment {
     }
 
     public void applyFilter(FilterState filterState) {
-        gameListAdapter.applyFilter(filterState);
+        if(gameListAdapter != null) {
+            gameListAdapter.applyFilter(filterState);
+        }
     }
 }
